@@ -5,7 +5,7 @@ export const siteUrl =
 
 export const site = {
   name: "Marlon Coreas",
-  email: "support@peekcompress.com",
+  email: "hello@marloncoreas.com",
   peekUrl: "https://peekcompress.com/",
   peekAppStoreUrl: "https://apps.apple.com/app/6768755084",
   remodelingUrl: "https://homeremodelingnc.com/",
@@ -37,7 +37,7 @@ export const copy = {
       titleStart: "I build software",
       titleAccent: "that feels inevitable.",
       intro:
-        "From native desktop products to conversion-focused websites, I turn complex ideas into clear, fast, and carefully engineered experiences.",
+        "I took a native macOS app from idea to the App Store, and I build client websites that earn their place in search results. Everything I ship, I own end to end — product, code, and polish.",
       primary: "Explore selected work",
       secondary: "Start a project",
       proofLabel: "Selected signals",
@@ -123,7 +123,7 @@ export const copy = {
         {
           number: "02",
           title: "High-performance web",
-          text: "Distinctive websites that load quickly, communicate clearly, and give search engines the right context.",
+          text: "No templates, no bloat: hand-built sites that load fast, read clearly, and give search engines exactly the context they need.",
           skills: ["Astro & TypeScript", "Responsive UI", "Technical SEO"]
         },
         {
@@ -168,7 +168,7 @@ export const copy = {
       navigation: "Navigation",
       projects: "Live projects",
       connect: "Connect",
-      legal: "Built with vinext. Designed to be fast, accessible, and bilingual.",
+      legal: "Designed and built by Marlon Coreas.",
       backToTop: "Back to top"
     }
   },
@@ -195,7 +195,7 @@ export const copy = {
       titleStart: "Creo software",
       titleAccent: "que se siente inevitable.",
       intro:
-        "Desde productos nativos de escritorio hasta sitios orientados a conversión, convierto ideas complejas en experiencias claras, rápidas y cuidadosamente desarrolladas.",
+        "Llevé una app nativa de macOS desde la idea hasta el App Store, y construyo sitios para clientes que se ganan su lugar en los buscadores. Todo lo que lanzo lo asumo completo: producto, código y acabado.",
       primary: "Explorar proyectos",
       secondary: "Iniciar un proyecto",
       proofLabel: "Señales concretas",
@@ -281,7 +281,7 @@ export const copy = {
         {
           number: "02",
           title: "Web de alto rendimiento",
-          text: "Sitios distintivos que cargan rápido, comunican con claridad y dan a los buscadores el contexto correcto.",
+          text: "Sin plantillas ni relleno: sitios hechos a mano que cargan rápido, se leen claro y le dan a los buscadores justo el contexto que necesitan.",
           skills: ["Astro y TypeScript", "UI responsive", "SEO técnico"]
         },
         {
@@ -326,7 +326,7 @@ export const copy = {
       navigation: "Navegación",
       projects: "Proyectos en línea",
       connect: "Conecta",
-      legal: "Creado con vinext. Diseñado para ser rápido, accesible y bilingüe.",
+      legal: "Diseñado y desarrollado por Marlon Coreas.",
       backToTop: "Volver arriba"
     }
   }
