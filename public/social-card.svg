@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Independent Software Engineer</title>
+  <desc id="desc">Product and web development portfolio</desc>
+  <defs>
+    <radialGradient id="glow" cx="75%" cy="20%" r="70%">
+      <stop offset="0" stop-color="#b8ff3d" stop-opacity=".32"/>
+      <stop offset=".55" stop-color="#a876ff" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#050505" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#fff" stroke-opacity=".055"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="#050505"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <circle cx="1035" cy="105" r="11" fill="#b8ff3d"/>
+  <text x="84" y="96" fill="#b8ff3d" font-family="ui-monospace, SFMono-Regular, monospace" font-size="22" letter-spacing="3">MARLON COREAS / SOFTWARE ENGINEER</text>
+  <text x="80" y="290" fill="#f4f4ef" font-family="Arial, Helvetica, sans-serif" font-size="84" font-weight="800">Software that feels</text>
+  <text x="80" y="390" fill="#f4f4ef" font-family="Arial, Helvetica, sans-serif" font-size="84" font-weight="800">inevitable.</text>
+  <text x="84" y="502" fill="#a3a39c" font-family="Arial, Helvetica, sans-serif" font-size="28">Native products · High-performance web · EN / ES</text>
+  <path d="M84 552h1032" stroke="#fff" stroke-opacity=".16"/>
+</svg>

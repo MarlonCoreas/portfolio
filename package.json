@@ -1,0 +1,23 @@
+{
+  "name": "independent-developer-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vinext dev",
+    "build": "vinext build && node scripts/prepare-sites-build.mjs",
+    "preview": "vinext start"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "vinext": "^0.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-rsc": "^0.5.30",
+    "typescript": "^5.9.3"
+  }
+}
