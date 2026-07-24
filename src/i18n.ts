@@ -1,7 +1,7 @@
 export type Locale = "en" | "es";
 
 export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://mscoreas-portfolio.mcoreas279.chatgpt.site";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://marloncoreas.com";
 
 export const site = {
   name: "Marlon Coreas",

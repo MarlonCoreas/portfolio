@@ -2,7 +2,7 @@
 
 A bilingual portfolio built with vinext. English is the default language and Spanish lives at `/es`.
 
-**Live site:** [mscoreas-portfolio.mcoreas279.chatgpt.site](https://mscoreas-portfolio.mcoreas279.chatgpt.site)
+**Live site:** [marloncoreas.com](https://marloncoreas.com)
 
 ![Portfolio preview](public/social-card.png)
 
