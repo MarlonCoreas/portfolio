@@ -53,11 +53,20 @@ try {
     console.log(`  ${route} -> ${path.relative(OUT, target)}`);
   }
 
-  // Serve /es without a trailing-slash redirect so the canonical URL matches.
+  // Serve /es without a trailing-slash redirect so the canonical URL matches,
+  // and collapse www/http variants onto the canonical origin.
+  const host = new URL(SITE_URL).host;
   await writeFile(
     path.join(OUT, ".htaccess"),
     `Options -MultiViews
 RewriteEngine On
+
+RewriteCond %{HTTP_HOST} ^www\\.${host.replaceAll(".", "\\.")}$ [NC]
+RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
+
 RewriteRule ^es/?$ es/index.html [L]
 
 ErrorDocument 404 /index.html
@@ -84,7 +93,12 @@ ErrorDocument 404 /index.html
 `
   );
 
-  console.log(`\nDone. Upload the contents of dist/hostinger/ to public_html.`);
+  // Zip everything (dotfiles included) so nothing gets lost when uploading.
+  await rm("dist/hostinger.zip", { force: true });
+  const zip = spawnSync("zip", ["-qr", path.resolve("dist/hostinger.zip"), "."], { cwd: OUT });
+  if (zip.status !== 0) throw new Error("zip failed");
+
+  console.log(`\nDone. Upload dist/hostinger.zip to public_html and extract it there.`);
 } finally {
   server.kill();
 }
