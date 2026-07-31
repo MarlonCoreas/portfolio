@@ -29,7 +29,7 @@ export const metadata = {
     url: "/es",
     locale: t.locale,
     alternateLocale: ["en_US"],
-    images: [{ url: "/social-card.png", width: 1200, height: 630, alt: "Desarrollador de software independiente — productos y web" }]
+    images: [{ url: "/social-card.png", width: 1200, height: 630, alt: "Sitios y software que se pagan solos — Marlon Coreas" }]
   },
   twitter: {
     card: "summary_large_image",

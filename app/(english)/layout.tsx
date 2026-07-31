@@ -29,7 +29,7 @@ export const metadata = {
     url: "/",
     locale: t.locale,
     alternateLocale: ["es_SV"],
-    images: [{ url: "/social-card.png", width: 1200, height: 630, alt: "Independent software engineer — product and web development" }]
+    images: [{ url: "/social-card.png", width: 1200, height: 630, alt: "Websites and software that earn their keep — Marlon Coreas" }]
   },
   twitter: {
     card: "summary_large_image",

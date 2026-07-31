@@ -59,6 +59,7 @@
     --lime: #b8ff3d;
     --coral: #ff6b4a;
     --violet: #a876ff;
+    --teal: #4fe0b8;
     --shell: min(1220px, calc(100vw - 48px));
     --radius-sm: 16px;
     --radius: 26px;
@@ -824,6 +825,10 @@
 
   .theme-coral {
     --project-accent: var(--coral);
+  }
+
+  .theme-teal {
+    --project-accent: var(--teal);
   }
 
   .theme-violet {

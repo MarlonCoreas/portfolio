@@ -77,17 +77,25 @@ export default function PortfolioPage({ lang }: Props) {
         mainEntity: {
           "@type": "Person",
           name: site.name,
-          jobTitle: "Software Engineer & Product Builder",
+          jobTitle: "Independent Web & Software Developer",
           knowsAbout: [
-            "Native macOS development",
-            "Product engineering",
-            "Web development",
-            "Astro",
-            "TypeScript",
-            "Technical SEO",
-            "Internationalization"
+            "Business websites",
+            "Web platforms and client portals",
+            "Custom web applications",
+            "Online stores",
+            "Booking and quoting systems",
+            "Automation and integrations",
+            "Desktop app development",
+            "Search engine optimization",
+            "Bilingual English and Spanish websites"
           ],
-          sameAs: [site.githubUrl, site.linkedinUrl, site.peekUrl, site.remodelingUrl]
+          sameAs: [
+            site.githubUrl,
+            site.linkedinUrl,
+            site.peekUrl,
+            site.remodelingUrl,
+            site.loanpilotUrl
+          ]
         }
       }
     ]
@@ -266,7 +274,7 @@ export default function PortfolioPage({ lang }: Props) {
                         <div className="stealth-ring ring-c" />
                         <div className="stealth-center">
                           <span>BUILD</span>
-                          <strong>03</strong>
+                          <strong>{project.number}</strong>
                           <span>TEST</span>
                         </div>
                         <span className="stealth-note note-a">research</span>
@@ -381,9 +389,9 @@ export default function PortfolioPage({ lang }: Props) {
                 {t.about.availability}
               </div>
               <div className="toolkit">
-                <p>{t.about.stackLabel}</p>
+                <p>{t.about.capabilitiesLabel}</p>
                 <ul>
-                  {t.about.stack.map((item) => (
+                  {t.about.capabilities.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
@@ -445,6 +453,9 @@ export default function PortfolioPage({ lang }: Props) {
               </a>
               <a href={site.remodelingUrl} target="_blank" rel="noreferrer">
                 NC Home Remodeling
+              </a>
+              <a href={site.loanpilotUrl} target="_blank" rel="noreferrer">
+                LoanPilot
               </a>
             </div>
             <div>
