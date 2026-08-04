@@ -13,6 +13,12 @@ const OUT = path.resolve("dist/hostinger");
 const routes = [
   { route: "/", file: "index.html" },
   { route: "/es", file: "es/index.html" },
+  { route: "/services/websites", file: "services/websites/index.html" },
+  { route: "/services/custom-software", file: "services/custom-software/index.html" },
+  { route: "/es/servicios/sitios-web", file: "es/servicios/sitios-web/index.html" },
+  { route: "/es/servicios/software-a-la-medida", file: "es/servicios/software-a-la-medida/index.html" },
+  { route: "/privacy", file: "privacy/index.html" },
+  { route: "/es/privacidad", file: "es/privacidad/index.html" },
   { route: "/robots.txt", file: "robots.txt" },
   { route: "/sitemap.xml", file: "sitemap.xml" }
 ];
@@ -68,8 +74,14 @@ RewriteCond %{HTTPS} !=on
 RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
 
 RewriteRule ^es/?$ es/index.html [L]
+RewriteRule ^services/websites/?$ services/websites/index.html [L]
+RewriteRule ^services/custom-software/?$ services/custom-software/index.html [L]
+RewriteRule ^es/servicios/sitios-web/?$ es/servicios/sitios-web/index.html [L]
+RewriteRule ^es/servicios/software-a-la-medida/?$ es/servicios/software-a-la-medida/index.html [L]
+RewriteRule ^privacy/?$ privacy/index.html [L]
+RewriteRule ^es/privacidad/?$ es/privacidad/index.html [L]
 
-ErrorDocument 404 /index.html
+ErrorDocument 404 /404.html
 
 <IfModule mod_expires.c>
   ExpiresActive On

@@ -1,4 +1,5 @@
 import { copy, site, siteUrl, type Locale } from "../src/i18n";
+import ClientEnhancements from "./ClientEnhancements";
 
 type Props = {
   lang: Locale;
@@ -19,43 +20,13 @@ function Arrow() {
   );
 }
 
-const clientScript = `
-  (() => {
-    const header = document.querySelector("[data-header]");
-    const updateHeader = () => header?.classList.toggle("is-scrolled", window.scrollY > 18);
-    updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reducedMotion) {
-      const observer = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        }
-      }, { threshold: 0.12 });
-
-      document.querySelectorAll("[data-reveal]").forEach((element) => observer.observe(element));
-      document.querySelectorAll("[data-spotlight]").forEach((element) => {
-        element.addEventListener("pointermove", (event) => {
-          const rect = element.getBoundingClientRect();
-          element.style.setProperty("--spot-x", event.clientX - rect.left + "px");
-          element.style.setProperty("--spot-y", event.clientY - rect.top + "px");
-        });
-      });
-    } else {
-      document.querySelectorAll("[data-reveal]").forEach((element) => element.classList.add("is-visible"));
-    }
-  })();
-`;
-
 export default function PortfolioPage({ lang }: Props) {
   const t = copy[lang];
   const mailto = `mailto:${site.email}?subject=${encodeURIComponent(t.contact.subject)}`;
   const year = new Date().getFullYear();
   const canonical = lang === "en" ? `${siteUrl}/` : `${siteUrl}/es`;
+  const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const privacyPath = lang === "en" ? "/privacy" : "/es/privacidad";
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -137,7 +108,7 @@ export default function PortfolioPage({ lang }: Props) {
             >
               {t.alternateLabel}
             </a>
-            <a className="header-cta" href="#contact">
+            <a className="header-cta" href="#contact" data-track="header_contact_click">
               <span>{t.nav.contact}</span>
               <span className="icon">
                 <Arrow />
@@ -165,13 +136,13 @@ export default function PortfolioPage({ lang }: Props) {
               <p className="hero-intro">{t.hero.intro}</p>
 
               <div className="hero-actions">
-                <a className="button button-primary" href="#work">
+                <a className="button button-primary" href="#work" data-track="hero_evidence_click">
                   <span>{t.hero.primary}</span>
                   <span className="icon">
                     <Arrow />
                   </span>
                 </a>
-                <a className="button button-ghost" href="#contact">
+                <a className="button button-ghost" href="#contact" data-track="hero_contact_click">
                   {t.hero.secondary}
                 </a>
               </div>
@@ -291,6 +262,20 @@ export default function PortfolioPage({ lang }: Props) {
                       <h3>{project.title}</h3>
                       <p className="project-description">{project.description}</p>
                       <p className="project-role">{project.role}</p>
+                      <dl className="project-evidence">
+                        <div>
+                          <dt>{lang === "en" ? "Challenge" : "Problema"}</dt>
+                          <dd>{project.challenge}</dd>
+                        </div>
+                        <div>
+                          <dt>{lang === "en" ? "Delivered" : "Entregado"}</dt>
+                          <dd>{project.delivered}</dd>
+                        </div>
+                        <div>
+                          <dt>{lang === "en" ? "Evidence" : "Evidencia"}</dt>
+                          <dd>{project.evidence}</dd>
+                        </div>
+                      </dl>
                       <ul
                         className="tag-list"
                         aria-label={lang === "en" ? "Project characteristics" : "Características del proyecto"}
@@ -303,7 +288,14 @@ export default function PortfolioPage({ lang }: Props) {
                     {project.links.length > 0 ? (
                       <div className="project-links">
                         {project.links.map((link) => (
-                          <a href={link.href} target="_blank" rel="noreferrer" key={link.href}>
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            key={link.href}
+                            data-track="case_study_open"
+                            data-track-label={project.title}
+                          >
                             <span>{link.label}</span>
                             <span className="icon">
                               <Arrow />
@@ -335,11 +327,16 @@ export default function PortfolioPage({ lang }: Props) {
                   <div className="service-number">{service.number}</div>
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
+                  <p className="service-fit">{service.fit}</p>
                   <ul>
                     {service.skills.map((skill) => (
                       <li key={skill}>{skill}</li>
                     ))}
                   </ul>
+                  <a className="service-link" href={service.path} data-track="service_detail_open" data-track-label={service.title}>
+                    <span>{service.linkLabel}</span>
+                    <span className="icon"><Arrow /></span>
+                  </a>
                 </article>
               ))}
             </div>
@@ -396,6 +393,56 @@ export default function PortfolioPage({ lang }: Props) {
                   ))}
                 </ul>
               </div>
+              <div className="profile-links">
+                {t.about.profileLinks.map((link) => (
+                  <a href={link.href} target="_blank" rel="noreferrer" key={link.href}>
+                    <span>{link.label}</span>
+                    <span className="icon"><Arrow /></span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="fit section-grid" aria-labelledby="fit-title">
+          <div className="shell">
+            <div className="section-heading section-heading-wide" data-reveal>
+              <p className="eyebrow">{t.fit.eyebrow}</p>
+              <div>
+                <h2 id="fit-title">{t.fit.title}</h2>
+              </div>
+            </div>
+            <div className="fit-grid">
+              <article className="fit-card fit-card-positive" data-reveal>
+                <h3>{t.fit.goodTitle}</h3>
+                <ul>
+                  {t.fit.good.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+              <article className="fit-card" data-reveal>
+                <h3>{t.fit.notTitle}</h3>
+                <ul>
+                  {t.fit.not.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="faq section-grid" aria-labelledby="faq-title">
+          <div className="shell faq-inner">
+            <div className="faq-heading" data-reveal>
+              <p className="eyebrow">{t.faq.eyebrow}</p>
+              <h2 id="faq-title">{t.faq.title}</h2>
+            </div>
+            <div className="faq-list">
+              {t.faq.items.map((item) => (
+                <details key={item.question} data-reveal>
+                  <summary>{item.question}<span aria-hidden="true">+</span></summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
@@ -407,18 +454,86 @@ export default function PortfolioPage({ lang }: Props) {
               <p className="eyebrow">{t.contact.eyebrow}</p>
               <h2 id="contact-title">{t.contact.title}</h2>
               <p className="contact-intro">{t.contact.text}</p>
-              <div className="contact-actions">
-                <a className="button button-light" href={mailto}>
-                  <span>{t.contact.button}</span>
-                  <span className="icon">
-                    <Arrow />
-                  </span>
-                </a>
-                <div>
-                  <span>{t.contact.emailLabel}</span>
-                  <a href={mailto}>{site.email}</a>
+              <p
+                className="contact-status"
+                data-contact-status
+                data-success={t.contact.fields.success}
+                data-error={t.contact.fields.error}
+                role="status"
+                hidden
+              />
+              <form className="contact-form" action="/api/contact.php" method="post" data-contact-form>
+                <input type="hidden" name="language" value={lang} />
+                <input type="hidden" name="redirect" value={lang === "en" ? "/" : "/es"} />
+                <div className="contact-honeypot" aria-hidden="true">
+                  <label htmlFor={`website-${lang}`}>Website</label>
+                  <input id={`website-${lang}`} name="website" type="text" tabIndex={-1} autoComplete="off" />
                 </div>
-              </div>
+                <div className="form-field">
+                  <label htmlFor={`name-${lang}`}>{t.contact.fields.name}</label>
+                  <input id={`name-${lang}`} name="name" type="text" autoComplete="name" maxLength={100} required />
+                </div>
+                <div className="form-field">
+                  <label htmlFor={`email-${lang}`}>{t.contact.fields.email}</label>
+                  <input id={`email-${lang}`} name="email" type="email" autoComplete="email" maxLength={160} required />
+                </div>
+                <div className="form-field form-field-wide">
+                  <label htmlFor={`company-${lang}`}>{t.contact.fields.company}</label>
+                  <input id={`company-${lang}`} name="company" type="text" autoComplete="organization" maxLength={220} />
+                </div>
+                <div className="form-field">
+                  <label htmlFor={`project-type-${lang}`}>{t.contact.fields.projectType}</label>
+                  <select id={`project-type-${lang}`} name="project_type" required defaultValue="">
+                    <option value="" disabled>—</option>
+                    {t.contact.fields.projectOptions.map((option) => (
+                      <option value={option.value} key={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-field">
+                  <label htmlFor={`timeline-${lang}`}>{t.contact.fields.timeline}</label>
+                  <select id={`timeline-${lang}`} name="timeline" required defaultValue="">
+                    <option value="" disabled>—</option>
+                    {t.contact.fields.timelineOptions.map((option) => (
+                      <option value={option.value} key={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-field form-field-wide">
+                  <label htmlFor={`budget-${lang}`}>{t.contact.fields.budget}</label>
+                  <select id={`budget-${lang}`} name="budget" required defaultValue="">
+                    <option value="" disabled>—</option>
+                    {t.contact.fields.budgetOptions.map((option) => (
+                      <option value={option.value} key={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-field form-field-wide">
+                  <label htmlFor={`goal-${lang}`}>{t.contact.fields.goal}</label>
+                  <textarea
+                    id={`goal-${lang}`}
+                    name="goal"
+                    placeholder={t.contact.fields.goalPlaceholder}
+                    rows={6}
+                    maxLength={2500}
+                    required
+                  />
+                </div>
+                <label className="consent-field form-field-wide">
+                  <input type="checkbox" name="consent" value="yes" required />
+                  <span>{t.contact.fields.consent} <a href={privacyPath}>{t.contact.fields.privacy}</a>.</span>
+                </label>
+                <div className="contact-submit form-field-wide">
+                  <button className="button button-light" type="submit">
+                    <span>{t.contact.button}</span>
+                    <span className="icon"><Arrow /></span>
+                  </button>
+                  <div>
+                    <span>{t.contact.responseTime}</span>
+                    <p>{t.contact.emailLabel} <a href={mailto} data-track="email_click">{site.email}</a></p>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </section>
@@ -468,6 +583,7 @@ export default function PortfolioPage({ lang }: Props) {
               </a>
               <a href={mailto}>{site.email}</a>
               <a href={t.alternatePath}>{lang === "en" ? "Español" : "English"}</a>
+              <a href={privacyPath}>{t.footer.privacy}</a>
             </div>
           </div>
           <div className="footer-bottom">
@@ -477,7 +593,7 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </div>
       </footer>
-      <script dangerouslySetInnerHTML={{ __html: clientScript }} />
+      <ClientEnhancements analyticsId={analyticsId} />
     </>
   );
 }

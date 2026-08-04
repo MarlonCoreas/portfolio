@@ -29,13 +29,13 @@ export const metadata = {
     url: "/es",
     locale: t.locale,
     alternateLocale: ["en_US"],
-    images: [{ url: "/social-card.png", width: 1200, height: 630, alt: "Sitios y software que se pagan solos — Marlon Coreas" }]
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Consultas más útiles. Menos trabajo manual. — Marlon Coreas" }]
   },
   twitter: {
     card: "summary_large_image",
     title: t.seo.title,
     description: t.seo.description,
-    images: ["/social-card.png"]
+    images: ["/og.png"]
   }
 };
 
