@@ -11,7 +11,11 @@ export const site = {
   remodelingUrl: "https://homeremodelingnc.com/",
   loanpilotUrl: "https://loanpilot.marloncoreas.com/",
   githubUrl: "https://github.com/MarlonCoreas",
-  linkedinUrl: "https://www.linkedin.com/in/marlon-salomon-coreas-villanueva-8b0416161"
+  linkedinUrl: "https://www.linkedin.com/in/marlon-salomon-coreas-villanueva-8b0416161",
+  // Scheduling link shown after a successful inquiry. Leave empty to hide the
+  // button entirely; set the same URL in the mailer config to include it in the
+  // confirmation email.
+  bookingUrl: "https://cal.com/mcoreas/15min"
 };
 
 export const copy = {
@@ -251,15 +255,26 @@ export const copy = {
         budget: "Comfortable investment range",
         budgetOptions: [
           { value: "guidance", label: "I need guidance" },
-          { value: "under-5k", label: "Under US$5,000" },
+          { value: "under-2k", label: "Under US$2,000" },
+          { value: "2k-5k", label: "US$2,000–5,000" },
           { value: "5k-10k", label: "US$5,000–10,000" },
           { value: "10k-25k", label: "US$10,000–25,000" },
           { value: "25k-plus", label: "US$25,000+" }
         ],
         consent: "I agree that Marlon may use these details only to respond to this inquiry.",
         privacy: "Privacy",
-        success: "Thanks — your project details were sent. I will review them and reply personally.",
-        error: "The message could not be sent. Please email me directly and I will reply as soon as possible."
+        successKicker: "Message received",
+        successTitle: "Your project is in the right place.",
+        success: "A confirmation is on its way to your inbox. I will review the context personally and reply within two business days.",
+        successPlain: "I will review the context personally and reply within two business days.",
+        sending: "Sending…",
+        successAction: "View the work",
+        bookAction: "Book a 15-minute call",
+        sendAnother: "Send another inquiry",
+        errorKicker: "Delivery problem",
+        errorTitle: "Your message was not sent.",
+        error: "Please try again in a moment or email me directly. I will reply as soon as possible.",
+        emailAction: "Email me directly"
       }
     },
     footer: {
@@ -508,15 +523,26 @@ export const copy = {
         budget: "Rango de inversión cómodo",
         budgetOptions: [
           { value: "guidance", label: "Necesito orientación" },
-          { value: "under-5k", label: "Menos de US$5,000" },
+          { value: "under-2k", label: "Menos de US$2,000" },
+          { value: "2k-5k", label: "US$2,000–5,000" },
           { value: "5k-10k", label: "US$5,000–10,000" },
           { value: "10k-25k", label: "US$10,000–25,000" },
           { value: "25k-plus", label: "US$25,000+" }
         ],
         consent: "Acepto que Marlon use estos datos únicamente para responder esta consulta.",
         privacy: "Privacidad",
-        success: "Gracias. Los detalles fueron enviados; los revisaré y responderé personalmente.",
-        error: "No fue posible enviar el mensaje. Escríbeme directamente y responderé lo antes posible."
+        successKicker: "Mensaje recibido",
+        successTitle: "Tu proyecto llegó al lugar correcto.",
+        success: "Te llegará una confirmación al correo. Revisaré personalmente el contexto y responderé en un máximo de dos días hábiles.",
+        successPlain: "Revisaré personalmente el contexto y responderé en un máximo de dos días hábiles.",
+        sending: "Enviando…",
+        successAction: "Ver los proyectos",
+        bookAction: "Agendar una llamada de 15 minutos",
+        sendAnother: "Enviar otra consulta",
+        errorKicker: "Problema de entrega",
+        errorTitle: "El mensaje no pudo enviarse.",
+        error: "Intenta nuevamente en un momento o escríbeme directamente. Responderé lo antes posible.",
+        emailAction: "Escribirme directamente"
       }
     },
     footer: {

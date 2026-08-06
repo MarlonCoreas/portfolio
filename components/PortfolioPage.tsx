@@ -454,14 +454,57 @@ export default function PortfolioPage({ lang }: Props) {
               <p className="eyebrow">{t.contact.eyebrow}</p>
               <h2 id="contact-title">{t.contact.title}</h2>
               <p className="contact-intro">{t.contact.text}</p>
-              <p
-                className="contact-status"
+              <section
+                className="contact-result"
                 data-contact-status
+                data-success-kicker={t.contact.fields.successKicker}
+                data-success-title={t.contact.fields.successTitle}
                 data-success={t.contact.fields.success}
+                data-success-plain={t.contact.fields.successPlain}
+                data-error-kicker={t.contact.fields.errorKicker}
+                data-error-title={t.contact.fields.errorTitle}
                 data-error={t.contact.fields.error}
                 role="status"
+                aria-live="polite"
+                tabIndex={-1}
                 hidden
-              />
+              >
+                <span className="contact-result-icon" aria-hidden="true" data-contact-result-icon>✓</span>
+                <div className="contact-result-copy">
+                  <p className="contact-result-kicker" data-contact-result-kicker />
+                  <h3 data-contact-result-title />
+                  <p className="contact-result-message" data-contact-result-message />
+                  <div className="contact-result-actions contact-result-success-actions">
+                    {site.bookingUrl ? (
+                      <a
+                        className="button button-light"
+                        href={site.bookingUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        data-track="contact_success_book"
+                        data-contact-booking
+                      >
+                        <span>{t.contact.fields.bookAction}</span>
+                        <span className="icon"><Arrow /></span>
+                      </a>
+                    ) : (
+                      <a className="button button-light" href="#work" data-track="contact_success_work">
+                        <span>{t.contact.fields.successAction}</span>
+                        <span className="icon"><Arrow /></span>
+                      </a>
+                    )}
+                    <button type="button" className="contact-result-secondary" data-contact-reset>
+                      {t.contact.fields.sendAnother}
+                    </button>
+                  </div>
+                  <div className="contact-result-actions contact-result-error-actions">
+                    <a className="button button-light" href={mailto} data-track="contact_error_email">
+                      <span>{t.contact.fields.emailAction}</span>
+                      <span className="icon"><Arrow /></span>
+                    </a>
+                  </div>
+                </div>
+              </section>
               <form className="contact-form" action="/api/contact.php" method="post" data-contact-form>
                 <input type="hidden" name="language" value={lang} />
                 <input type="hidden" name="redirect" value={lang === "en" ? "/" : "/es"} />
@@ -524,8 +567,8 @@ export default function PortfolioPage({ lang }: Props) {
                   <span>{t.contact.fields.consent} <a href={privacyPath}>{t.contact.fields.privacy}</a>.</span>
                 </label>
                 <div className="contact-submit form-field-wide">
-                  <button className="button button-light" type="submit">
-                    <span>{t.contact.button}</span>
+                  <button className="button button-light" type="submit" data-contact-submit data-sending={t.contact.fields.sending}>
+                    <span data-contact-submit-label>{t.contact.button}</span>
                     <span className="icon"><Arrow /></span>
                   </button>
                   <div>

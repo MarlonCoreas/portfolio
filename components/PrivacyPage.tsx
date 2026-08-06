@@ -11,7 +11,8 @@ const content = {
     sections: [
       { title: "What the contact form sends", text: "When you submit the project form, it sends the name, email, company or website, project type, timing, budget range and message that you choose to provide." },
       { title: "Why it is used", text: "The information is used only to review your inquiry, reply to you and decide whether a project conversation would be useful." },
-      { title: "Where it goes", text: `The form delivers the message to ${site.email}. The website does not create a marketing account or sell the information. Hosting and email providers may process the message as necessary to deliver and protect their services.` },
+      { title: "Where it goes", text: `The form delivers the message to ${site.email} and keeps a copy on the site's own server so an inquiry is never lost to a mail failure. The website does not create a marketing account or sell the information. Hosting and email providers may process the message as necessary to deliver and protect their services.` },
+      { title: "The confirmation email", text: "After a successful submission you receive one confirmation message containing a copy of what you sent and what happens next. It is sent once, it is not a subscription, and you are not added to any mailing list." },
       { title: "Analytics", text: "The site can use a configured analytics service to measure broad interactions such as opening a service page or submitting the form. Advertising profiles are not intentionally created. If analytics is not configured, those events remain only inside the browser." },
       { title: "Your choice", text: `You can avoid the form and write directly to ${site.email}. You may also ask for your inquiry to be corrected or deleted, subject to any information that must be retained for legitimate business or legal reasons.` }
     ],
@@ -27,7 +28,8 @@ const content = {
     sections: [
       { title: "Qué envía el formulario", text: "Al enviar el formulario se transmite el nombre, correo, empresa o sitio, tipo de proyecto, plazo, rango de inversión y mensaje que decidas proporcionar." },
       { title: "Para qué se usa", text: "La información se usa únicamente para revisar la consulta, responderte y decidir si una conversación sobre el proyecto sería útil." },
-      { title: "A dónde llega", text: `El formulario entrega el mensaje a ${site.email}. El sitio no crea una cuenta de mercadeo ni vende la información. Los proveedores de alojamiento y correo pueden procesarla cuando sea necesario para entregar y proteger sus servicios.` },
+      { title: "A dónde llega", text: `El formulario entrega el mensaje a ${site.email} y guarda una copia en el servidor del sitio para que una consulta nunca se pierda por una falla de correo. El sitio no crea una cuenta de mercadeo ni vende la información. Los proveedores de alojamiento y correo pueden procesarla cuando sea necesario para entregar y proteger sus servicios.` },
+      { title: "El correo de confirmación", text: "Tras un envío exitoso recibes un único mensaje de confirmación con una copia de lo que enviaste y los siguientes pasos. Se envía una sola vez, no es una suscripción y no quedas en ninguna lista de correo." },
       { title: "Analítica", text: "El sitio puede utilizar un servicio de analítica configurado para medir interacciones generales, como abrir una página de servicio o enviar el formulario. No se crean intencionalmente perfiles publicitarios. Si la analítica no está configurada, esos eventos permanecen solamente en el navegador." },
       { title: "Tu elección", text: `Puedes evitar el formulario y escribir directamente a ${site.email}. También puedes solicitar que tu consulta sea corregida o eliminada, salvo la información que deba conservarse por razones comerciales o legales legítimas.` }
     ],
