@@ -40,4 +40,27 @@ return [
     // Lower = stricter. Raise to 7 if real inquiries are being flagged; drop to
     // 4 if vendor pitches are getting through.
     'spam_threshold' => 5,
+
+    // Wordlists for the spam scorer. They live here, outside the public
+    // repository, because a list anyone can read is a list anyone can write
+    // around. Structural signals (links, file-share hosts, pasted markup) stay
+    // in contact.php — those cannot be avoided by a sender who needs the link.
+    //
+    // Match on lowercase substrings of name + company + message.
+    //   'vendor' scores 3 — selling language a real client rarely uses
+    //   'soft'   scores 1 — openers prospects also use, never enough alone
+    //   'bulk'   scores 4 — mail-merge leftovers with no place in a form
+    //
+    // Leaving these empty is valid: only structure gets scored. The lead log
+    // records `phrases=N` on every submission, so a list that failed to load
+    // shows up as phrases=0.
+    // Placeholders only — replace with the real wording on the server.
+    'spam_phrases' => [
+        'vendor' => ['a phrase only someone selling would write'],
+        'soft' => ['an opener a real client might also use'],
+        'bulk' => ['a mail-merge leftover'],
+    ],
+
+    // Added to the file-share and shortener hosts already built in.
+    'extra_suspect_hosts' => [],
 ];

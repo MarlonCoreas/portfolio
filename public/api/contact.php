@@ -118,6 +118,35 @@ function send_via_smtp(
 }
 
 /**
+ * Normalises the wordlists from contact-config.php into the shape the scorer
+ * expects. Missing keys become empty lists rather than an error, so a server
+ * without the config still runs on the structural signals alone.
+ */
+function load_spam_phrases(array $config): array {
+    $configured = is_array($config['spam_phrases'] ?? null) ? $config['spam_phrases'] : [];
+    $normalise = static function (mixed $list): array {
+        if (!is_array($list)) {
+            return [];
+        }
+        $clean = [];
+        foreach ($list as $phrase) {
+            $phrase = mb_strtolower(trim((string)$phrase), 'UTF-8');
+            if ($phrase !== '') {
+                $clean[] = $phrase;
+            }
+        }
+        return $clean;
+    };
+
+    return [
+        'vendor' => $normalise($configured['vendor'] ?? []),
+        'soft' => $normalise($configured['soft'] ?? []),
+        'bulk' => $normalise($configured['bulk'] ?? []),
+        'hosts' => $normalise($config['extra_suspect_hosts'] ?? []),
+    ];
+}
+
+/**
  * Scores an inquiry for cold-outreach spam — agencies pitching SEO, app
  * development or link building through the form.
  *
@@ -129,28 +158,23 @@ function send_via_smtp(
  * Nothing is ever rejected on this score. A flagged inquiry still reaches the
  * inbox tagged, which keeps a false positive cheap: it costs the automatic
  * confirmation, never the lead.
+ *
+ * The phrase lists are deliberately NOT in this file. This repository is
+ * public, and a list anyone can read is a list anyone can write around, so the
+ * wording lives in contact-config.php on the server. The structural signals
+ * below stay here: knowing that file-share links are scored does not help a
+ * sender who needs the link to deliver the pitch in the first place.
+ *
+ * $phrases arrives as ['vendor' => [], 'soft' => [], 'bulk' => []]. With no
+ * config the wordlists are simply empty and only structure is scored.
  */
-function spam_assessment(string $name, string $company, string $goal, array &$reasons): int {
+function spam_assessment(string $name, string $company, string $goal, array $phrases, array &$reasons): int {
     $reasons = [];
     $score = 0;
     $haystack = mb_strtolower($name . ' ' . $company . ' ' . $goal, 'UTF-8');
 
     // Selling, not buying. These rarely appear in a real problem description.
-    $vendorPhrases = [
-        'we offer', 'we provide', 'we specialize', 'we specialise', 'we deliver',
-        'our agency', 'our services include', 'we are a leading',
-        'we are an experienced', 'we would love to work', 'dedicated developers',
-        'hire dedicated', 'offshore', 'outsourcing', 'white label', 'white-label',
-        'guest post', 'link building', 'backlink', 'rank your website', 'rank higher',
-        'first page of google', 'increase your traffic', 'boost your sales',
-        'digital marketing agency', 'seo services', 'seo expert', 'web design services',
-        'let me know if you are interested', 'if you are interested, please',
-        'reply for the price', 'send you our portfolio', 'free audit', 'free quote for you',
-        'ofrecemos', 'le ofrezco', 'te ofrezco', 'somos una empresa', 'nuestra empresa',
-        'nuestro equipo', 'brindamos', 'primeros lugares', 'posicionar su', 'posicionar tu',
-        'agencia de marketing', 'servicios de seo', 'diseño de páginas para',
-    ];
-    foreach ($vendorPhrases as $phrase) {
+    foreach ($phrases['vendor'] as $phrase) {
         if (str_contains($haystack, $phrase)) {
             $score += 3;
             $reasons[] = 'vendor-phrase:' . $phrase;
@@ -162,11 +186,7 @@ function spam_assessment(string $name, string $company, string $goal, array &$re
 
     // Softer signals. Real prospects say these too ("our company needs a site"),
     // so they only nudge the score and never flag an inquiry on their own.
-    $softPhrases = [
-        'i came across your', 'i visited your website', 'we noticed your',
-        'vi su sitio', 'vi tu sitio', 'our company', 'our team of', 'our services',
-    ];
-    foreach ($softPhrases as $phrase) {
+    foreach ($phrases['soft'] as $phrase) {
         if (str_contains($haystack, $phrase)) {
             $score += 1;
             $reasons[] = 'cold-opener:' . $phrase;
@@ -174,7 +194,7 @@ function spam_assessment(string $name, string $company, string $goal, array &$re
     }
 
     // Bulk mail leftovers that have no business in a contact form.
-    foreach (['unsubscribe', 'this is not spam', 'dear sir/madam', 'dear sir or madam'] as $phrase) {
+    foreach ($phrases['bulk'] as $phrase) {
         if (str_contains($haystack, $phrase)) {
             $score += 4;
             $reasons[] = 'bulk-mail:' . $phrase;
@@ -191,10 +211,11 @@ function spam_assessment(string $name, string $company, string $goal, array &$re
     }
 
     // File-share and shortener hosts: the pattern behind the recent Mega links.
-    $suspectHosts = [
+    // Safe to keep public — the sender needs the link for the pitch to work.
+    $suspectHosts = array_merge([
         'mega.nz', 'mega.io', 'mega.co.nz', 'bit.ly', 'tinyurl', 'cutt.ly', 'rebrand.ly',
         't.me', 'wetransfer', 'dropbox.com', 'drive.google.com', 'shorturl', 'is.gd',
-    ];
+    ], $phrases['hosts']);
     foreach ($suspectHosts as $host) {
         if (str_contains($haystack, $host)) {
             $score += 5;
@@ -346,9 +367,11 @@ $config = load_config();
 // --- Spam assessment --------------------------------------------------------
 
 $spamReasons = [];
-$spamScore = spam_assessment($safeName, $safeCompany, $goal, $spamReasons);
+$spamPhrases = load_spam_phrases($config);
+$spamScore = spam_assessment($safeName, $safeCompany, $goal, $spamPhrases, $spamReasons);
 $spamThreshold = (int)($config['spam_threshold'] ?? 5);
 $isSuspected = $spamScore >= $spamThreshold;
+$phraseCount = count($spamPhrases['vendor']) + count($spamPhrases['soft']) + count($spamPhrases['bulk']);
 
 // --- Notification to Marlon -------------------------------------------------
 
@@ -492,7 +515,8 @@ $logEntry = implode("\n", [
         . ' · via=' . $transport
         . ' · delivery=' . ($sent ? 'ok' : 'failed')
         . ' · confirmation=' . ($confirmationSent ? 'ok' : 'no')
-        . ' · spam=' . $spamScore . ($isSuspected ? ' (FLAGGED: ' . implode(', ', $spamReasons) . ')' : '')
+        . ' · spam=' . $spamScore . '/' . $spamThreshold . ' · phrases=' . $phraseCount
+        . ($isSuspected ? ' (FLAGGED: ' . implode(', ', $spamReasons) . ')' : '')
         . ($transportError !== null ? ' · error=' . str_replace("\n", ' ', $transportError) : ''),
     $notifyBody,
     ''

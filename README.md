@@ -48,6 +48,14 @@ Until that file exists the form still works — it falls back to PHP `mail()` fo
 
 Any transactional email provider that offers SMTP credentials (Brevo, Resend, MailerSend, Amazon SES) can be used instead by changing only `contact-config.php` — no code change required.
 
+### Spam scoring
+
+Inquiries are scored for cold-outreach pitches. Flagged mail still arrives, tagged `[SPAM?]` with an `X-Spam-Flag` header, but the sender receives no confirmation email and no booking link — a false positive costs the automatic reply, never the lead.
+
+The scorer weights *offering* language ("we provide…") and structure (links in the message, file-share hosts, pasted markup) rather than topic words, so a real client asking for help with search rankings is not mistaken for an SEO vendor.
+
+**The wordlists live in `contact-config.php`, not in this repository**, because a public list is one anyone can write around. Structural signals stay in `contact.php` — a sender who needs their link delivered cannot avoid those. With no config the lists are empty and only structure is scored: the filter under-detects rather than flagging real inquiries. Every submission logs `phrases=N`, so a list that failed to load shows up as `phrases=0`. Tune `spam_threshold` (default 5) rather than editing code.
+
 `public/api/vendor/PHPMailer` is PHPMailer 6.9.3, vendored because static hosting has no Composer. Check [its releases](https://github.com/PHPMailer/PHPMailer/releases) once or twice a year and replace the three files if a security fix ships.
 
 ## Optional analytics
