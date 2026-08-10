@@ -4,7 +4,7 @@ A bilingual portfolio built with vinext. English is the default language and Spa
 
 **Live site:** [marloncoreas.com](https://marloncoreas.com)
 
-![Portfolio preview](public/social-card.png)
+![Portfolio preview](docs/social-card.png)
 
 ## Local development
 

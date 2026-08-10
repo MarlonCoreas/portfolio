@@ -247,14 +247,24 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
 
 $redirect = (string)($_POST['redirect'] ?? '/');
 
-$origin = (string)($_SERVER['HTTP_ORIGIN'] ?? '');
+// Same-origin check. Origin is sent on cross-site POSTs by every current
+// browser; Referer covers the few that omit Origin on same-origin form posts.
+// Requiring at least one of them closes the header-stripping path without
+// blocking a visitor whose browser sends only the other.
 $host = (string)($_SERVER['HTTP_HOST'] ?? '');
+$requestHost = strtolower(explode(':', $host)[0]);
+$origin = (string)($_SERVER['HTTP_ORIGIN'] ?? '');
+$referer = (string)($_SERVER['HTTP_REFERER'] ?? '');
+
+$claimedHost = '';
 if ($origin !== '') {
-    $originHost = (string)(parse_url($origin, PHP_URL_HOST) ?? '');
-    $requestHost = explode(':', $host)[0];
-    if ($originHost === '' || !hash_equals(strtolower($requestHost), strtolower($originHost))) {
-        respond_to($redirect, 'error', 403);
-    }
+    $claimedHost = strtolower((string)(parse_url($origin, PHP_URL_HOST) ?? ''));
+} elseif ($referer !== '') {
+    $claimedHost = strtolower((string)(parse_url($referer, PHP_URL_HOST) ?? ''));
+}
+
+if ($claimedHost === '' || !hash_equals($requestHost, $claimedHost)) {
+    respond_to($redirect, 'error', 403);
 }
 
 // Hidden field: bots usually fill it; people never see it.
@@ -454,12 +464,21 @@ if ($sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config
     $labels = $optionLabels[$language];
     $bookingUrl = trim((string)($config['booking_url'] ?? ''));
 
+    // Greet by first name — "Hi Marlon Salomon Coreas Villanueva," reads like a
+    // form letter. Fall back to the full name for initials or a title, where
+    // the first token ("J.", "Sr.") is not a name at all.
+    $nameParts = preg_split('~\s+~', $safeName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $firstName = $nameParts[0] ?? $safeName;
+    if (mb_strlen($firstName, 'UTF-8') <= 2 || str_ends_with($firstName, '.')) {
+        $firstName = $safeName;
+    }
+
     if ($language === 'es') {
         $confirmSubject = 'Recibí los detalles de tu proyecto — Marlon Coreas';
         $bookingBlock = $bookingUrl !== ''
             ? "Si prefieres avanzar más rápido, puedes reservar una llamada de 15 minutos aquí:\n" . $bookingUrl . "\n\n"
             : '';
-        $confirmBody = "Hola " . $safeName . ",\n\n"
+        $confirmBody = "Hola " . $firstName . ",\n\n"
             . "Gracias por escribir. Esta es la confirmación de que tu consulta llegó: la leo yo personalmente, no un equipo de ventas.\n\n"
             . "Qué sigue: voy a revisar el contexto que describiste y te responderé en un máximo de dos días hábiles, con una lectura honesta de si soy la persona indicada para ayudarte y cuál sería un primer paso sensato.\n\n"
             . $bookingBlock
@@ -478,7 +497,7 @@ if ($sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config
         $bookingBlock = $bookingUrl !== ''
             ? "If you would rather move faster, you can book a 15-minute call here:\n" . $bookingUrl . "\n\n"
             : '';
-        $confirmBody = "Hi " . $safeName . ",\n\n"
+        $confirmBody = "Hi " . $firstName . ",\n\n"
             . "Thanks for writing. This confirms your inquiry arrived — I read these myself, not a sales team.\n\n"
             . "What happens next: I will review the context you described and reply within two business days, with an honest read on whether I am the right person to help and what a sensible first step would be.\n\n"
             . $bookingBlock
