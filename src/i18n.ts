@@ -122,6 +122,11 @@ export const copy = {
         }
       ]
     },
+    testimonials: {
+      eyebrow: "In their words",
+      title: "What clients say about working together.",
+      items: [] as { quote: string; name: string; role: string; company: string; project?: string }[]
+    },
     services: {
       eyebrow: "What I can do for you",
       title: "Choose the problem, not a list of technologies.",
@@ -134,6 +139,7 @@ export const copy = {
           text: "For service businesses whose current site is unclear, dated or difficult to find. The work starts with what a customer must understand before making contact.",
           fit: "Best fit: established service businesses with real work, a clear offer and someone ready to answer inquiries.",
           skills: ["Positioning and content", "English & Spanish", "Mobile, accessibility and search foundations"],
+          priceFrom: "From US$2,000",
           path: "/services/websites",
           linkLabel: "Explore business websites"
         },
@@ -143,6 +149,7 @@ export const copy = {
           text: "Web platforms, client portals, quoting and booking systems, internal dashboards, integrations between the tools you already pay for — software shaped around how your business actually runs.",
           fit: "Best fit: a repeated process is costing time, creating errors or forcing the team to work across disconnected tools.",
           skills: ["Process discovery", "A focused first release", "Support after launch"],
+          priceFrom: "From US$8,000",
           path: "/services/custom-software",
           linkLabel: "Explore custom software"
         },
@@ -152,6 +159,7 @@ export const copy = {
           text: "For founders who need to turn a specific, testable idea into a first useful release — including web and desktop software.",
           fit: "Best fit: the user, problem and first essential workflow can be described without relying on a long feature list.",
           skills: ["Research and product scope", "Desktop and web", "Launch and App Store experience"],
+          priceFrom: "From US$10,000",
           path: "/services/custom-software#products",
           linkLabel: "See the product process"
         }
@@ -390,6 +398,11 @@ export const copy = {
         }
       ]
     },
+    testimonials: {
+      eyebrow: "En sus palabras",
+      title: "Lo que dicen los clientes sobre trabajar juntos.",
+      items: [] as { quote: string; name: string; role: string; company: string; project?: string }[]
+    },
     services: {
       eyebrow: "En qué te puedo ayudar",
       title: "Elige el problema, no una lista de tecnologías.",
@@ -402,6 +415,7 @@ export const copy = {
           text: "Para negocios de servicios cuyo sitio actual es confuso, anticuado o difícil de encontrar. El trabajo comienza con lo que un cliente debe entender antes de contactarte.",
           fit: "Mejor encaje: negocios de servicios establecidos, con trabajo real, una oferta clara y alguien listo para responder consultas.",
           skills: ["Posicionamiento y contenido", "Español e inglés", "Móvil, accesibilidad y fundamentos SEO"],
+          priceFrom: "Desde US$2,000",
           path: "/es/servicios/sitios-web",
           linkLabel: "Explorar sitios para negocios"
         },
@@ -411,6 +425,7 @@ export const copy = {
           text: "Plataformas web, portales para clientes, sistemas de cotización y reservas, paneles internos, integraciones entre las herramientas que ya pagas — software hecho a la forma en que opera tu negocio.",
           fit: "Mejor encaje: un proceso repetitivo consume tiempo, crea errores o obliga al equipo a trabajar entre herramientas desconectadas.",
           skills: ["Descubrimiento del proceso", "Una primera versión enfocada", "Soporte después del lanzamiento"],
+          priceFrom: "Desde US$8,000",
           path: "/es/servicios/software-a-la-medida",
           linkLabel: "Explorar software a medida"
         },
@@ -420,6 +435,7 @@ export const copy = {
           text: "Para fundadores que necesitan convertir una idea específica y comprobable en una primera versión útil, incluyendo software web y de escritorio.",
           fit: "Mejor encaje: el usuario, el problema y el primer flujo esencial pueden explicarse sin depender de una lista interminable de funciones.",
           skills: ["Investigación y alcance", "Escritorio y web", "Lanzamiento y experiencia en App Store"],
+          priceFrom: "Desde US$10,000",
           path: "/es/servicios/software-a-la-medida#productos",
           linkLabel: "Ver el proceso de producto"
         }

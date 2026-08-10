@@ -208,7 +208,12 @@ export default function PortfolioPage({ lang }: Props) {
             </div>
 
             <div className="project-list">
-              {t.work.items.map((project, index) => (
+              {t.work.items.map((project, index) => {
+                // Every current project ships an image, so TypeScript narrows the
+                // fallback branch to never. Widening here keeps the stealth visual
+                // available for confidential work without an image to show.
+                const projectImage: string | undefined = project.image;
+                return (
                 <article
                   className={`project-card theme-${project.theme}`}
                   data-reveal
@@ -216,10 +221,10 @@ export default function PortfolioPage({ lang }: Props) {
                   key={project.number}
                 >
                   <div className="project-visual">
-                    {project.image ? (
+                    {projectImage ? (
                       <>
                         <img
-                          src={project.image}
+                          src={projectImage}
                           alt={project.alt}
                           width="1200"
                           height={index === 0 ? "750" : "800"}
@@ -306,10 +311,41 @@ export default function PortfolioPage({ lang }: Props) {
                     ) : null}
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
+
+        {t.testimonials.items.length > 0 ? (
+          <section className="testimonials section-grid" aria-labelledby="testimonials-title">
+            <div className="shell">
+              <div className="section-heading" data-reveal>
+                <p className="eyebrow">{t.testimonials.eyebrow}</p>
+                <div>
+                  <h2 id="testimonials-title">{t.testimonials.title}</h2>
+                </div>
+              </div>
+              <div className="testimonial-list">
+                {t.testimonials.items.map((item) => (
+                  <figure className="testimonial-card" data-reveal data-spotlight key={item.name}>
+                    <span className="testimonial-mark" aria-hidden="true">&ldquo;</span>
+                    <blockquote>
+                      <p>{item.quote}</p>
+                    </blockquote>
+                    <figcaption>
+                      <strong>{item.name}</strong>
+                      <span>
+                        {item.role} · {item.company}
+                      </span>
+                      {item.project ? <span className="testimonial-project">{item.project}</span> : null}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         <section className="services section-grid" id="services" aria-labelledby="services-title">
           <div className="shell">
@@ -328,6 +364,7 @@ export default function PortfolioPage({ lang }: Props) {
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
                   <p className="service-fit">{service.fit}</p>
+                  <p className="service-price">{service.priceFrom}</p>
                   <ul>
                     {service.skills.map((skill) => (
                       <li key={skill}>{skill}</li>
