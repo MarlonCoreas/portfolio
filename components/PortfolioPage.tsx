@@ -28,6 +28,10 @@ export default function PortfolioPage({ lang }: Props) {
   const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const privacyPath = lang === "en" ? "/privacy" : "/es/privacidad";
 
+  // One person across both languages, so the node carries a language-neutral
+  // @id and every other node points at it instead of repeating the object.
+  const personId = `${siteUrl}/#person`;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -45,29 +49,76 @@ export default function PortfolioPage({ lang }: Props) {
         name: t.seo.title,
         description: t.seo.description,
         inLanguage: lang,
-        mainEntity: {
-          "@type": "Person",
-          name: site.name,
-          jobTitle: "Independent Web & Software Developer",
-          knowsAbout: [
-            "Business websites",
-            "Web platforms and client portals",
-            "Custom web applications",
-            "Online stores",
-            "Booking and quoting systems",
-            "Automation and integrations",
-            "Desktop app development",
-            "Search engine optimization",
-            "Bilingual English and Spanish websites"
-          ],
-          sameAs: [
-            site.githubUrl,
-            site.linkedinUrl,
-            site.peekUrl,
-            site.remodelingUrl,
-            site.loanpilotUrl
-          ]
+        mainEntity: { "@id": personId }
+      },
+      {
+        "@type": "Person",
+        "@id": personId,
+        name: site.name,
+        jobTitle: "Independent Web & Software Developer",
+        url: `${siteUrl}/`,
+        email: site.email,
+        knowsLanguage: ["en", "es"],
+        nationality: { "@type": "Country", name: "El Salvador" },
+        knowsAbout: [
+          "Business websites",
+          "Web platforms and client portals",
+          "Custom web applications",
+          "Online stores",
+          "Booking and quoting systems",
+          "Automation and integrations",
+          "Desktop app development",
+          "Search engine optimization",
+          "Bilingual English and Spanish websites"
+        ],
+        sameAs: [
+          site.githubUrl,
+          site.linkedinUrl,
+          site.peekUrl,
+          site.remodelingUrl,
+          site.loanpilotUrl
+        ]
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": `${canonical}#service`,
+        name: t.seo.title,
+        url: canonical,
+        description: t.seo.description,
+        email: site.email,
+        image: `${siteUrl}/og.png`,
+        inLanguage: lang,
+        provider: { "@id": personId },
+        founder: { "@id": personId },
+        availableLanguage: ["en", "es"],
+        address: { "@type": "PostalAddress", addressCountry: "SV" },
+        areaServed: t.seo.areaServed.map((place) => ({ "@type": place.type, name: place.name })),
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: t.nav.services,
+          itemListElement: t.services.items.map((service) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: service.title,
+              description: service.text,
+              url: `${siteUrl}${service.path}`,
+              provider: { "@id": personId }
+            }
+          }))
         }
+      },
+      {
+        // Read from the same array that renders the accordion, so the markup
+        // cannot drift from the visible text when the copy changes.
+        "@type": "FAQPage",
+        "@id": `${canonical}#faq`,
+        inLanguage: lang,
+        mainEntity: t.faq.items.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer }
+        }))
       }
     ]
   };
@@ -208,7 +259,12 @@ export default function PortfolioPage({ lang }: Props) {
             </div>
 
             <div className="project-list">
-              {t.work.items.map((project, index) => (
+              {t.work.items.map((project, index) => {
+                // Every current project ships an image, so TypeScript narrows the
+                // fallback branch to never. Widening here keeps the stealth visual
+                // available for confidential work without an image to show.
+                const projectImage: string | undefined = project.image;
+                return (
                 <article
                   className={`project-card theme-${project.theme}`}
                   data-reveal
@@ -216,10 +272,10 @@ export default function PortfolioPage({ lang }: Props) {
                   key={project.number}
                 >
                   <div className="project-visual">
-                    {project.image ? (
+                    {projectImage ? (
                       <>
                         <img
-                          src={project.image}
+                          src={projectImage}
                           alt={project.alt}
                           width="1200"
                           height={index === 0 ? "750" : "800"}
@@ -306,10 +362,41 @@ export default function PortfolioPage({ lang }: Props) {
                     ) : null}
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
+
+        {t.testimonials.items.length > 0 ? (
+          <section className="testimonials section-grid" aria-labelledby="testimonials-title">
+            <div className="shell">
+              <div className="section-heading" data-reveal>
+                <p className="eyebrow">{t.testimonials.eyebrow}</p>
+                <div>
+                  <h2 id="testimonials-title">{t.testimonials.title}</h2>
+                </div>
+              </div>
+              <div className="testimonial-list">
+                {t.testimonials.items.map((item) => (
+                  <figure className="testimonial-card" data-reveal data-spotlight key={item.name}>
+                    <span className="testimonial-mark" aria-hidden="true">&ldquo;</span>
+                    <blockquote>
+                      <p>{item.quote}</p>
+                    </blockquote>
+                    <figcaption>
+                      <strong>{item.name}</strong>
+                      <span>
+                        {item.role} · {item.company}
+                      </span>
+                      {item.project ? <span className="testimonial-project">{item.project}</span> : null}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         <section className="services section-grid" id="services" aria-labelledby="services-title">
           <div className="shell">
@@ -328,6 +415,7 @@ export default function PortfolioPage({ lang }: Props) {
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
                   <p className="service-fit">{service.fit}</p>
+                  <p className="service-price">{service.priceFrom}</p>
                   <ul>
                     {service.skills.map((skill) => (
                       <li key={skill}>{skill}</li>
@@ -454,14 +542,57 @@ export default function PortfolioPage({ lang }: Props) {
               <p className="eyebrow">{t.contact.eyebrow}</p>
               <h2 id="contact-title">{t.contact.title}</h2>
               <p className="contact-intro">{t.contact.text}</p>
-              <p
-                className="contact-status"
+              <section
+                className="contact-result"
                 data-contact-status
+                data-success-kicker={t.contact.fields.successKicker}
+                data-success-title={t.contact.fields.successTitle}
                 data-success={t.contact.fields.success}
+                data-success-plain={t.contact.fields.successPlain}
+                data-error-kicker={t.contact.fields.errorKicker}
+                data-error-title={t.contact.fields.errorTitle}
                 data-error={t.contact.fields.error}
                 role="status"
+                aria-live="polite"
+                tabIndex={-1}
                 hidden
-              />
+              >
+                <span className="contact-result-icon" aria-hidden="true" data-contact-result-icon>✓</span>
+                <div className="contact-result-copy">
+                  <p className="contact-result-kicker" data-contact-result-kicker />
+                  <h3 data-contact-result-title />
+                  <p className="contact-result-message" data-contact-result-message />
+                  <div className="contact-result-actions contact-result-success-actions">
+                    {site.bookingUrl ? (
+                      <a
+                        className="button button-light"
+                        href={site.bookingUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        data-track="contact_success_book"
+                        data-contact-booking
+                      >
+                        <span>{t.contact.fields.bookAction}</span>
+                        <span className="icon"><Arrow /></span>
+                      </a>
+                    ) : (
+                      <a className="button button-light" href="#work" data-track="contact_success_work">
+                        <span>{t.contact.fields.successAction}</span>
+                        <span className="icon"><Arrow /></span>
+                      </a>
+                    )}
+                    <button type="button" className="contact-result-secondary" data-contact-reset>
+                      {t.contact.fields.sendAnother}
+                    </button>
+                  </div>
+                  <div className="contact-result-actions contact-result-error-actions">
+                    <a className="button button-light" href={mailto} data-track="contact_error_email">
+                      <span>{t.contact.fields.emailAction}</span>
+                      <span className="icon"><Arrow /></span>
+                    </a>
+                  </div>
+                </div>
+              </section>
               <form className="contact-form" action="/api/contact.php" method="post" data-contact-form>
                 <input type="hidden" name="language" value={lang} />
                 <input type="hidden" name="redirect" value={lang === "en" ? "/" : "/es"} />
@@ -524,8 +655,8 @@ export default function PortfolioPage({ lang }: Props) {
                   <span>{t.contact.fields.consent} <a href={privacyPath}>{t.contact.fields.privacy}</a>.</span>
                 </label>
                 <div className="contact-submit form-field-wide">
-                  <button className="button button-light" type="submit">
-                    <span>{t.contact.button}</span>
+                  <button className="button button-light" type="submit" data-contact-submit data-sending={t.contact.fields.sending}>
+                    <span data-contact-submit-label>{t.contact.button}</span>
                     <span className="icon"><Arrow /></span>
                   </button>
                   <div>

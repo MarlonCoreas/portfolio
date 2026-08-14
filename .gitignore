@@ -8,3 +8,8 @@ dist
 .env
 .env.*
 !.env.example
+
+# Mailer credentials and captured leads never belong in the repo.
+public/api/config.php
+contact-config.php
+*.log

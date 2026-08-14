@@ -4,7 +4,7 @@ A bilingual portfolio built with vinext. English is the default language and Spa
 
 **Live site:** [marloncoreas.com](https://marloncoreas.com)
 
-![Portfolio preview](public/social-card.png)
+![Portfolio preview](docs/social-card.png)
 
 ## Local development
 
@@ -34,7 +34,29 @@ The shared email address, social links, project links, and all English/Spanish c
 
 ## Contact form
 
-`public/api/contact.php` handles project inquiries on Hostinger. It validates fields, checks same-origin requests, uses a honeypot and a one-minute IP-hash rate limit, and sends the message to `hello@marloncoreas.com`. Confirm that PHP mail delivery is enabled for the domain after every hosting migration. The direct email link remains available as a fallback.
+`public/api/contact.php` handles project inquiries on Hostinger. It validates fields, checks same-origin requests, uses a honeypot and a one-minute IP-hash rate limit (counted only on accepted submissions), emails the inquiry, sends the visitor a confirmation, and appends every accepted lead to a log so nothing is lost to a mail failure. The direct email link remains available as a fallback.
+
+### Mailer setup (required for the confirmation email)
+
+Mail is sent over authenticated SMTP through the domain mailbox, so it carries DKIM and aligns with SPF. Without this the confirmation sent to a stranger's inbox is very likely to be filtered as spam.
+
+1. Create or reuse the `hello@marloncoreas.com` mailbox in hPanel and note its password.
+2. Copy `public/api/config.example.php` to `contact-config.php` and upload it **one level above** `public_html` (e.g. `~/domains/marloncoreas.com/contact-config.php`), then fill in `smtp_pass`.
+3. Optionally set `booking_url` to include a scheduling link in the confirmation email, and set the same URL as `site.bookingUrl` in [`src/i18n.ts`](src/i18n.ts) to show the button on the success panel.
+
+Until that file exists the form still works — it falls back to PHP `mail()` for the inquiry and skips the confirmation, rather than breaking between a deploy and the config upload. Check `contact-leads.log` (written above the document root) to see which transport was used: `via=smtp` means the mailer is live.
+
+Any transactional email provider that offers SMTP credentials (Brevo, Resend, MailerSend, Amazon SES) can be used instead by changing only `contact-config.php` — no code change required.
+
+### Spam scoring
+
+Inquiries are scored for cold-outreach pitches. Flagged mail still arrives, tagged `[SPAM?]` with an `X-Spam-Flag` header, but the sender receives no confirmation email and no booking link — a false positive costs the automatic reply, never the lead.
+
+The scorer weights *offering* language ("we provide…") and structure (links in the message, file-share hosts, pasted markup) rather than topic words, so a real client asking for help with search rankings is not mistaken for an SEO vendor.
+
+**The wordlists live in `contact-config.php`, not in this repository**, because a public list is one anyone can write around. Structural signals stay in `contact.php` — a sender who needs their link delivered cannot avoid those. With no config the lists are empty and only structure is scored: the filter under-detects rather than flagging real inquiries. Every submission logs `phrases=N`, so a list that failed to load shows up as `phrases=0`. Tune `spam_threshold` (default 5) rather than editing code.
+
+`public/api/vendor/PHPMailer` is PHPMailer 6.9.3, vendored because static hosting has no Composer. Check [its releases](https://github.com/PHPMailer/PHPMailer/releases) once or twice a year and replace the three files if a security fix ships.
 
 ## Optional analytics
 

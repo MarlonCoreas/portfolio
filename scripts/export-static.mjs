@@ -64,7 +64,7 @@ try {
   const host = new URL(SITE_URL).host;
   await writeFile(
     path.join(OUT, ".htaccess"),
-    `Options -MultiViews
+    `Options -MultiViews -Indexes
 RewriteEngine On
 
 RewriteCond %{HTTP_HOST} ^www\\.${host.replaceAll(".", "\\.")}$ [NC]
@@ -81,7 +81,35 @@ RewriteRule ^es/servicios/software-a-la-medida/?$ es/servicios/software-a-la-med
 RewriteRule ^privacy/?$ privacy/index.html [L]
 RewriteRule ^es/privacidad/?$ es/privacidad/index.html [L]
 
+# The mailer library is only ever loaded by contact.php, never requested directly.
+RewriteRule ^api/vendor/ - [F,L]
+
 ErrorDocument 404 /404.html
+
+# Nothing here should be reachable over the web: dotfiles, the contact log and
+# any mailer credentials that end up inside the site instead of above it.
+# Both syntaxes are present so an older Apache does not fail the whole site.
+<FilesMatch "^\\.|\\.log$|^config(\\.example)?\\.php$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  # The framework emits per-build inline bootstrap scripts, so script hashes are
+  # not stable; 'unsafe-inline' stays, but every other directive is locked down.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+</IfModule>
 
 <IfModule mod_expires.c>
   ExpiresActive On

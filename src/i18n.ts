@@ -11,7 +11,11 @@ export const site = {
   remodelingUrl: "https://homeremodelingnc.com/",
   loanpilotUrl: "https://loanpilot.marloncoreas.com/",
   githubUrl: "https://github.com/MarlonCoreas",
-  linkedinUrl: "https://www.linkedin.com/in/marlon-salomon-coreas-villanueva-8b0416161"
+  linkedinUrl: "https://www.linkedin.com/in/marlon-coreas",
+  // Scheduling link shown after a successful inquiry. Leave empty to hide the
+  // button entirely; set the same URL in the mailer config to include it in the
+  // confirmation email.
+  bookingUrl: "https://cal.com/mcoreas/15min"
 };
 
 export const copy = {
@@ -24,7 +28,13 @@ export const copy = {
     seo: {
       title: "Marlon Coreas | Websites & Custom Software for Service Businesses",
       description:
-        "Bilingual websites and custom software for service businesses that need clearer inquiries and less manual work — planned, designed and built end to end."
+        "Bilingual websites and custom software for service businesses that need clearer inquiries and less manual work — planned, designed and built end to end.",
+      // Structured-data only, never rendered. Mirrors about.availability.
+      areaServed: [
+        { type: "Country", name: "United States" },
+        { type: "Country", name: "El Salvador" },
+        { type: "Place", name: "Latin America" }
+      ]
     },
     nav: {
       work: "Work",
@@ -103,20 +113,25 @@ export const copy = {
         {
           number: "03",
           title: "LoanPilot",
-          kind: "My own product · Free web tool",
+          kind: "My own product · Free bilingual web tool",
           description:
-            "A free calculator that shows what a loan will really cost before signing, and how much you save by paying extra against the balance. Built around Salvadoran lending rules, works on any phone, and nothing anyone types ever leaves their browser.",
+            "Four free calculators for the money questions most Salvadorans have to take on trust: what a loan will really cost before signing, what a severance settlement should pay, how overtime is counted and what payroll withholdings to expect. Built on the labor code and official rate tables, and nothing anyone types ever leaves their browser.",
           role: "Idea · Design · Development · Launch",
-          challenge: "Explain the real cost of a loan without requiring financial expertise or collecting sensitive information.",
-          delivered: "Bilingual calculator, yearly breakdowns, extra-payment scenarios and a privacy-first browser-only calculation model.",
-          evidence: "Free to open and test on any modern phone or computer; calculations remain in the browser.",
-          tags: ["Free to use", "Works on any phone", "Español / English"],
+          challenge: "Turn scattered legal and financial rules into answers a person can trust, without requiring expertise, an account or any personal data.",
+          delivered: "Loan, severance, overtime and withholding calculators, yearly cost breakdowns, extra-payment scenarios, PDF and Excel export of the loan schedule, and a browser-only calculation model.",
+          evidence: "Free to open and test in Spanish or English; every official source is cited and dated on the page, and calculations remain in the browser.",
+          tags: ["Free to use", "Four calculators", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "The LoanPilot calculator showing a monthly payment estimate and yearly cost breakdown",
+          alt: "The LoanPilot home page showing its four calculators: loans, severance, overtime and payroll withholdings",
           theme: "teal",
           links: [{ label: "View live project", href: site.loanpilotUrl }]
         }
       ]
+    },
+    testimonials: {
+      eyebrow: "In their words",
+      title: "What clients say about working together.",
+      items: [] as { quote: string; name: string; role: string; company: string; project?: string }[]
     },
     services: {
       eyebrow: "What I can do for you",
@@ -130,6 +145,7 @@ export const copy = {
           text: "For service businesses whose current site is unclear, dated or difficult to find. The work starts with what a customer must understand before making contact.",
           fit: "Best fit: established service businesses with real work, a clear offer and someone ready to answer inquiries.",
           skills: ["Positioning and content", "English & Spanish", "Mobile, accessibility and search foundations"],
+          priceFrom: "From US$2,000",
           path: "/services/websites",
           linkLabel: "Explore business websites"
         },
@@ -139,6 +155,7 @@ export const copy = {
           text: "Web platforms, client portals, quoting and booking systems, internal dashboards, integrations between the tools you already pay for — software shaped around how your business actually runs.",
           fit: "Best fit: a repeated process is costing time, creating errors or forcing the team to work across disconnected tools.",
           skills: ["Process discovery", "A focused first release", "Support after launch"],
+          priceFrom: "From US$8,000",
           path: "/services/custom-software",
           linkLabel: "Explore custom software"
         },
@@ -148,6 +165,7 @@ export const copy = {
           text: "For founders who need to turn a specific, testable idea into a first useful release — including web and desktop software.",
           fit: "Best fit: the user, problem and first essential workflow can be described without relying on a long feature list.",
           skills: ["Research and product scope", "Desktop and web", "Launch and App Store experience"],
+          priceFrom: "From US$10,000",
           path: "/services/custom-software#products",
           linkLabel: "See the product process"
         }
@@ -251,15 +269,26 @@ export const copy = {
         budget: "Comfortable investment range",
         budgetOptions: [
           { value: "guidance", label: "I need guidance" },
-          { value: "under-5k", label: "Under US$5,000" },
+          { value: "under-2k", label: "Under US$2,000" },
+          { value: "2k-5k", label: "US$2,000–5,000" },
           { value: "5k-10k", label: "US$5,000–10,000" },
           { value: "10k-25k", label: "US$10,000–25,000" },
           { value: "25k-plus", label: "US$25,000+" }
         ],
         consent: "I agree that Marlon may use these details only to respond to this inquiry.",
         privacy: "Privacy",
-        success: "Thanks — your project details were sent. I will review them and reply personally.",
-        error: "The message could not be sent. Please email me directly and I will reply as soon as possible."
+        successKicker: "Message received",
+        successTitle: "Your project is in the right place.",
+        success: "A confirmation is on its way to your inbox. I will review the context personally and reply within two business days.",
+        successPlain: "I will review the context personally and reply within two business days.",
+        sending: "Sending…",
+        successAction: "View the work",
+        bookAction: "Book a 15-minute call",
+        sendAnother: "Send another inquiry",
+        errorKicker: "Delivery problem",
+        errorTitle: "Your message was not sent.",
+        error: "Please try again in a moment or email me directly. I will reply as soon as possible.",
+        emailAction: "Email me directly"
       }
     },
     footer: {
@@ -281,7 +310,12 @@ export const copy = {
     seo: {
       title: "Marlon Coreas | Sitios web y software a medida para negocios",
       description:
-        "Sitios web bilingües y software a medida para negocios de servicios que necesitan consultas más claras y menos trabajo manual."
+        "Sitios web bilingües y software a medida para negocios de servicios que necesitan consultas más claras y menos trabajo manual.",
+      areaServed: [
+        { type: "Country", name: "Estados Unidos" },
+        { type: "Country", name: "El Salvador" },
+        { type: "Place", name: "América Latina" }
+      ]
     },
     nav: {
       work: "Proyectos",
@@ -360,20 +394,25 @@ export const copy = {
         {
           number: "03",
           title: "LoanPilot",
-          kind: "Producto propio · Herramienta web gratuita",
+          kind: "Producto propio · Herramienta web gratuita y bilingüe",
           description:
-            "Una calculadora gratuita que muestra cuánto costará realmente un préstamo antes de firmarlo, y cuánto se ahorra abonando a capital. Hecha con la normativa salvadoreña, funciona en cualquier teléfono y nada de lo que se escribe sale del navegador.",
+            "Cuatro calculadoras gratuitas para las preguntas de dinero que en El Salvador casi siempre se aceptan de palabra: cuánto costará realmente un préstamo antes de firmarlo, cuánto debería pagar un finiquito, cómo se cuentan las horas extra y qué descuentos esperar en la planilla. Hechas con el Código de Trabajo y las tablas oficiales, y nada de lo que se escribe sale del navegador.",
           role: "Idea · Diseño · Desarrollo · Lanzamiento",
-          challenge: "Explicar el costo real de un préstamo sin exigir conocimientos financieros ni recopilar información sensible.",
-          delivered: "Calculadora bilingüe, desgloses anuales, escenarios de abonos extra y cálculos privados dentro del navegador.",
-          evidence: "Se puede abrir y probar gratis en teléfonos y computadoras modernas; los cálculos permanecen en el navegador.",
-          tags: ["Uso gratuito", "Funciona en cualquier teléfono", "Español / English"],
+          challenge: "Convertir reglas legales y financieras dispersas en respuestas confiables, sin exigir conocimientos, cuenta ni datos personales.",
+          delivered: "Calculadoras de préstamos, finiquito, horas extra y retenciones, desgloses anuales, escenarios de abonos extra, exportación a PDF y Excel de la tabla del préstamo, y cálculos dentro del navegador.",
+          evidence: "Se puede abrir y probar gratis en español o inglés; cada fuente oficial está citada y fechada en la página, y los cálculos permanecen en el navegador.",
+          tags: ["Uso gratuito", "Cuatro calculadoras", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "La calculadora de LoanPilot mostrando la cuota estimada y el desglose de costo por año",
+          alt: "La portada de LoanPilot mostrando sus cuatro calculadoras: préstamos, finiquito, horas extras y retenciones",
           theme: "teal",
           links: [{ label: "Ver proyecto", href: site.loanpilotUrl }]
         }
       ]
+    },
+    testimonials: {
+      eyebrow: "En sus palabras",
+      title: "Lo que dicen los clientes sobre trabajar juntos.",
+      items: [] as { quote: string; name: string; role: string; company: string; project?: string }[]
     },
     services: {
       eyebrow: "En qué te puedo ayudar",
@@ -387,6 +426,7 @@ export const copy = {
           text: "Para negocios de servicios cuyo sitio actual es confuso, anticuado o difícil de encontrar. El trabajo comienza con lo que un cliente debe entender antes de contactarte.",
           fit: "Mejor encaje: negocios de servicios establecidos, con trabajo real, una oferta clara y alguien listo para responder consultas.",
           skills: ["Posicionamiento y contenido", "Español e inglés", "Móvil, accesibilidad y fundamentos SEO"],
+          priceFrom: "Desde US$2,000",
           path: "/es/servicios/sitios-web",
           linkLabel: "Explorar sitios para negocios"
         },
@@ -396,6 +436,7 @@ export const copy = {
           text: "Plataformas web, portales para clientes, sistemas de cotización y reservas, paneles internos, integraciones entre las herramientas que ya pagas — software hecho a la forma en que opera tu negocio.",
           fit: "Mejor encaje: un proceso repetitivo consume tiempo, crea errores o obliga al equipo a trabajar entre herramientas desconectadas.",
           skills: ["Descubrimiento del proceso", "Una primera versión enfocada", "Soporte después del lanzamiento"],
+          priceFrom: "Desde US$8,000",
           path: "/es/servicios/software-a-la-medida",
           linkLabel: "Explorar software a medida"
         },
@@ -405,6 +446,7 @@ export const copy = {
           text: "Para fundadores que necesitan convertir una idea específica y comprobable en una primera versión útil, incluyendo software web y de escritorio.",
           fit: "Mejor encaje: el usuario, el problema y el primer flujo esencial pueden explicarse sin depender de una lista interminable de funciones.",
           skills: ["Investigación y alcance", "Escritorio y web", "Lanzamiento y experiencia en App Store"],
+          priceFrom: "Desde US$10,000",
           path: "/es/servicios/software-a-la-medida#productos",
           linkLabel: "Ver el proceso de producto"
         }
@@ -508,15 +550,26 @@ export const copy = {
         budget: "Rango de inversión cómodo",
         budgetOptions: [
           { value: "guidance", label: "Necesito orientación" },
-          { value: "under-5k", label: "Menos de US$5,000" },
+          { value: "under-2k", label: "Menos de US$2,000" },
+          { value: "2k-5k", label: "US$2,000–5,000" },
           { value: "5k-10k", label: "US$5,000–10,000" },
           { value: "10k-25k", label: "US$10,000–25,000" },
           { value: "25k-plus", label: "US$25,000+" }
         ],
         consent: "Acepto que Marlon use estos datos únicamente para responder esta consulta.",
         privacy: "Privacidad",
-        success: "Gracias. Los detalles fueron enviados; los revisaré y responderé personalmente.",
-        error: "No fue posible enviar el mensaje. Escríbeme directamente y responderé lo antes posible."
+        successKicker: "Mensaje recibido",
+        successTitle: "Tu proyecto llegó al lugar correcto.",
+        success: "Te llegará una confirmación al correo. Revisaré personalmente el contexto y responderé en un máximo de dos días hábiles.",
+        successPlain: "Revisaré personalmente el contexto y responderé en un máximo de dos días hábiles.",
+        sending: "Enviando…",
+        successAction: "Ver los proyectos",
+        bookAction: "Agendar una llamada de 15 minutos",
+        sendAnother: "Enviar otra consulta",
+        errorKicker: "Problema de entrega",
+        errorTitle: "El mensaje no pudo enviarse.",
+        error: "Intenta nuevamente en un momento o escríbeme directamente. Responderé lo antes posible.",
+        emailAction: "Escribirme directamente"
       }
     },
     footer: {

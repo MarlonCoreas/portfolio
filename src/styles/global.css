@@ -1119,6 +1119,78 @@
     bottom: 18%;
   }
 
+  /* Testimonials. Sized so a single quote reads as a deliberate feature
+     rather than an empty grid waiting to be filled. */
+  .testimonial-list {
+    display: grid;
+    margin-top: 56px;
+    gap: 26px;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  }
+
+  .testimonial-card {
+    position: relative;
+    display: grid;
+    align-content: start;
+    padding: clamp(30px, 3.4vw, 46px);
+    gap: 24px;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background:
+      radial-gradient(circle at var(--spot-x, 12%) var(--spot-y, 8%), rgba(184, 255, 61, 0.07), transparent 320px),
+      var(--ink-soft);
+  }
+
+  .testimonial-list:has(> :only-child) .testimonial-card {
+    max-width: 860px;
+  }
+
+  .testimonial-mark {
+    color: var(--lime);
+    font-size: 3.4rem;
+    line-height: 0.5;
+    opacity: 0.55;
+  }
+
+  .testimonial-card blockquote p {
+    color: var(--paper);
+    font-size: clamp(1.12rem, 1.6vw, 1.42rem);
+    line-height: 1.62;
+    text-wrap: pretty;
+  }
+
+  .testimonial-list:has(> :only-child) blockquote p {
+    font-size: clamp(1.2rem, 2vw, 1.72rem);
+  }
+
+  .testimonial-card figcaption {
+    display: grid;
+    padding-top: 22px;
+    gap: 5px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .testimonial-card figcaption strong {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .testimonial-card figcaption span {
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .testimonial-card .testimonial-project {
+    margin-top: 6px;
+    color: var(--lime);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
   .services {
     background: var(--paper);
     color: var(--ink);
@@ -1194,6 +1266,16 @@
     font-size: 0.79rem;
     font-weight: 650;
     line-height: 1.6;
+  }
+
+  .service-price {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    opacity: 0.72;
   }
 
   .service-card ul {
@@ -1881,18 +1963,116 @@
     line-height: 1.72;
   }
 
-  .contact-status {
-    margin-top: 30px;
-    padding: 16px 18px;
-    border: 1px solid rgba(184, 255, 61, 0.32);
-    border-radius: 12px;
-    background: rgba(184, 255, 61, 0.08);
-    color: var(--paper);
+  .contact-result {
+    display: grid;
+    max-width: 900px;
+    margin-top: 48px;
+    padding: clamp(28px, 4vw, 46px);
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 26px;
+    border: 1px solid rgba(184, 255, 61, 0.36);
+    border-radius: 24px;
+    outline: 0;
+    background:
+      radial-gradient(circle at 8% 10%, rgba(184, 255, 61, 0.18), transparent 240px),
+      rgba(184, 255, 61, 0.055);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
   }
 
-  .contact-status[data-state="error"] {
-    border-color: rgba(255, 107, 74, 0.45);
-    background: rgba(255, 107, 74, 0.1);
+  .contact-result[hidden],
+  .contact-form[hidden] {
+    display: none;
+  }
+
+  .contact-result-icon {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    place-items: center;
+    border-radius: 18px;
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 1.55rem;
+    font-weight: 800;
+    box-shadow: 0 12px 30px rgba(184, 255, 61, 0.18);
+  }
+
+  .contact-result-kicker {
+    color: var(--lime);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .contact-result h3 {
+    max-width: 660px;
+    margin-top: 11px;
+    font-size: clamp(2rem, 4vw, 3.7rem);
+    line-height: 1;
+  }
+
+  .contact-result-message {
+    max-width: 630px;
+    margin-top: 17px;
+    color: var(--muted-strong);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .contact-result-actions {
+    display: none;
+    align-items: center;
+    margin-top: 28px;
+    gap: 16px;
+  }
+
+  .contact-result[data-state="sent"] .contact-result-success-actions,
+  .contact-result[data-state="error"] .contact-result-error-actions {
+    display: flex;
+  }
+
+  .contact-result-secondary {
+    padding: 12px 4px;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.38);
+    color: var(--paper);
+    background: transparent;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 180ms ease, color 180ms ease;
+  }
+
+  .contact-result-secondary:hover,
+  .contact-result-secondary:focus-visible {
+    border-color: var(--lime);
+    color: var(--lime);
+  }
+
+  .contact-result[data-state="error"] {
+    border-color: rgba(255, 107, 74, 0.44);
+    background:
+      radial-gradient(circle at 8% 10%, rgba(255, 107, 74, 0.17), transparent 240px),
+      rgba(255, 107, 74, 0.065);
+  }
+
+  .contact-result[data-state="error"] .contact-result-icon {
+    background: var(--coral);
+    box-shadow: 0 12px 30px rgba(255, 107, 74, 0.16);
+  }
+
+  .contact-result[data-state="error"] .contact-result-kicker {
+    color: var(--coral);
+  }
+
+  .contact-result[data-state="error"] + .contact-form {
+    margin-top: 30px;
   }
 
   .contact-form {
@@ -1901,6 +2081,20 @@
     margin-top: 48px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
+  }
+
+  .contact-form[aria-busy="true"] {
+    cursor: progress;
+  }
+
+  .contact-form[aria-busy="true"] .form-field,
+  .contact-form[aria-busy="true"] .consent-field {
+    opacity: 0.72;
+  }
+
+  .contact-form [type="submit"]:disabled {
+    cursor: progress;
+    opacity: 0.76;
   }
 
   .form-field {
@@ -2609,6 +2803,35 @@
 
   .contact-panel h2 {
     font-size: clamp(3rem, 14vw, 4.8rem);
+  }
+
+  .testimonial-list {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-result {
+    padding: 26px 22px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .contact-result-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+  }
+
+  .contact-result-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .contact-result-actions .button {
+    width: 100%;
+  }
+
+  .contact-result-secondary {
+    align-self: center;
   }
 
   .contact-form {
