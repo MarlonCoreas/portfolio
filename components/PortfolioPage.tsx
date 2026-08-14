@@ -28,6 +28,10 @@ export default function PortfolioPage({ lang }: Props) {
   const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const privacyPath = lang === "en" ? "/privacy" : "/es/privacidad";
 
+  // One person across both languages, so the node carries a language-neutral
+  // @id and every other node points at it instead of repeating the object.
+  const personId = `${siteUrl}/#person`;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -45,29 +49,76 @@ export default function PortfolioPage({ lang }: Props) {
         name: t.seo.title,
         description: t.seo.description,
         inLanguage: lang,
-        mainEntity: {
-          "@type": "Person",
-          name: site.name,
-          jobTitle: "Independent Web & Software Developer",
-          knowsAbout: [
-            "Business websites",
-            "Web platforms and client portals",
-            "Custom web applications",
-            "Online stores",
-            "Booking and quoting systems",
-            "Automation and integrations",
-            "Desktop app development",
-            "Search engine optimization",
-            "Bilingual English and Spanish websites"
-          ],
-          sameAs: [
-            site.githubUrl,
-            site.linkedinUrl,
-            site.peekUrl,
-            site.remodelingUrl,
-            site.loanpilotUrl
-          ]
+        mainEntity: { "@id": personId }
+      },
+      {
+        "@type": "Person",
+        "@id": personId,
+        name: site.name,
+        jobTitle: "Independent Web & Software Developer",
+        url: `${siteUrl}/`,
+        email: site.email,
+        knowsLanguage: ["en", "es"],
+        nationality: { "@type": "Country", name: "El Salvador" },
+        knowsAbout: [
+          "Business websites",
+          "Web platforms and client portals",
+          "Custom web applications",
+          "Online stores",
+          "Booking and quoting systems",
+          "Automation and integrations",
+          "Desktop app development",
+          "Search engine optimization",
+          "Bilingual English and Spanish websites"
+        ],
+        sameAs: [
+          site.githubUrl,
+          site.linkedinUrl,
+          site.peekUrl,
+          site.remodelingUrl,
+          site.loanpilotUrl
+        ]
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": `${canonical}#service`,
+        name: t.seo.title,
+        url: canonical,
+        description: t.seo.description,
+        email: site.email,
+        image: `${siteUrl}/og.png`,
+        inLanguage: lang,
+        provider: { "@id": personId },
+        founder: { "@id": personId },
+        availableLanguage: ["en", "es"],
+        address: { "@type": "PostalAddress", addressCountry: "SV" },
+        areaServed: t.seo.areaServed.map((place) => ({ "@type": place.type, name: place.name })),
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: t.nav.services,
+          itemListElement: t.services.items.map((service) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: service.title,
+              description: service.text,
+              url: `${siteUrl}${service.path}`,
+              provider: { "@id": personId }
+            }
+          }))
         }
+      },
+      {
+        // Read from the same array that renders the accordion, so the markup
+        // cannot drift from the visible text when the copy changes.
+        "@type": "FAQPage",
+        "@id": `${canonical}#faq`,
+        inLanguage: lang,
+        mainEntity: t.faq.items.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer }
+        }))
       }
     ]
   };

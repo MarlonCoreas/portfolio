@@ -11,7 +11,7 @@ export const site = {
   remodelingUrl: "https://homeremodelingnc.com/",
   loanpilotUrl: "https://loanpilot.marloncoreas.com/",
   githubUrl: "https://github.com/MarlonCoreas",
-  linkedinUrl: "https://www.linkedin.com/in/marlon-salomon-coreas-villanueva-8b0416161",
+  linkedinUrl: "https://www.linkedin.com/in/marlon-coreas",
   // Scheduling link shown after a successful inquiry. Leave empty to hide the
   // button entirely; set the same URL in the mailer config to include it in the
   // confirmation email.
@@ -28,7 +28,13 @@ export const copy = {
     seo: {
       title: "Marlon Coreas | Websites & Custom Software for Service Businesses",
       description:
-        "Bilingual websites and custom software for service businesses that need clearer inquiries and less manual work — planned, designed and built end to end."
+        "Bilingual websites and custom software for service businesses that need clearer inquiries and less manual work — planned, designed and built end to end.",
+      // Structured-data only, never rendered. Mirrors about.availability.
+      areaServed: [
+        { type: "Country", name: "United States" },
+        { type: "Country", name: "El Salvador" },
+        { type: "Place", name: "Latin America" }
+      ]
     },
     nav: {
       work: "Work",
@@ -107,16 +113,16 @@ export const copy = {
         {
           number: "03",
           title: "LoanPilot",
-          kind: "My own product · Free web tool",
+          kind: "My own product · Free bilingual web tool",
           description:
-            "A free calculator that shows what a loan will really cost before signing, and how much you save by paying extra against the balance. Built around Salvadoran lending rules, works on any phone, and nothing anyone types ever leaves their browser.",
+            "Four free calculators for the money questions most Salvadorans have to take on trust: what a loan will really cost before signing, what a severance settlement should pay, how overtime is counted and what payroll withholdings to expect. Built on the labor code and official rate tables, and nothing anyone types ever leaves their browser.",
           role: "Idea · Design · Development · Launch",
-          challenge: "Explain the real cost of a loan without requiring financial expertise or collecting sensitive information.",
-          delivered: "Bilingual calculator, yearly breakdowns, extra-payment scenarios and a privacy-first browser-only calculation model.",
-          evidence: "Free to open and test on any modern phone or computer; calculations remain in the browser.",
-          tags: ["Free to use", "Works on any phone", "Español / English"],
+          challenge: "Turn scattered legal and financial rules into answers a person can trust, without requiring expertise, an account or any personal data.",
+          delivered: "Loan, severance, overtime and withholding calculators, yearly cost breakdowns, extra-payment scenarios, PDF and Excel export of the loan schedule, and a browser-only calculation model.",
+          evidence: "Free to open and test in Spanish or English; every official source is cited and dated on the page, and calculations remain in the browser.",
+          tags: ["Free to use", "Four calculators", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "The LoanPilot calculator showing a monthly payment estimate and yearly cost breakdown",
+          alt: "The LoanPilot loan calculator showing a monthly payment estimate and yearly cost breakdown",
           theme: "teal",
           links: [{ label: "View live project", href: site.loanpilotUrl }]
         }
@@ -304,7 +310,12 @@ export const copy = {
     seo: {
       title: "Marlon Coreas | Sitios web y software a medida para negocios",
       description:
-        "Sitios web bilingües y software a medida para negocios de servicios que necesitan consultas más claras y menos trabajo manual."
+        "Sitios web bilingües y software a medida para negocios de servicios que necesitan consultas más claras y menos trabajo manual.",
+      areaServed: [
+        { type: "Country", name: "Estados Unidos" },
+        { type: "Country", name: "El Salvador" },
+        { type: "Place", name: "América Latina" }
+      ]
     },
     nav: {
       work: "Proyectos",
@@ -383,16 +394,16 @@ export const copy = {
         {
           number: "03",
           title: "LoanPilot",
-          kind: "Producto propio · Herramienta web gratuita",
+          kind: "Producto propio · Herramienta web gratuita y bilingüe",
           description:
-            "Una calculadora gratuita que muestra cuánto costará realmente un préstamo antes de firmarlo, y cuánto se ahorra abonando a capital. Hecha con la normativa salvadoreña, funciona en cualquier teléfono y nada de lo que se escribe sale del navegador.",
+            "Cuatro calculadoras gratuitas para las preguntas de dinero que en El Salvador casi siempre se aceptan de palabra: cuánto costará realmente un préstamo antes de firmarlo, cuánto debería pagar un finiquito, cómo se cuentan las horas extra y qué descuentos esperar en la planilla. Hechas con el Código de Trabajo y las tablas oficiales, y nada de lo que se escribe sale del navegador.",
           role: "Idea · Diseño · Desarrollo · Lanzamiento",
-          challenge: "Explicar el costo real de un préstamo sin exigir conocimientos financieros ni recopilar información sensible.",
-          delivered: "Calculadora bilingüe, desgloses anuales, escenarios de abonos extra y cálculos privados dentro del navegador.",
-          evidence: "Se puede abrir y probar gratis en teléfonos y computadoras modernas; los cálculos permanecen en el navegador.",
-          tags: ["Uso gratuito", "Funciona en cualquier teléfono", "Español / English"],
+          challenge: "Convertir reglas legales y financieras dispersas en respuestas confiables, sin exigir conocimientos, cuenta ni datos personales.",
+          delivered: "Calculadoras de préstamos, finiquito, horas extra y retenciones, desgloses anuales, escenarios de abonos extra, exportación a PDF y Excel de la tabla del préstamo, y cálculos dentro del navegador.",
+          evidence: "Se puede abrir y probar gratis en español o inglés; cada fuente oficial está citada y fechada en la página, y los cálculos permanecen en el navegador.",
+          tags: ["Uso gratuito", "Cuatro calculadoras", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "La calculadora de LoanPilot mostrando la cuota estimada y el desglose de costo por año",
+          alt: "La calculadora de préstamos de LoanPilot mostrando la cuota estimada y el desglose de costo por año",
           theme: "teal",
           links: [{ label: "Ver proyecto", href: site.loanpilotUrl }]
         }

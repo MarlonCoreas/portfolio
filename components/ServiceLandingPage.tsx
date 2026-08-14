@@ -178,7 +178,12 @@ export default function ServiceLandingPage({ lang, service }: Props) {
           </div>
         </section>
 
-        <section className="service-page-section service-page-light section-grid" id={service === "software" ? "products" : undefined}>
+        {/* The Spanish service card links to #productos, so the anchor has to be
+            localised or that link lands nowhere. */}
+        <section
+          className="service-page-section service-page-light section-grid"
+          id={service === "software" ? (lang === "en" ? "products" : "productos") : undefined}
+        >
           <div className="shell">
             <h2>{t.deliverTitle}</h2>
             <div className="service-page-deliverables">
