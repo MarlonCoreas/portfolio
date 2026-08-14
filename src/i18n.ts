@@ -122,7 +122,7 @@ export const copy = {
           evidence: "Free to open and test in Spanish or English; every official source is cited and dated on the page, and calculations remain in the browser.",
           tags: ["Free to use", "Four calculators", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "The LoanPilot loan calculator showing a monthly payment estimate and yearly cost breakdown",
+          alt: "The LoanPilot home page showing its four calculators: loans, severance, overtime and payroll withholdings",
           theme: "teal",
           links: [{ label: "View live project", href: site.loanpilotUrl }]
         }
@@ -403,7 +403,7 @@ export const copy = {
           evidence: "Se puede abrir y probar gratis en español o inglés; cada fuente oficial está citada y fechada en la página, y los cálculos permanecen en el navegador.",
           tags: ["Uso gratuito", "Cuatro calculadoras", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "La calculadora de préstamos de LoanPilot mostrando la cuota estimada y el desglose de costo por año",
+          alt: "La portada de LoanPilot mostrando sus cuatro calculadoras: préstamos, finiquito, horas extras y retenciones",
           theme: "teal",
           links: [{ label: "Ver proyecto", href: site.loanpilotUrl }]
         }
