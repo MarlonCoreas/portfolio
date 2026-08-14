@@ -71,7 +71,7 @@ export const copy = {
       eyebrow: "Selected work",
       title: "Proof, not promises.",
       intro:
-        "Three public projects you can open and use. Each one shows the problem, the work delivered and the evidence that can be checked today.",
+        "Three public projects you can open and use, plus the one I'm building now. Each finished project shows the problem, the work delivered and the evidence that can be checked today.",
       viewProject: "View live project",
       visitAppStore: "App Store",
       items: [
@@ -87,6 +87,7 @@ export const copy = {
           evidence: "Available publicly on the Mac App Store and its product site.",
           tags: ["Mac app", "On the App Store", "Own product"],
           image: "/images/peek-workspace.webp",
+          imageHeight: 750,
           alt: "Peek Compress displaying the contents of an archive on macOS",
           theme: "lime",
           links: [
@@ -106,6 +107,7 @@ export const copy = {
           evidence: "The complete bilingual website and its quote paths are public. Lead-volume claims are intentionally omitted until client data is authorized.",
           tags: ["English & Spanish", "Public client work", "Clear quote paths"],
           image: "/images/nc-remodeling.webp",
+          imageHeight: 800,
           alt: "Interior remodeling and custom cabinetry project featured on the NC Home Remodeling website",
           theme: "coral",
           links: [{ label: "View live project", href: site.remodelingUrl }]
@@ -122,9 +124,27 @@ export const copy = {
           evidence: "Free to open and test in Spanish or English; every official source is cited and dated on the page, and calculations remain in the browser.",
           tags: ["Free to use", "Four calculators", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "The LoanPilot home page showing its four calculators: loans, severance, overtime and payroll withholdings",
+          imageHeight: 1150,
+          alt: "The LoanPilot tool directory showing its four calculators: loans, severance, overtime and payroll withholdings",
           theme: "teal",
           links: [{ label: "View live project", href: site.loanpilotUrl }]
+        },
+        {
+          number: "04",
+          title: "Next product",
+          kind: "My own product · Not announced yet",
+          description:
+            "A product of my own currently in build and test. There is nothing to open or verify here yet, and that is the point: this card is what an honest work-in-progress looks like next to three finished projects.",
+          role: "Idea · Design · Development",
+          challenge: "Still being sharpened against real use before anything is announced.",
+          delivered: "In progress — research, prototypes and the first version that has to survive daily use.",
+          evidence: "None yet, deliberately. It gets a link and the same problem, work and evidence breakdown as the projects above on the day it ships.",
+          tags: ["In progress", "Own product", "Announced when it ships"],
+          image: undefined,
+          imageHeight: undefined,
+          alt: "",
+          theme: "violet",
+          links: [] as { label: string; href: string }[]
         }
       ]
     },
@@ -352,7 +372,7 @@ export const copy = {
       eyebrow: "Proyectos seleccionados",
       title: "Evidencia, no promesas.",
       intro:
-        "Tres proyectos públicos que puedes abrir y usar. Cada uno muestra el problema, el trabajo entregado y la evidencia que se puede comprobar hoy.",
+        "Tres proyectos públicos que puedes abrir y usar, más el que estoy construyendo ahora. Cada proyecto terminado muestra el problema, el trabajo entregado y la evidencia que se puede comprobar hoy.",
       viewProject: "Ver proyecto",
       visitAppStore: "App Store",
       items: [
@@ -368,6 +388,7 @@ export const copy = {
           evidence: "Disponible públicamente en el Mac App Store y en su sitio oficial.",
           tags: ["App de Mac", "En el App Store", "Producto propio"],
           image: "/images/peek-workspace.webp",
+          imageHeight: 750,
           alt: "Peek Compress mostrando el contenido de un archivo comprimido en macOS",
           theme: "lime",
           links: [
@@ -387,6 +408,7 @@ export const copy = {
           evidence: "El sitio bilingüe y sus rutas de cotización son públicos. Se omiten cifras de contactos hasta contar con datos autorizados por el cliente.",
           tags: ["Español e inglés", "Trabajo público", "Rutas claras de cotización"],
           image: "/images/nc-remodeling.webp",
+          imageHeight: 800,
           alt: "Proyecto de remodelación y gabinetes a medida presentado en el sitio de NC Home Remodeling",
           theme: "coral",
           links: [{ label: "Ver proyecto", href: site.remodelingUrl }]
@@ -403,9 +425,27 @@ export const copy = {
           evidence: "Se puede abrir y probar gratis en español o inglés; cada fuente oficial está citada y fechada en la página, y los cálculos permanecen en el navegador.",
           tags: ["Uso gratuito", "Cuatro calculadoras", "Español / English"],
           image: "/images/loanpilot.webp",
-          alt: "La portada de LoanPilot mostrando sus cuatro calculadoras: préstamos, finiquito, horas extras y retenciones",
+          imageHeight: 1150,
+          alt: "El directorio de herramientas de LoanPilot mostrando sus cuatro calculadoras: préstamos, finiquito, horas extras y retenciones",
           theme: "teal",
           links: [{ label: "Ver proyecto", href: site.loanpilotUrl }]
+        },
+        {
+          number: "04",
+          title: "Próximo producto",
+          kind: "Producto propio · Aún sin anunciar",
+          description:
+            "Un producto propio que está en construcción y prueba. Todavía no hay nada que abrir ni comprobar, y ese es el punto: así se ve un trabajo en curso contado con honestidad junto a tres proyectos terminados.",
+          role: "Idea · Diseño · Desarrollo",
+          challenge: "Se sigue afinando contra el uso real antes de anunciar cualquier cosa.",
+          delivered: "En curso: investigación, prototipos y la primera versión que tiene que aguantar el uso diario.",
+          evidence: "Ninguna todavía, a propósito. El día que salga tendrá enlace y el mismo desglose de problema, trabajo y evidencia que los proyectos de arriba.",
+          tags: ["En curso", "Producto propio", "Se anuncia cuando salga"],
+          image: undefined,
+          imageHeight: undefined,
+          alt: "",
+          theme: "violet",
+          links: [] as { label: string; href: string }[]
         }
       ]
     },

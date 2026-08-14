@@ -278,7 +278,7 @@ export default function PortfolioPage({ lang }: Props) {
                           src={projectImage}
                           alt={project.alt}
                           width="1200"
-                          height={index === 0 ? "750" : "800"}
+                          height={project.imageHeight ?? 800}
                           loading="lazy"
                           decoding="async"
                         />
@@ -300,13 +300,13 @@ export default function PortfolioPage({ lang }: Props) {
                         <div className="stealth-ring ring-b" />
                         <div className="stealth-ring ring-c" />
                         <div className="stealth-center">
-                          <span>BUILD</span>
+                          <span>{lang === "en" ? "BUILD" : "CREAR"}</span>
                           <strong>{project.number}</strong>
-                          <span>TEST</span>
+                          <span>{lang === "en" ? "TEST" : "PROBAR"}</span>
                         </div>
-                        <span className="stealth-note note-a">research</span>
-                        <span className="stealth-note note-b">prototype</span>
-                        <span className="stealth-note note-c">iterate</span>
+                        <span className="stealth-note note-a">{lang === "en" ? "research" : "estudio"}</span>
+                        <span className="stealth-note note-b">{lang === "en" ? "prototype" : "prototipo"}</span>
+                        <span className="stealth-note note-c">{lang === "en" ? "iterate" : "iterar"}</span>
                       </div>
                     )}
                   </div>

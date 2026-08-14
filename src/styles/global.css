@@ -861,6 +861,14 @@
       linear-gradient(135deg, #111811, #080908 70%);
   }
 
+  .project-card:nth-child(3) .project-visual > img:first-child {
+    padding: clamp(28px, 4vw, 64px);
+    object-fit: contain;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(79, 224, 184, 0.12), transparent 38%),
+      linear-gradient(135deg, #0e1a17, #080a09 70%);
+  }
+
   .project-card:nth-child(2) .project-visual::after {
     position: absolute;
     inset: 0;
@@ -2713,6 +2721,14 @@
 
   .project-card:first-child .project-visual > img:first-child {
     padding: 34px 18px;
+  }
+
+  .project-card:nth-child(3) .project-visual {
+    min-height: 360px;
+  }
+
+  .project-card:nth-child(3) .project-visual > img:first-child {
+    padding: 24px 18px;
   }
 
   .project-chip {
