@@ -264,6 +264,9 @@ export default function PortfolioPage({ lang }: Props) {
                 // fallback branch to never. Widening here keeps the stealth visual
                 // available for confidential work without an image to show.
                 const projectImage: string | undefined = project.image;
+                // Only LoanPilot publishes the reading it applies where the law
+                // admits more than one, so the fourth evidence row is optional.
+                const highlight = "highlight" in project ? project.highlight : undefined;
                 return (
                 <article
                   className={`project-card theme-${project.theme}`}
@@ -331,6 +334,24 @@ export default function PortfolioPage({ lang }: Props) {
                           <dt>{lang === "en" ? "Evidence" : "Evidencia"}</dt>
                           <dd>{project.evidence}</dd>
                         </div>
+                        {highlight ? (
+                          <div className="evidence-highlight">
+                            <dt>{highlight.label}</dt>
+                            <dd>
+                              {highlight.text}{" "}
+                              <a
+                                className="evidence-link"
+                                href={highlight.link.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                data-track="evidence_link_open"
+                                data-track-label={project.title}
+                              >
+                                {highlight.link.label}
+                              </a>
+                            </dd>
+                          </div>
+                        ) : null}
                       </dl>
                       <ul
                         className="tag-list"

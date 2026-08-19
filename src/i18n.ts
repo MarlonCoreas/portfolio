@@ -10,6 +10,9 @@ export const site = {
   peekAppStoreUrl: "https://apps.apple.com/app/6768755084",
   remodelingUrl: "https://homeremodelingnc.com/",
   loanpilotUrl: "https://loanpilot.marloncoreas.com/",
+  // The disputed-rules page has its own path per language.
+  loanpilotRulesUrlEn: "https://loanpilot.marloncoreas.com/en/disputed-rules/",
+  loanpilotRulesUrlEs: "https://loanpilot.marloncoreas.com/reglas-en-disputa/",
   githubUrl: "https://github.com/MarlonCoreas",
   linkedinUrl: "https://www.linkedin.com/in/marlon-coreas",
   // Scheduling link shown after a successful inquiry. Leave empty to hide the
@@ -120,8 +123,18 @@ export const copy = {
             "Seven free calculators for the money questions most Salvadorans have to take on trust: what a loan or a card paid at the minimum will really cost, what a severance settlement and a Christmas bonus should pay, how overtime is counted, and what payroll withholdings and the year-end tax balance come to. Built on the labor code and official rate tables, reconciled against the labor ministry's own settlement calculation, and nothing anyone types ever leaves their browser.",
           role: "Idea · Design · Development · Launch",
           challenge: "Turn scattered legal and financial rules into answers a person can trust, without requiring expertise, an account or any personal data.",
-          delivered: "Calculators for loans, credit cards, severance, the Christmas bonus, overtime, payroll withholdings and the annual tax balance; yearly cost breakdowns, extra-payment scenarios, PDF and Excel export of the loan schedule, shareable links that carry the figures, and a published record of every rule the law leaves open to more than one reading.",
+          delivered: "Calculators for loans, credit cards, severance, the Christmas bonus, overtime, payroll withholdings and the annual tax balance; yearly cost breakdowns, extra-payment scenarios, PDF and Excel export of the loan schedule, and shareable links that carry the figures.",
           evidence: "Free to open and test in Spanish or English; every official source is cited and dated on the page, the settlement figures are reconciled against the ministry's own calculation, the rule registry and the code are public on GitHub, and calculations remain in the browser.",
+          // Only LoanPilot carries this fourth evidence row; the card renders it
+          // when the project defines it.
+          highlight: {
+            label: "Judgment",
+            text: "Salvadoran law does not always say one thing. Where a text and the ministry's own practice disagree, the site publishes both readings, says which one it applies and marks it as applied — never as correct.",
+            link: {
+              label: "Read the disputed rules",
+              href: site.loanpilotRulesUrlEn
+            }
+          },
           tags: ["Free to use", "Seven calculators", "Open source"],
           image: "/images/loanpilot-seven-tools.webp",
           imageHeight: 884,
@@ -421,8 +434,18 @@ export const copy = {
             "Siete calculadoras gratuitas para las preguntas de dinero que en El Salvador casi siempre se aceptan de palabra: cuánto costará de verdad un préstamo o una tarjeta pagada con el mínimo, cuánto debería pagar un finiquito y un aguinaldo, cómo se cuentan las horas extra, y a cuánto llegan las retenciones y el saldo de renta del año. Hechas con el Código de Trabajo y las tablas oficiales, contrastadas contra el cálculo del propio ministerio, y nada de lo que se escribe sale del navegador.",
           role: "Idea · Diseño · Desarrollo · Lanzamiento",
           challenge: "Convertir reglas legales y financieras dispersas en respuestas confiables, sin exigir conocimientos, cuenta ni datos personales.",
-          delivered: "Calculadoras de préstamos, tarjeta de crédito, finiquito, aguinaldo, horas extra, retenciones y renta anual; desgloses anuales, escenarios de abonos extra, exportación a PDF y Excel de la tabla del préstamo, enlaces que llevan las cifras, y un registro público de cada regla que la ley admite leer de más de una forma.",
+          delivered: "Calculadoras de préstamos, tarjeta de crédito, finiquito, aguinaldo, horas extra, retenciones y renta anual; desgloses anuales, escenarios de abonos extra, exportación a PDF y Excel de la tabla del préstamo, y enlaces que llevan las cifras.",
           evidence: "Se puede abrir y probar gratis en español o inglés; cada fuente oficial está citada y fechada en la página, el finiquito se reconcilia contra la constancia del MTPS, el registro de reglas y el código están públicos en GitHub, y los cálculos permanecen en el navegador.",
+          // Solo LoanPilot lleva esta cuarta fila de evidencia; la tarjeta la
+          // muestra cuando el proyecto la define.
+          highlight: {
+            label: "Criterio",
+            text: "La ley salvadoreña no siempre dice una sola cosa. Donde el texto y la práctica del ministerio no coinciden, el sitio publica las dos lecturas, dice cuál aplica y la marca como aplicada, nunca como correcta.",
+            link: {
+              label: "Ver las reglas en disputa",
+              href: site.loanpilotRulesUrlEs
+            }
+          },
           tags: ["Uso gratuito", "Siete calculadoras", "Código abierto"],
           image: "/images/loanpilot-seven-tools.webp",
           imageHeight: 884,
