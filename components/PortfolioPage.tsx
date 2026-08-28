@@ -617,6 +617,10 @@ export default function PortfolioPage({ lang }: Props) {
               <form className="contact-form" action="/api/contact.php" method="post" data-contact-form>
                 <input type="hidden" name="language" value={lang} />
                 <input type="hidden" name="redirect" value={lang === "en" ? "/" : "/es"} />
+                {/* Filled in at submit time with how long the form was open. A
+                    bot posting straight at the endpoint leaves it empty, which
+                    the server scores rather than rejects. */}
+                <input type="hidden" name="elapsed" value="" data-contact-elapsed />
                 <div className="contact-honeypot" aria-hidden="true">
                   <label htmlFor={`website-${lang}`}>Website</label>
                   <input id={`website-${lang}`} name="website" type="text" tabIndex={-1} autoComplete="off" />

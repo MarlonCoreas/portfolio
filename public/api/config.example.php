@@ -41,6 +41,19 @@ return [
     // 4 if vendor pitches are getting through.
     'spam_threshold' => 5,
 
+    // Score at which the submission is dropped instead of delivered: written to
+    // the lead log, never mailed, and answered with the ordinary success page so
+    // the sender learns nothing. Keep a clear gap above `spam_threshold` — that
+    // gap is what makes a false positive cost the confirmation instead of the
+    // lead. If a real inquiry is ever discarded it will be in the log, marked
+    // DISCARDED with the signals that got it there.
+    'spam_hard_threshold' => 10,
+
+    // Most inquiries one address may send in a rolling 24 hours. A person with
+    // second thoughts sends two or three; a bot working a target list sends
+    // dozens. Beyond the cap the answer is the normal success page.
+    'daily_cap_per_ip' => 5,
+
     // Wordlists for the spam scorer. They live here, outside the public
     // repository, because a list anyone can read is a list anyone can write
     // around. Structural signals (links, file-share hosts, pasted markup) stay

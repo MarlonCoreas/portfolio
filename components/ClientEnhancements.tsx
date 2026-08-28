@@ -125,10 +125,15 @@ export default function ClientEnhancements({ analyticsId }: Props) {
     };
     trackedElements.forEach((element) => element.addEventListener("click", handleTrackedClick));
 
+    // Monotonic, so a visitor whose system clock is wrong is not penalised.
+    const formOpenedAt = performance.now();
+    const elapsedField = contactForm?.querySelector<HTMLInputElement>("[data-contact-elapsed]");
+
     const handleSubmit = async (event: SubmitEvent) => {
       if (!contactForm || !submitButton || !submitLabel) return;
 
       event.preventDefault();
+      if (elapsedField) elapsedField.value = String(Math.round(performance.now() - formOpenedAt));
       submitButton.disabled = true;
       contactForm.setAttribute("aria-busy", "true");
       submitLabel.textContent = submitButton.dataset.sending || defaultSubmitLabel;

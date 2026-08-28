@@ -155,9 +155,11 @@ function load_spam_phrases(array $config): array {
  * topic would reject genuine prospects, so offering-language and structural
  * signals (links, markup) carry the weight instead.
  *
- * Nothing is ever rejected on this score. A flagged inquiry still reaches the
- * inbox tagged, which keeps a false positive cheap: it costs the automatic
- * confirmation, never the lead.
+ * The score drives two thresholds. At `spam_threshold` an inquiry is merely
+ * flagged: it still reaches the inbox tagged, so a false positive there costs
+ * the automatic confirmation and never the lead. Only at `spam_hard_threshold`
+ * — deliberately far above it — is a submission dropped without being mailed,
+ * and even then it is written to the lead log rather than lost.
  *
  * The phrase lists are deliberately NOT in this file. This repository is
  * public, and a list anyone can read is a list anyone can write around, so the
@@ -236,6 +238,42 @@ function spam_assessment(string $name, string $company, string $goal, array $phr
         $reasons[] = 'link-in-name';
     }
 
+    // Shouting. Somebody describing a real problem does not hold the shift key
+    // down for a whole paragraph, and lowercasing it would cost the bot the
+    // attention it is buying.
+    $letters = (string)preg_replace('~[^A-Za-z]~', '', $goal);
+    if (strlen($letters) >= 25) {
+        $upper = strlen((string)preg_replace('~[^A-Z]~', '', $letters));
+        if ($upper / strlen($letters) > 0.6) {
+            $score += 4;
+            $reasons[] = 'all-caps-message';
+        }
+    }
+
+    // Runs of currency or punctuation — "$>$>$>", "!!!", "€€€". Decoration
+    // that only appears when the message is selling something.
+    if (preg_match('~([\$€£!?*])[^A-Za-z0-9]{0,2}\1[^A-Za-z0-9]{0,2}\1~u', $goal)) {
+        $score += 4;
+        $reasons[] = 'symbol-run';
+    }
+
+    // Delivery beacons. Form-spam kits append an opaque identifier so they can
+    // tell which of thousands of forms actually delivered. No visitor types a
+    // forty-character unbroken string into a project description.
+    if (preg_match('~\b(?:token|id|ref|code|uid)\s*[:=]\s*\S{20,}~i', $name . ' ' . $company . ' ' . $goal)
+        || preg_match('~[A-Za-z0-9]{40,}~', $goal)) {
+        $score += 5;
+        $reasons[] = 'delivery-beacon';
+    }
+
+    // "MichaelFlind" — two capitalised words fused with no separator is a
+    // generated handle far more often than a name someone typed. Deliberately
+    // weak: it nudges, and never flags an inquiry by itself.
+    if (preg_match('~^[A-Z][a-z]+[A-Z][a-z]+$~', $name)) {
+        $score += 2;
+        $reasons[] = 'generated-name';
+    }
+
     return $score;
 }
 
@@ -272,14 +310,45 @@ if (trim((string)($_POST['website'] ?? '')) !== '') {
     respond_to($redirect, 'sent');
 }
 
+// How long the form was open before it was submitted, in milliseconds, measured
+// by the page itself against a monotonic clock so a visitor's wrong system time
+// cannot break it. A bot that POSTs straight at this endpoint never runs that
+// code and sends nothing; one that replays a captured value sends the same
+// implausible reading every time.
+//
+// This only feeds the spam score below, never a rejection. A real visitor with
+// JavaScript disabled still posts the form natively, and losing that lead would
+// cost more than the spam it prevents.
+$elapsed = (string)($_POST['elapsed'] ?? '');
+$browserProof = ctype_digit($elapsed) && (int)$elapsed >= 2500 && (int)$elapsed <= 86_400_000;
+
+$config = load_config();
+
 // Lightweight rate limit: one accepted attempt per minute per IP hash.
 // Only accepted submissions are recorded, so a visitor who mistypes a field
 // can correct it and resend immediately instead of waiting out the window.
 $ip = (string)($_SERVER['REMOTE_ADDR'] ?? 'unknown');
 $rateFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'marlon-contact-' . hash('sha256', $ip);
-$lastAttempt = is_file($rateFile) ? (int)@file_get_contents($rateFile) : 0;
+$rateState = is_file($rateFile) ? explode(':', (string)@file_get_contents($rateFile)) : [];
+$lastAttempt = (int)($rateState[0] ?? 0);
+$dayStart = (int)($rateState[1] ?? 0);
+$dayCount = (int)($rateState[2] ?? 0);
+
 if ($lastAttempt > 0 && time() - $lastAttempt < 60) {
     respond_to($redirect, 'error', 429);
+}
+
+// Daily ceiling. One person with a genuine second thought sends two or three
+// inquiries; a bot working through a target list sends dozens. Beyond the cap
+// the answer is the ordinary success page, so a script gets no signal that it
+// has been cut off and simply keeps talking to a wall.
+if (time() - $dayStart >= 86_400) {
+    $dayStart = time();
+    $dayCount = 0;
+}
+$dailyCap = (int)($config['daily_cap_per_ip'] ?? 5);
+if ($dayCount >= $dailyCap) {
+    respond_to($redirect, 'sent');
 }
 
 $name = trim((string)($_POST['name'] ?? ''));
@@ -314,7 +383,7 @@ if (!$valid) {
     respond_to($redirect, 'error', 422);
 }
 
-@file_put_contents($rateFile, (string)time(), LOCK_EX);
+@file_put_contents($rateFile, implode(':', [time(), $dayStart, $dayCount + 1]), LOCK_EX);
 
 $language = $language === 'es' ? 'es' : 'en';
 $safeName = str_replace(["\r", "\n"], ' ', $name);
@@ -372,15 +441,25 @@ $optionLabels = [
     ],
 ];
 
-$config = load_config();
-
 // --- Spam assessment --------------------------------------------------------
 
 $spamReasons = [];
 $spamPhrases = load_spam_phrases($config);
 $spamScore = spam_assessment($safeName, $safeCompany, $goal, $spamPhrases, $spamReasons);
+if (!$browserProof) {
+    $spamScore += 4;
+    $spamReasons[] = 'no-browser-proof';
+}
+
 $spamThreshold = (int)($config['spam_threshold'] ?? 5);
+
+// Above the hard threshold the submission is dropped outright: logged, never
+// mailed, and answered with the same success page as everyone else so the
+// sender learns nothing. The gap between the two thresholds is what keeps a
+// false positive cheap — a merely flagged inquiry still lands in the inbox.
+$hardThreshold = (int)($config['spam_hard_threshold'] ?? 10);
 $isSuspected = $spamScore >= $spamThreshold;
+$isDiscarded = $spamScore >= $hardThreshold;
 $phraseCount = count($spamPhrases['vendor']) + count($spamPhrases['soft']) + count($spamPhrases['bulk']);
 
 // --- Notification to Marlon -------------------------------------------------
@@ -421,7 +500,12 @@ $spamHeaders = $isSuspected
 $transport = 'smtp';
 $transportError = null;
 
-if (($config['smtp_host'] ?? '') !== '' && ($config['smtp_pass'] ?? '') !== '') {
+if ($isDiscarded) {
+    // Nothing leaves the server. The log below is the only record, which is
+    // where to look if a real inquiry ever lands here.
+    $transport = 'discarded';
+    $sent = true;
+} elseif (($config['smtp_host'] ?? '') !== '' && ($config['smtp_pass'] ?? '') !== '') {
     $sent = send_via_smtp(
         $config,
         (string)($config['notify_to'] ?? 'hello@marloncoreas.com'),
@@ -457,10 +541,17 @@ if (($config['smtp_host'] ?? '') !== '' && ($config['smtp_pass'] ?? '') !== '') 
 // Only sent once the inquiry is safely captured, so the visitor is never told
 // "received" for something that was not — and never to a flagged sender, who
 // would otherwise learn the address is live and read by a person.
+//
+// It deliberately quotes NOTHING the visitor typed, only the closed-list
+// choices. The address in the form is unverified: whoever fills it in picks who
+// receives this mail. Echoing their own words back would let anyone deliver any
+// text to any inbox over this domain's authenticated, DKIM-signed mailbox — a
+// relay, paid for with the domain's sending reputation. The full message is in
+// the notification and the log, where it is only ever read by its owner.
 
 $confirmationSent = false;
 
-if ($sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config['smtp_host'] ?? '') !== '') {
+if (!$isDiscarded && $sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config['smtp_host'] ?? '') !== '') {
     $labels = $optionLabels[$language];
     $bookingUrl = trim((string)($config['booking_url'] ?? ''));
 
@@ -482,13 +573,11 @@ if ($sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config
             . "Gracias por escribir. Esta es la confirmación de que tu consulta llegó: la leo yo personalmente, no un equipo de ventas.\n\n"
             . "Qué sigue: voy a revisar el contexto que describiste y te responderé en un máximo de dos días hábiles, con una lectura honesta de si soy la persona indicada para ayudarte y cuál sería un primer paso sensato.\n\n"
             . $bookingBlock
-            . "Copia de lo que enviaste:\n\n"
+            . "Resumen de lo que enviaste:\n\n"
             . "  Qué necesitas:      " . $labels['project_type'][$projectType] . "\n"
             . "  Cuándo:             " . $labels['timeline'][$timeline] . "\n"
-            . "  Rango de inversión: " . $labels['budget'][$budget] . "\n"
-            . "  Empresa o sitio:    " . ($safeCompany !== '' ? $safeCompany : 'No indicado') . "\n\n"
-            . "  Problema a resolver:\n"
-            . "  " . str_replace("\n", "\n  ", $goal) . "\n\n"
+            . "  Rango de inversión: " . $labels['budget'][$budget] . "\n\n"
+            . "Tu mensaje quedó guardado completo y lo tendré delante cuando te responda.\n\n"
             . "Si algo de lo anterior está mal, responde este correo y lo corrijo.\n\n"
             . "— Marlon Coreas\n"
             . "  marloncoreas.com\n";
@@ -501,13 +590,11 @@ if ($sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config
             . "Thanks for writing. This confirms your inquiry arrived — I read these myself, not a sales team.\n\n"
             . "What happens next: I will review the context you described and reply within two business days, with an honest read on whether I am the right person to help and what a sensible first step would be.\n\n"
             . $bookingBlock
-            . "A copy of what you sent:\n\n"
+            . "A summary of what you sent:\n\n"
             . "  What you need:    " . $labels['project_type'][$projectType] . "\n"
             . "  Timing:           " . $labels['timeline'][$timeline] . "\n"
-            . "  Investment range: " . $labels['budget'][$budget] . "\n"
-            . "  Company/website:  " . ($safeCompany !== '' ? $safeCompany : 'Not provided') . "\n\n"
-            . "  Problem to solve:\n"
-            . "  " . str_replace("\n", "\n  ", $goal) . "\n\n"
+            . "  Investment range: " . $labels['budget'][$budget] . "\n\n"
+            . "I have your full message saved and will have it in front of me when I reply.\n\n"
             . "If anything above is wrong, just reply to this email and I will correct it.\n\n"
             . "— Marlon Coreas\n"
             . "  marloncoreas.com\n";
@@ -534,8 +621,9 @@ $logEntry = implode("\n", [
         . ' · via=' . $transport
         . ' · delivery=' . ($sent ? 'ok' : 'failed')
         . ' · confirmation=' . ($confirmationSent ? 'ok' : 'no')
-        . ' · spam=' . $spamScore . '/' . $spamThreshold . ' · phrases=' . $phraseCount
-        . ($isSuspected ? ' (FLAGGED: ' . implode(', ', $spamReasons) . ')' : '')
+        . ' · spam=' . $spamScore . '/' . $spamThreshold . '/' . $hardThreshold . ' · phrases=' . $phraseCount
+        . ($isDiscarded ? ' (DISCARDED: ' : ($isSuspected ? ' (FLAGGED: ' : ''))
+        . ($isSuspected ? implode(', ', $spamReasons) . ')' : '')
         . ($transportError !== null ? ' · error=' . str_replace("\n", ' ', $transportError) : ''),
     $notifyBody,
     ''
