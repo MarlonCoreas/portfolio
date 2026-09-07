@@ -1,0 +1,18 @@
+{
+  "home": {
+    "en": "/",
+    "es": "/es"
+  },
+  "websites": {
+    "en": "/services/websites",
+    "es": "/es/servicios/sitios-web"
+  },
+  "software": {
+    "en": "/services/custom-software",
+    "es": "/es/servicios/software-a-la-medida"
+  },
+  "privacy": {
+    "en": "/privacy",
+    "es": "/es/privacidad"
+  }
+}

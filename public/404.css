@@ -1,0 +1,10 @@
+/* Standalone hosting fallback; theme.css is copied from src/styles/tokens.css. */
+:root { color-scheme: dark; font-family: var(--sans); background: var(--color-background); color: var(--color-text); }
+* { box-sizing: border-box; }
+body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; }
+main { width: min(760px, 100%); padding: clamp(32px, 7vw, 72px); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+small { color: var(--color-link); font-size: .875rem; }
+h1 { margin: 24px 0 0; font-size: clamp(3rem, 10vw, 7rem); line-height: 1; letter-spacing: -.06em; }
+p { max-width: 560px; margin: 28px 0 0; color: var(--color-text-secondary); line-height: 1.7; }
+a { display: inline-flex; margin-top: 34px; padding: 14px 20px; color: var(--color-on-action); border-radius: var(--radius-pill); background: var(--color-action); font-weight: 600; text-decoration: none; }
+a:focus-visible { outline: 3px solid var(--color-link); outline-offset: 4px; }

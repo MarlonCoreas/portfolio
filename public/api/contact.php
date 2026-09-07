@@ -371,11 +371,12 @@ $timeline = (string)($_POST['timeline'] ?? '');
 $budget = (string)($_POST['budget'] ?? '');
 $consent = (string)($_POST['consent'] ?? '');
 
-$projectTypes = ['website', 'software', 'product', 'unsure'];
-$timelines = ['soon', '1-2-months', '3-6-months', 'exploring'];
+// Empty optional fields are allowed; unknown non-empty values are still rejected.
+$projectTypes = ['', 'website', 'software', 'product', 'unsure'];
+$timelines = ['', 'soon', '1-2-months', '3-6-months', 'exploring'];
 // 'under-5k' was split into two ranges. It stays accepted so a visitor with the
 // previous page cached in their browser does not get an error on submit.
-$budgets = ['guidance', 'under-2k', '2k-5k', 'under-5k', '5k-10k', '10k-25k', '25k-plus'];
+$budgets = ['', 'guidance', 'under-2k', '2k-5k', 'under-5k', '5k-10k', '10k-25k', '25k-plus'];
 
 $valid = $name !== ''
     && strlen($name) <= 100
@@ -405,18 +406,21 @@ $safeCompany = str_replace(["\r", "\n"], ' ', $company);
 $optionLabels = [
     'en' => [
         'project_type' => [
+            '' => 'Not specified',
             'website' => 'Business website',
             'software' => 'Custom software or internal tool',
             'product' => 'New digital product',
             'unsure' => 'Not sure yet',
         ],
         'timeline' => [
+            '' => 'Not specified',
             'soon' => 'As soon as there is a good plan',
             '1-2-months' => 'Within 1–2 months',
             '3-6-months' => 'Within 3–6 months',
             'exploring' => 'Still exploring',
         ],
         'budget' => [
+            '' => 'Not specified',
             'guidance' => 'Needs guidance',
             'under-2k' => 'Under US$2,000',
             '2k-5k' => 'US$2,000–5,000',
@@ -428,18 +432,21 @@ $optionLabels = [
     ],
     'es' => [
         'project_type' => [
+            '' => 'Sin indicar',
             'website' => 'Sitio web para empresa',
             'software' => 'Software a la medida o herramienta interna',
             'product' => 'Producto digital nuevo',
             'unsure' => 'Aún no está seguro',
         ],
         'timeline' => [
+            '' => 'Sin indicar',
             'soon' => 'En cuanto haya un buen plan',
             '1-2-months' => 'En 1–2 meses',
             '3-6-months' => 'En 3–6 meses',
             'exploring' => 'Todavía explorando',
         ],
         'budget' => [
+            '' => 'Sin indicar',
             'guidance' => 'Necesita orientación',
             'under-2k' => 'Menos de US$2,000',
             '2k-5k' => 'US$2,000–5,000',

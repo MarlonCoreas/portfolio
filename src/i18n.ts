@@ -1,31 +1,13 @@
 export type Locale = "en" | "es";
 
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://marloncoreas.com";
-
-export const site = {
-  name: "Marlon Coreas",
-  email: "hello@marloncoreas.com",
-  peekUrl: "https://peekcompress.com/",
-  peekAppStoreUrl: "https://apps.apple.com/app/6768755084",
-  remodelingUrl: "https://homeremodelingnc.com/",
-  loanpilotUrl: "https://loanpilot.marloncoreas.com/",
-  // The disputed-rules page has its own path per language.
-  loanpilotRulesUrlEn: "https://loanpilot.marloncoreas.com/en/disputed-rules/",
-  loanpilotRulesUrlEs: "https://loanpilot.marloncoreas.com/reglas-en-disputa/",
-  githubUrl: "https://github.com/MarlonCoreas",
-  linkedinUrl: "https://www.linkedin.com/in/marlon-coreas",
-  // Scheduling link shown after a successful inquiry. Leave empty to hide the
-  // button entirely; set the same URL in the mailer config to include it in the
-  // confirmation email.
-  bookingUrl: "https://cal.com/mcoreas/15min"
-};
+import { site } from "./config/site";
+import { routePath } from "./config/routes";
 
 export const copy = {
   en: {
     locale: "en_US",
     languageName: "English",
-    alternatePath: "/es",
+    alternatePath: routePath("home", "es"),
     alternateLabel: "ES",
     skip: "Skip to content",
     seo: {
@@ -48,12 +30,12 @@ export const copy = {
     hero: {
       status: "Available for new projects",
       eyebrow: "Marlon Coreas · Independent product designer & developer",
-      titleStart: "More useful inquiries.",
-      titleAccent: "Less manual work.",
+      titleStart: "Your business has a lot to offer.",
+      titleAccent: "Let’s make it show.",
       intro:
-        "I plan, design and build bilingual websites and custom software for service businesses. Before promising an outcome, we define the problem, the scope, the timeline and what success should look like.",
-      primary: "See the evidence",
-      secondary: "Tell me the problem",
+        "I design and build bilingual websites and custom software. You work directly with me, from the first conversation to launch.",
+      primary: "Explore my work",
+      secondary: "Let’s talk",
       proofLabel: "Publicly verifiable",
       proof: [
         { value: "03", label: "working products online" },
@@ -168,38 +150,38 @@ export const copy = {
     },
     services: {
       eyebrow: "What I can do for you",
-      title: "Choose the problem, not a list of technologies.",
+      title: "A better next step for your business.",
       intro:
-        "These are the three situations where I can be most useful. Every engagement begins with a written scope, timeline and price before development starts.",
+        "A new website, a simpler workflow or your first product. We agree on scope, timing and price before getting started.",
       items: [
         {
           number: "01",
-          title: "A website that earns trust",
-          text: "For service businesses whose current site is unclear, dated or difficult to find. The work starts with what a customer must understand before making contact.",
-          fit: "Best fit: established service businesses with real work, a clear offer and someone ready to answer inquiries.",
-          skills: ["Positioning and content", "English & Spanish", "Mobile, accessibility and search foundations"],
+          title: "Business websites",
+          text: "Help people understand your services, see your work and get in touch.",
+          fit: "For businesses ready to improve their online presence.",
+          skills: ["Clear content and design", "English & Spanish", "Mobile, accessibility and SEO"],
           priceFrom: "From US$2,000",
-          path: "/services/websites",
-          linkLabel: "Explore business websites"
+          path: routePath("websites", "en"),
+          linkLabel: "See what’s included"
         },
         {
           number: "02",
           title: "Custom software",
-          text: "Web platforms, client portals, quoting and booking systems, internal dashboards, integrations between the tools you already pay for — software shaped around how your business actually runs.",
-          fit: "Best fit: a repeated process is costing time, creating errors or forcing the team to work across disconnected tools.",
-          skills: ["Process discovery", "A focused first release", "Support after launch"],
+          text: "Bring quoting, bookings and customer information into tools that fit your team.",
+          fit: "For teams spending too much time on manual tasks.",
+          skills: ["Tools built for your workflow", "Connected systems", "A working first release"],
           priceFrom: "From US$8,000",
-          path: "/services/custom-software",
-          linkLabel: "Explore custom software"
+          path: routePath("software", "en"),
+          linkLabel: "Explore the options"
         },
         {
           number: "03",
-          title: "Products built from scratch",
-          text: "For founders who need to turn a specific, testable idea into a first useful release — including web and desktop software.",
-          fit: "Best fit: the user, problem and first essential workflow can be described without relying on a long feature list.",
-          skills: ["Research and product scope", "Desktop and web", "Launch and App Store experience"],
+          title: "Digital products",
+          text: "Turn your idea into a first release people can actually use, on the web or desktop.",
+          fit: "For founders ready to test a focused product idea.",
+          skills: ["Prototype and product design", "Web or desktop development", "Launch preparation"],
           priceFrom: "From US$10,000",
-          path: "/services/custom-software#products",
+          path: `${routePath("software", "en")}#products`,
           linkLabel: "See the product process"
         }
       ]
@@ -218,23 +200,21 @@ export const copy = {
     },
     about: {
       eyebrow: "About",
-      title: "A technical partner, not another vendor.",
+      title: "The person behind your next project.",
       text:
-        "I'm Marlon Coreas, an independent designer and developer based in El Salvador. I've taken my own products from an empty file to the Mac App Store and I work directly with businesses in the US and Latin America. There is no handoff to an anonymous delivery team: the person in the first conversation is the person responsible for the work.",
-      availability: "Taking on new client projects — working remotely with businesses across the US and Latin America.",
+        "I'm Marlon, an independent designer and developer based in El Salvador. I work with businesses in the US and Latin America, and build my own products too, including Peek Compress for Mac. We’ll talk directly, review progress together and take your project through to launch.",
+      availability: "Working directly with you, in English or Spanish.",
+      personalNote: "Away from the screen, I enjoy running and hiking in the mountains.",
+      location: "Based in El Salvador · Working worldwide",
+      personalRole: "Independent designer & developer",
       capabilitiesLabel: "Capabilities",
       capabilities: [
-        "Business websites",
-        "Web platforms and portals",
-        "Custom web applications",
-        "Online stores",
+        "Websites and online stores",
+        "Platforms and internal tools",
         "Booking and quoting systems",
-        "Internal dashboards and tools",
         "Automation and integrations",
-        "Desktop apps",
-        "English and Spanish",
-        "Google visibility",
-        "Ongoing support and evolution"
+        "Web and desktop apps",
+        "SEO and ongoing support"
       ],
       profileLinks: [
         { label: "GitHub", href: site.githubUrl },
@@ -263,7 +243,7 @@ export const copy = {
       eyebrow: "Before we talk",
       title: "Straight answers to common questions.",
       items: [
-        { question: "How much does a project cost?", answer: "It depends on the scope and risk. After an initial conversation, you receive a written proposal with deliverables, exclusions, schedule and price. The inquiry form asks for a budget range so I can recommend a realistic path." },
+        { question: "How much does a project cost?", answer: "It depends on the scope and risk. After an initial conversation, you receive a written proposal with deliverables, exclusions, schedule and price. You can optionally share a budget range to help me recommend a realistic path." },
         { question: "How long will it take?", answer: "A focused business website and a custom platform are different projects. I confirm the schedule only after understanding the content, integrations, feedback process and launch requirements." },
         { question: "Do you guarantee more leads or Google rankings?", answer: "No. I can build the message, user journey, performance and search foundations needed to compete, then measure what happens. No responsible developer can guarantee market behavior or rankings." },
         { question: "Who owns the finished work?", answer: "Ownership, accounts, licenses and handover are written into the proposal. You receive the agreed access and assets when the project obligations are complete." },
@@ -272,16 +252,18 @@ export const copy = {
     },
     contact: {
       eyebrow: "Have a project in mind?",
-      title: "Tell me the problem. I'll tell you honestly if I can help.",
+      title: "Let’s bring your idea to life.",
       text:
-        "Share the context, desired outcome, timing and a comfortable investment range. I will reply personally with the next useful step — even when that means recommending a smaller solution or a different specialist.",
-      button: "Send project details",
+        "Tell me what you have in mind or what you’d like to improve. You don’t need a finished brief. I’ll reply personally with a useful next step.",
+      button: "Send my message",
       emailLabel: "Or write directly",
       subject: "Project inquiry",
       responseTime: "Usually replies within two business days.",
       fields: {
+        optionalContext: "Add more context (optional)",
+        notSpecified: "Not specified",
         name: "Your name",
-        email: "Work email",
+        email: "Your email",
         company: "Company or current website",
         projectType: "What do you need?",
         projectOptions: [
@@ -290,8 +272,8 @@ export const copy = {
           { value: "product", label: "New digital product" },
           { value: "unsure", label: "Not sure yet" }
         ],
-        goal: "What problem should this solve?",
-        goalPlaceholder: "A few useful details about the current situation, who it affects and what should improve.",
+        goal: "Tell me about your idea",
+        goalPlaceholder: "What do you do, and what would you like to build or improve?",
         timeline: "When do you want to begin?",
         timelineOptions: [
           { value: "soon", label: "As soon as there is a good plan" },
@@ -337,7 +319,7 @@ export const copy = {
   es: {
     locale: "es_SV",
     languageName: "Español",
-    alternatePath: "/",
+    alternatePath: routePath("home", "en"),
     alternateLabel: "EN",
     skip: "Saltar al contenido",
     seo: {
@@ -359,12 +341,12 @@ export const copy = {
     hero: {
       status: "Disponible para nuevos proyectos",
       eyebrow: "Marlon Coreas · Diseñador de producto y desarrollador independiente",
-      titleStart: "Consultas más útiles.",
-      titleAccent: "Menos trabajo manual.",
+      titleStart: "Tu negocio tiene mucho que ofrecer.",
+      titleAccent: "Hagamos que se note.",
       intro:
-        "Planifico, diseño y desarrollo sitios bilingües y software a medida para negocios de servicios. Antes de prometer un resultado, definimos el problema, el alcance, el plazo y cómo debería verse el éxito.",
-      primary: "Ver la evidencia",
-      secondary: "Contarme el problema",
+        "Diseño y desarrollo sitios web bilingües y software a medida. Trabajas directamente conmigo, desde la primera conversación hasta el lanzamiento.",
+      primary: "Ver mis proyectos",
+      secondary: "Hablemos",
       proofLabel: "Comprobable públicamente",
       proof: [
         { value: "03", label: "productos funcionando" },
@@ -479,38 +461,38 @@ export const copy = {
     },
     services: {
       eyebrow: "En qué te puedo ayudar",
-      title: "Elige el problema, no una lista de tecnologías.",
+      title: "El siguiente paso para tu negocio.",
       intro:
-        "Estas son las tres situaciones donde puedo ser más útil. Todo proyecto empieza con un alcance, plazo y precio por escrito antes de desarrollar.",
+        "Un nuevo sitio, un proceso más simple o tu primer producto. Acordamos alcance, plazo y precio antes de empezar.",
       items: [
         {
           number: "01",
-          title: "Un sitio que gana confianza",
-          text: "Para negocios de servicios cuyo sitio actual es confuso, anticuado o difícil de encontrar. El trabajo comienza con lo que un cliente debe entender antes de contactarte.",
-          fit: "Mejor encaje: negocios de servicios establecidos, con trabajo real, una oferta clara y alguien listo para responder consultas.",
-          skills: ["Posicionamiento y contenido", "Español e inglés", "Móvil, accesibilidad y fundamentos SEO"],
+          title: "Sitios para negocios",
+          text: "Haz que tus clientes entiendan tus servicios, conozcan tu trabajo y sepan cómo contactarte.",
+          fit: "Para negocios que quieren mejorar su presencia en línea.",
+          skills: ["Contenido y diseño claros", "Español e inglés", "Móvil, accesibilidad y SEO"],
           priceFrom: "Desde US$2,000",
-          path: "/es/servicios/sitios-web",
-          linkLabel: "Explorar sitios para negocios"
+          path: routePath("websites", "es"),
+          linkLabel: "Ver qué incluye"
         },
         {
           number: "02",
           title: "Software a la medida",
-          text: "Plataformas web, portales para clientes, sistemas de cotización y reservas, paneles internos, integraciones entre las herramientas que ya pagas — software hecho a la forma en que opera tu negocio.",
-          fit: "Mejor encaje: un proceso repetitivo consume tiempo, crea errores o obliga al equipo a trabajar entre herramientas desconectadas.",
-          skills: ["Descubrimiento del proceso", "Una primera versión enfocada", "Soporte después del lanzamiento"],
+          text: "Conecta cotizaciones, reservas e información de clientes en herramientas que se adapten a tu equipo.",
+          fit: "Para equipos que dedican demasiado tiempo a tareas manuales.",
+          skills: ["Herramientas para tu proceso", "Sistemas conectados", "Una primera versión funcional"],
           priceFrom: "Desde US$8,000",
-          path: "/es/servicios/software-a-la-medida",
-          linkLabel: "Explorar software a medida"
+          path: routePath("software", "es"),
+          linkLabel: "Ver las opciones"
         },
         {
           number: "03",
-          title: "Productos desde cero",
-          text: "Para fundadores que necesitan convertir una idea específica y comprobable en una primera versión útil, incluyendo software web y de escritorio.",
-          fit: "Mejor encaje: el usuario, el problema y el primer flujo esencial pueden explicarse sin depender de una lista interminable de funciones.",
-          skills: ["Investigación y alcance", "Escritorio y web", "Lanzamiento y experiencia en App Store"],
+          title: "Productos digitales",
+          text: "Convierte tu idea en una primera versión que las personas puedan usar, en la web o en el escritorio.",
+          fit: "Para fundadores listos para probar una idea concreta.",
+          skills: ["Prototipo y diseño de producto", "Desarrollo web o de escritorio", "Preparación del lanzamiento"],
           priceFrom: "Desde US$10,000",
-          path: "/es/servicios/software-a-la-medida#productos",
+          path: `${routePath("software", "es")}#productos`,
           linkLabel: "Ver el proceso de producto"
         }
       ]
@@ -529,23 +511,21 @@ export const copy = {
     },
     about: {
       eyebrow: "Acerca de mí",
-      title: "Un socio técnico, no un proveedor más.",
+      title: "La persona detrás de tu próximo proyecto.",
       text:
-        "Soy Marlon Coreas, diseñador y desarrollador independiente en El Salvador. He llevado productos propios desde un archivo vacío hasta el Mac App Store y trabajo directamente con negocios de Estados Unidos y Latinoamérica. No hay un traspaso a un equipo anónimo: la persona de la primera conversación es la responsable del trabajo.",
-      availability: "Tomando nuevos proyectos de clientes — trabajo remoto con negocios en Estados Unidos y América Latina.",
+        "Soy Marlon, diseñador y desarrollador independiente en El Salvador. Trabajo con negocios de Estados Unidos y Latinoamérica, y también creo productos propios, como Peek Compress para Mac. Hablaremos directamente, revisaremos los avances juntos y llevaremos tu proyecto hasta el lanzamiento.",
+      availability: "Trabajo directo contigo, en español o en inglés.",
+      personalNote: "Fuera de la pantalla, disfruto correr y hacer trekking en la montaña.",
+      location: "Desde El Salvador · Para el mundo",
+      personalRole: "Diseñador y desarrollador independiente",
       capabilitiesLabel: "Capacidades",
       capabilities: [
-        "Sitios web para negocios",
-        "Plataformas y portales web",
-        "Aplicaciones web a la medida",
-        "Tiendas en línea",
-        "Sistemas de reservas y cotización",
-        "Paneles y herramientas internas",
+        "Sitios web y tiendas en línea",
+        "Plataformas y herramientas internas",
+        "Reservas y cotizaciones",
         "Automatizaciones e integraciones",
-        "Apps de escritorio",
-        "Español e inglés",
-        "Visibilidad en Google",
-        "Soporte y evolución continua"
+        "Apps web y de escritorio",
+        "SEO y soporte continuo"
       ],
       profileLinks: [
         { label: "GitHub", href: site.githubUrl },
@@ -574,7 +554,7 @@ export const copy = {
       eyebrow: "Antes de hablar",
       title: "Respuestas directas a preguntas comunes.",
       items: [
-        { question: "¿Cuánto cuesta un proyecto?", answer: "Depende del alcance y el riesgo. Después de una conversación inicial recibes una propuesta escrita con entregables, exclusiones, calendario y precio. El formulario pide un rango de inversión para recomendar un camino realista." },
+        { question: "¿Cuánto cuesta un proyecto?", answer: "Depende del alcance y el riesgo. Después de una conversación inicial recibes una propuesta escrita con entregables, exclusiones, calendario y precio. Puedes compartir un rango de inversión de forma opcional para que te recomiende un camino realista." },
         { question: "¿Cuánto tiempo toma?", answer: "Un sitio enfocado y una plataforma a medida son proyectos diferentes. Confirmo el calendario después de entender el contenido, las integraciones, el proceso de revisión y el lanzamiento." },
         { question: "¿Garantizas más clientes o posiciones en Google?", answer: "No. Puedo construir el mensaje, recorrido, rendimiento y fundamentos de búsqueda necesarios para competir y después medir lo que ocurre. Ningún desarrollador responsable puede garantizar el comportamiento del mercado o de un buscador." },
         { question: "¿Quién es dueño del trabajo terminado?", answer: "La propiedad, las cuentas, licencias y entrega se detallan en la propuesta. Recibes los accesos y activos acordados cuando se cumplen las obligaciones del proyecto." },
@@ -583,16 +563,18 @@ export const copy = {
     },
     contact: {
       eyebrow: "¿Tienes un proyecto en mente?",
-      title: "Cuéntame el problema. Te diré honestamente si puedo ayudar.",
+      title: "Hablemos de tu idea.",
       text:
-        "Comparte el contexto, el resultado esperado, el plazo y un rango de inversión cómodo. Responderé personalmente con el siguiente paso útil, aunque eso signifique recomendar una solución más pequeña u otro especialista.",
-      button: "Enviar detalles del proyecto",
+        "Cuéntame qué tienes en mente o qué te gustaría mejorar. No necesitas tener todo definido. Te responderé personalmente con un siguiente paso útil.",
+      button: "Enviar mensaje",
       emailLabel: "O escribe directamente",
       subject: "Consulta sobre proyecto",
       responseTime: "Normalmente respondo en dos días hábiles.",
       fields: {
+        optionalContext: "Agregar contexto (opcional)",
+        notSpecified: "Sin indicar",
         name: "Tu nombre",
-        email: "Correo de trabajo",
+        email: "Tu correo",
         company: "Empresa o sitio actual",
         projectType: "¿Qué necesitas?",
         projectOptions: [
@@ -601,8 +583,8 @@ export const copy = {
           { value: "product", label: "Un nuevo producto digital" },
           { value: "unsure", label: "Todavía no estoy seguro" }
         ],
-        goal: "¿Qué problema debería resolver?",
-        goalPlaceholder: "Algunos detalles útiles sobre la situación actual, a quién afecta y qué debería mejorar.",
+        goal: "Cuéntame tu idea",
+        goalPlaceholder: "¿A qué te dedicas y qué te gustaría crear o mejorar?",
         timeline: "¿Cuándo quieres comenzar?",
         timelineOptions: [
           { value: "soon", label: "En cuanto exista un buen plan" },

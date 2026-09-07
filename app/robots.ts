@@ -1,4 +1,4 @@
-import { siteUrl } from "../src/i18n";
+import { siteUrl } from "../src/config/site";
 
 export default function robots() {
   return {

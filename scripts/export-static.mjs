@@ -1,3 +1,5 @@
+import routePaths from "../src/config/routes.json" with { type: "json" };
+import { siteUrl } from "../src/config/site.ts";
 import { spawn, spawnSync } from "node:child_process";
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -6,19 +8,13 @@ import path from "node:path";
 // Builds the app, boots the production server, snapshots every route,
 // and assembles an upload-ready folder in dist/hostinger.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://marloncoreas.com";
+const SITE_URL = siteUrl;
 const PORT = 4180;
 const OUT = path.resolve("dist/hostinger");
 
+const pageRoutes = Object.values(routePaths).flatMap((translations) => Object.values(translations));
 const routes = [
-  { route: "/", file: "index.html" },
-  { route: "/es", file: "es/index.html" },
-  { route: "/services/websites", file: "services/websites/index.html" },
-  { route: "/services/custom-software", file: "services/custom-software/index.html" },
-  { route: "/es/servicios/sitios-web", file: "es/servicios/sitios-web/index.html" },
-  { route: "/es/servicios/software-a-la-medida", file: "es/servicios/software-a-la-medida/index.html" },
-  { route: "/privacy", file: "privacy/index.html" },
-  { route: "/es/privacidad", file: "es/privacidad/index.html" },
+  ...pageRoutes.map((route) => ({ route, file: route === "/" ? "index.html" : `${route.slice(1)}/index.html` })),
   { route: "/robots.txt", file: "robots.txt" },
   { route: "/sitemap.xml", file: "sitemap.xml" }
 ];
@@ -31,7 +27,8 @@ const build = spawnSync("npx", ["vinext", "build"], {
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
-const server = spawn("npx", ["vinext", "start"], {
+// The snapshot server is only used locally; do not bind it to every interface.
+const server = spawn("npx", ["vinext", "start", "--hostname", "127.0.0.1"], {
   stdio: "ignore",
   env: { ...process.env, NEXT_PUBLIC_SITE_URL: SITE_URL, PORT: String(PORT) }
 });
@@ -40,7 +37,7 @@ try {
   let ready = false;
   for (let attempt = 0; attempt < 40 && !ready; attempt++) {
     await new Promise((resolve) => setTimeout(resolve, 500));
-    ready = await fetch(`http://localhost:${PORT}/`).then((r) => r.ok, () => false);
+    ready = await fetch(`http://127.0.0.1:${PORT}/`).then((r) => r.ok, () => false);
   }
   if (!ready) throw new Error(`Production server did not start on port ${PORT}`);
 
@@ -50,8 +47,10 @@ try {
     filter: (source) => !source.includes(`${path.sep}.vite`)
   });
 
+  await cp("src/styles/tokens.css", path.join(OUT, "theme.css"));
+
   for (const { route, file } of routes) {
-    const response = await fetch(`http://localhost:${PORT}${route}`);
+    const response = await fetch(`http://127.0.0.1:${PORT}${route}`);
     if (!response.ok) throw new Error(`${route} responded ${response.status}`);
     const target = path.join(OUT, file);
     await mkdir(path.dirname(target), { recursive: true });
@@ -73,13 +72,7 @@ RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
 
-RewriteRule ^es/?$ es/index.html [L]
-RewriteRule ^services/websites/?$ services/websites/index.html [L]
-RewriteRule ^services/custom-software/?$ services/custom-software/index.html [L]
-RewriteRule ^es/servicios/sitios-web/?$ es/servicios/sitios-web/index.html [L]
-RewriteRule ^es/servicios/software-a-la-medida/?$ es/servicios/software-a-la-medida/index.html [L]
-RewriteRule ^privacy/?$ privacy/index.html [L]
-RewriteRule ^es/privacidad/?$ es/privacidad/index.html [L]
+${routes.filter(({ route }) => route !== "/" && !route.includes(".")).map(({ route, file }) => `RewriteRule ^${route.slice(1)}/?$ ${file} [L]`).join("\n")}
 
 # The mailer library is only ever loaded by contact.php, never requested directly.
 RewriteRule ^api/vendor/ - [F,L]

@@ -30,7 +30,13 @@ This builds the app, snapshots every public page plus `robots.txt` and `sitemap.
 
 ## Update personal details
 
-The shared email address, social links, project links, and all English/Spanish copy live in [`src/i18n.ts`](src/i18n.ts). Update the `site` object first when a dedicated portfolio email becomes available. The canonical site URL is also centralized there as `siteUrl`.
+Shared contact details, social links, project URLs and the canonical domain live in [`src/config/site.ts`](src/config/site.ts). Home-page copy lives in [`src/i18n.ts`](src/i18n.ts); service and privacy copy live in `src/content/`.
+
+All pages inherit one header and footer from `SiteRoot`. Colors, typography and shared dimensions are centralized in [`src/styles/tokens.css`](src/styles/tokens.css). Page paths and language equivalents live in [`src/config/routes.json`](src/config/routes.json), which also drives the sitemap and static export.
+
+See [the project structure guide](docs/project-structure.md) for the component map, styling conventions and steps for adding pages.
+
+Run `npm run check`, then `npm run export:hostinger` and `npm run test:export` to validate the source and all exported pages. These scripts require Node.js 22.18 or newer.
 
 ## Contact form
 
@@ -42,7 +48,7 @@ Mail is sent over authenticated SMTP through the domain mailbox, so it carries D
 
 1. Create or reuse the `hello@marloncoreas.com` mailbox in hPanel and note its password.
 2. Copy `public/api/config.example.php` to `contact-config.php` and upload it **one level above** `public_html` (e.g. `~/domains/marloncoreas.com/contact-config.php`), then fill in `smtp_pass`.
-3. Optionally set `booking_url` to include a scheduling link in the confirmation email, and set the same URL as `site.bookingUrl` in [`src/i18n.ts`](src/i18n.ts) to show the button on the success panel.
+3. Optionally set `booking_url` to include a scheduling link in the confirmation email, and set the same URL as `site.bookingUrl` in [`src/config/site.ts`](src/config/site.ts) to show the button on the success panel.
 
 Until that file exists the form still works — it falls back to PHP `mail()` for the inquiry and skips the confirmation, rather than breaking between a deploy and the config upload. Check `contact-leads.log` (written above the document root) to see which transport was used: `via=smtp` means the mailer is live.
 

@@ -1,32 +1,19 @@
-import { copy, site, siteUrl, type Locale } from "../src/i18n";
-import ClientEnhancements from "./ClientEnhancements";
+import ActionLink from "./ui/ActionLink";
+import Arrow from "./ui/ArrowIcon";
+import ContactSection from "./portfolio/ContactSection";
+import SectionHeading from "./ui/SectionHeading";
+import { routePath } from "../src/config/routes";
+import { site, siteUrl } from "../src/config/site";
+import { copy, type Locale } from "../src/i18n";
+import ProjectCarousel from "./ProjectCarousel";
 
 type Props = {
   lang: Locale;
 };
 
-function Arrow() {
-  return (
-    <svg viewBox="0 0 20 20" aria-hidden="true">
-      <path
-        d="M4.5 15.5 15 5m0 0H7m8 0v8"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 export default function PortfolioPage({ lang }: Props) {
   const t = copy[lang];
-  const mailto = `mailto:${site.email}?subject=${encodeURIComponent(t.contact.subject)}`;
-  const year = new Date().getFullYear();
-  const canonical = lang === "en" ? `${siteUrl}/` : `${siteUrl}/es`;
-  const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-  const privacyPath = lang === "en" ? "/privacy" : "/es/privacidad";
+  const canonical = `${siteUrl}${routePath("home", lang)}`;
 
   // One person across both languages, so the node carries a language-neutral
   // @id and every other node points at it instead of repeating the object.
@@ -126,52 +113,9 @@ export default function PortfolioPage({ lang }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      <a className="skip-link" href="#content">
-        {t.skip}
-      </a>
-
-      <header className="site-header" data-header>
-        <div className="shell header-inner">
-          <a className="brand" href={lang === "en" ? "/" : "/es"} aria-label="Portfolio home">
-            <span className="brand-glyph" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-            <span className="brand-label">
-              BUILD<span>/</span>SHIP
-            </span>
-          </a>
-
-          <nav className="desktop-nav" aria-label={lang === "en" ? "Primary navigation" : "Navegación principal"}>
-            <a href="#work">{t.nav.work}</a>
-            <a href="#services">{t.nav.services}</a>
-            <a href="#about">{t.nav.about}</a>
-          </nav>
-
-          <div className="header-actions">
-            <a
-              className="language-switch"
-              href={t.alternatePath}
-              hrefLang={lang === "en" ? "es" : "en"}
-              lang={lang === "en" ? "es" : "en"}
-              aria-label={lang === "en" ? "Ver en español" : "View in English"}
-            >
-              {t.alternateLabel}
-            </a>
-            <a className="header-cta" href="#contact" data-track="header_contact_click">
-              <span>{t.nav.contact}</span>
-              <span className="icon">
-                <Arrow />
-              </span>
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <main id="content">
+      <main id="content" tabIndex={-1}>
         <section className="hero section-grid" aria-labelledby="hero-title">
-          <div className="hero-glow" aria-hidden="true" />
+
           <div className="shell hero-inner">
             <div className="hero-copy" data-reveal>
               <div className="availability">
@@ -179,7 +123,7 @@ export default function PortfolioPage({ lang }: Props) {
                 {t.hero.status}
               </div>
 
-              <p className="eyebrow">{t.hero.eyebrow}</p>
+              <p className="eyebrow">{site.name}<span className="hero-role">{t.hero.eyebrow.split(" · ")[1]}</span></p>
               <h1 id="hero-title">
                 <span>{t.hero.titleStart}</span>
                 <em>{t.hero.titleAccent}</em>
@@ -187,52 +131,15 @@ export default function PortfolioPage({ lang }: Props) {
               <p className="hero-intro">{t.hero.intro}</p>
 
               <div className="hero-actions">
-                <a className="button button-primary" href="#work" data-track="hero_evidence_click">
-                  <span>{t.hero.primary}</span>
-                  <span className="icon">
-                    <Arrow />
-                  </span>
-                </a>
-                <a className="button button-ghost" href="#contact" data-track="hero_contact_click">
-                  {t.hero.secondary}
-                </a>
+                <ActionLink href="#work" data-track="hero_evidence_click" arrow>{t.hero.primary}</ActionLink>
+                <ActionLink variant="ghost" href="#contact" data-track="hero_contact_click">{t.hero.secondary}</ActionLink>
               </div>
             </div>
 
-            <div className="hero-system" data-reveal data-spotlight>
-              <div className="system-orbit orbit-one" aria-hidden="true" />
-              <div className="system-orbit orbit-two" aria-hidden="true" />
-              <div className="system-card">
-                <div className="system-topline">
-                  <span>{t.hero.consoleEyebrow}</span>
-                  <span className="system-status">
-                    <i /> online
-                  </span>
-                </div>
-                <h2>{t.hero.consoleTitle}</h2>
-                <div className="system-code" aria-label={t.hero.consoleTitle}>
-                  {t.hero.consoleLines.map((line) => (
-                    <div key={line.key}>
-                      <span>{line.key}</span>
-                      <strong>{line.value}</strong>
-                    </div>
-                  ))}
-                </div>
-                <div className="shipping-card">
-                  <div className="shipping-icon" aria-hidden="true">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <div>
-                    <small>{t.hero.shipping}</small>
-                    <p>{t.hero.shippingValue}</p>
-                  </div>
-                </div>
-              </div>
-              <span className="system-coordinate coordinate-one">13.69°N</span>
-              <span className="system-coordinate coordinate-two">DEV/26</span>
-            </div>
+            <ProjectCarousel lang={lang} projects={t.work.items.flatMap((project) => project.image ? [{
+              number: project.number, title: project.title, image: project.image,
+              alt: project.alt, height: project.imageHeight ?? 800
+            }] : [])} />
 
             <div className="hero-proof" data-reveal>
               <p>{t.hero.proofLabel}</p>
@@ -250,13 +157,7 @@ export default function PortfolioPage({ lang }: Props) {
 
         <section className="work section-grid" id="work" aria-labelledby="work-title">
           <div className="shell">
-            <div className="section-heading" data-reveal>
-              <p className="eyebrow">{t.work.eyebrow}</p>
-              <div>
-                <h2 id="work-title">{t.work.title}</h2>
-                <p>{t.work.intro}</p>
-              </div>
-            </div>
+            <SectionHeading id="work-title" eyebrow={t.work.eyebrow} title={t.work.title} intro={t.work.intro} />
 
             <div className="project-list">
               {t.work.items.map((project, index) => {
@@ -270,9 +171,11 @@ export default function PortfolioPage({ lang }: Props) {
                 return (
                 <article
                   className={`project-card theme-${project.theme}`}
-                  data-reveal
                   data-spotlight
+                  data-reveal
+
                   key={project.number}
+                  id={`project-${project.number}`}
                 >
                   <div className="project-visual">
                     {projectImage ? (
@@ -321,6 +224,8 @@ export default function PortfolioPage({ lang }: Props) {
                       <h3>{project.title}</h3>
                       <p className="project-description">{project.description}</p>
                       <p className="project-role">{project.role}</p>
+                      <details className="project-details">
+                        <summary>{lang === "es" ? "Detrás del proyecto" : "Behind the project"}<span aria-hidden="true">+</span></summary>
                       <dl className="project-evidence">
                         <div>
                           <dt>{lang === "en" ? "Challenge" : "Problema"}</dt>
@@ -353,6 +258,7 @@ export default function PortfolioPage({ lang }: Props) {
                           </div>
                         ) : null}
                       </dl>
+                      </details>
                       <ul
                         className="tag-list"
                         aria-label={lang === "en" ? "Project characteristics" : "Características del proyecto"}
@@ -392,15 +298,10 @@ export default function PortfolioPage({ lang }: Props) {
         {t.testimonials.items.length > 0 ? (
           <section className="testimonials section-grid" aria-labelledby="testimonials-title">
             <div className="shell">
-              <div className="section-heading" data-reveal>
-                <p className="eyebrow">{t.testimonials.eyebrow}</p>
-                <div>
-                  <h2 id="testimonials-title">{t.testimonials.title}</h2>
-                </div>
-              </div>
+              <SectionHeading id="testimonials-title" eyebrow={t.testimonials.eyebrow} title={t.testimonials.title} />
               <div className="testimonial-list">
                 {t.testimonials.items.map((item) => (
-                  <figure className="testimonial-card" data-reveal data-spotlight key={item.name}>
+                  <figure className="testimonial-card" data-spotlight data-reveal key={item.name}>
                     <span className="testimonial-mark" aria-hidden="true">&ldquo;</span>
                     <blockquote>
                       <p>{item.quote}</p>
@@ -421,22 +322,15 @@ export default function PortfolioPage({ lang }: Props) {
 
         <section className="services section-grid" id="services" aria-labelledby="services-title">
           <div className="shell">
-            <div className="section-heading section-heading-wide" data-reveal>
-              <p className="eyebrow">{t.services.eyebrow}</p>
-              <div>
-                <h2 id="services-title">{t.services.title}</h2>
-                <p>{t.services.intro}</p>
-              </div>
-            </div>
+            <SectionHeading id="services-title" eyebrow={t.services.eyebrow} title={t.services.title} intro={t.services.intro} wide />
 
             <div className="service-grid">
               {t.services.items.map((service) => (
-                <article className="service-card" data-reveal data-spotlight key={service.number}>
-                  <div className="service-number">{service.number}</div>
+                <article className="service-card" data-spotlight data-reveal key={service.number}>
+                  <div className="service-topline"><span className="service-number">{service.number}</span><span className="service-price">{service.priceFrom}</span></div>
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
                   <p className="service-fit">{service.fit}</p>
-                  <p className="service-price">{service.priceFrom}</p>
                   <ul>
                     {service.skills.map((skill) => (
                       <li key={skill}>{skill}</li>
@@ -476,14 +370,14 @@ export default function PortfolioPage({ lang }: Props) {
 
         <section className="about section-grid" id="about" aria-labelledby="about-title">
           <div className="shell about-inner">
-            <div className="about-mark" aria-hidden="true" data-reveal>
-              <span className="about-bracket">[</span>
-              <div className="about-core">
-                <span>think</span>
-                <strong>+</strong>
-                <span>make</span>
+            <div className="personal-card" data-spotlight data-reveal>
+              <p className="personal-location">{t.about.location}</p>
+              <span className="personal-monogram" aria-hidden="true">mc<span>.</span></span>
+              <div className="personal-identity">
+                <p>{site.name}</p>
+                <span>{t.about.personalRole}</span>
               </div>
-              <span className="about-bracket">]</span>
+              <p className="personal-note">{t.about.personalNote}</p>
             </div>
 
             <div className="about-copy" data-reveal>
@@ -516,12 +410,7 @@ export default function PortfolioPage({ lang }: Props) {
 
         <section className="fit section-grid" aria-labelledby="fit-title">
           <div className="shell">
-            <div className="section-heading section-heading-wide" data-reveal>
-              <p className="eyebrow">{t.fit.eyebrow}</p>
-              <div>
-                <h2 id="fit-title">{t.fit.title}</h2>
-              </div>
-            </div>
+            <SectionHeading id="fit-title" eyebrow={t.fit.eyebrow} title={t.fit.title} wide />
             <div className="fit-grid">
               <article className="fit-card fit-card-positive" data-reveal>
                 <h3>{t.fit.goodTitle}</h3>
@@ -556,200 +445,9 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </section>
 
-        <section className="contact section-grid" id="contact" aria-labelledby="contact-title">
-          <div className="shell">
-            <div className="contact-panel" data-reveal data-spotlight>
-              <div className="contact-grid" aria-hidden="true" />
-              <p className="eyebrow">{t.contact.eyebrow}</p>
-              <h2 id="contact-title">{t.contact.title}</h2>
-              <p className="contact-intro">{t.contact.text}</p>
-              <section
-                className="contact-result"
-                data-contact-status
-                data-success-kicker={t.contact.fields.successKicker}
-                data-success-title={t.contact.fields.successTitle}
-                data-success={t.contact.fields.success}
-                data-success-plain={t.contact.fields.successPlain}
-                data-error-kicker={t.contact.fields.errorKicker}
-                data-error-title={t.contact.fields.errorTitle}
-                data-error={t.contact.fields.error}
-                role="status"
-                aria-live="polite"
-                tabIndex={-1}
-                hidden
-              >
-                <span className="contact-result-icon" aria-hidden="true" data-contact-result-icon>✓</span>
-                <div className="contact-result-copy">
-                  <p className="contact-result-kicker" data-contact-result-kicker />
-                  <h3 data-contact-result-title />
-                  <p className="contact-result-message" data-contact-result-message />
-                  <div className="contact-result-actions contact-result-success-actions">
-                    {site.bookingUrl ? (
-                      <a
-                        className="button button-light"
-                        href={site.bookingUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        data-track="contact_success_book"
-                        data-contact-booking
-                      >
-                        <span>{t.contact.fields.bookAction}</span>
-                        <span className="icon"><Arrow /></span>
-                      </a>
-                    ) : (
-                      <a className="button button-light" href="#work" data-track="contact_success_work">
-                        <span>{t.contact.fields.successAction}</span>
-                        <span className="icon"><Arrow /></span>
-                      </a>
-                    )}
-                    <button type="button" className="contact-result-secondary" data-contact-reset>
-                      {t.contact.fields.sendAnother}
-                    </button>
-                  </div>
-                  <div className="contact-result-actions contact-result-error-actions">
-                    <a className="button button-light" href={mailto} data-track="contact_error_email">
-                      <span>{t.contact.fields.emailAction}</span>
-                      <span className="icon"><Arrow /></span>
-                    </a>
-                  </div>
-                </div>
-              </section>
-              <form className="contact-form" action="/api/contact.php" method="post" data-contact-form>
-                <input type="hidden" name="language" value={lang} />
-                <input type="hidden" name="redirect" value={lang === "en" ? "/" : "/es"} />
-                {/* Filled in at submit time with how long the form was open. A
-                    bot posting straight at the endpoint leaves it empty, which
-                    the server scores rather than rejects. */}
-                <input type="hidden" name="elapsed" value="" data-contact-elapsed />
-                <div className="contact-honeypot" aria-hidden="true">
-                  <label htmlFor={`website-${lang}`}>Website</label>
-                  <input id={`website-${lang}`} name="website" type="text" tabIndex={-1} autoComplete="off" />
-                </div>
-                <div className="form-field">
-                  <label htmlFor={`name-${lang}`}>{t.contact.fields.name}</label>
-                  <input id={`name-${lang}`} name="name" type="text" autoComplete="name" maxLength={100} required />
-                </div>
-                <div className="form-field">
-                  <label htmlFor={`email-${lang}`}>{t.contact.fields.email}</label>
-                  <input id={`email-${lang}`} name="email" type="email" autoComplete="email" maxLength={160} required />
-                </div>
-                <div className="form-field form-field-wide">
-                  <label htmlFor={`company-${lang}`}>{t.contact.fields.company}</label>
-                  <input id={`company-${lang}`} name="company" type="text" autoComplete="organization" maxLength={220} />
-                </div>
-                <div className="form-field">
-                  <label htmlFor={`project-type-${lang}`}>{t.contact.fields.projectType}</label>
-                  <select id={`project-type-${lang}`} name="project_type" required defaultValue="">
-                    <option value="" disabled>—</option>
-                    {t.contact.fields.projectOptions.map((option) => (
-                      <option value={option.value} key={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-field">
-                  <label htmlFor={`timeline-${lang}`}>{t.contact.fields.timeline}</label>
-                  <select id={`timeline-${lang}`} name="timeline" required defaultValue="">
-                    <option value="" disabled>—</option>
-                    {t.contact.fields.timelineOptions.map((option) => (
-                      <option value={option.value} key={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-field form-field-wide">
-                  <label htmlFor={`budget-${lang}`}>{t.contact.fields.budget}</label>
-                  <select id={`budget-${lang}`} name="budget" required defaultValue="">
-                    <option value="" disabled>—</option>
-                    {t.contact.fields.budgetOptions.map((option) => (
-                      <option value={option.value} key={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-field form-field-wide">
-                  <label htmlFor={`goal-${lang}`}>{t.contact.fields.goal}</label>
-                  <textarea
-                    id={`goal-${lang}`}
-                    name="goal"
-                    placeholder={t.contact.fields.goalPlaceholder}
-                    rows={6}
-                    maxLength={2500}
-                    required
-                  />
-                </div>
-                <label className="consent-field form-field-wide">
-                  <input type="checkbox" name="consent" value="yes" required />
-                  <span>{t.contact.fields.consent} <a href={privacyPath}>{t.contact.fields.privacy}</a>.</span>
-                </label>
-                <div className="contact-submit form-field-wide">
-                  <button className="button button-light" type="submit" data-contact-submit data-sending={t.contact.fields.sending}>
-                    <span data-contact-submit-label>{t.contact.button}</span>
-                    <span className="icon"><Arrow /></span>
-                  </button>
-                  <div>
-                    <span>{t.contact.responseTime}</span>
-                    <p>{t.contact.emailLabel} <a href={mailto} data-track="email_click">{site.email}</a></p>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </section>
+        <ContactSection lang={lang} />
       </main>
 
-      <footer className="site-footer section-grid">
-        <div className="shell">
-          <div className="footer-top">
-            <a className="brand" href={lang === "en" ? "/" : "/es"} aria-label="Portfolio home">
-              <span className="brand-glyph" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-              <span className="brand-label">
-                BUILD<span>/</span>SHIP
-              </span>
-            </a>
-            <p>{t.footer.tagline}</p>
-          </div>
-          <div className="footer-links">
-            <div>
-              <p>{t.footer.navigation}</p>
-              <a href="#work">{t.nav.work}</a>
-              <a href="#services">{t.nav.services}</a>
-              <a href="#about">{t.nav.about}</a>
-            </div>
-            <div>
-              <p>{t.footer.projects}</p>
-              <a href={site.peekUrl} target="_blank" rel="noreferrer">
-                Peek Compress
-              </a>
-              <a href={site.remodelingUrl} target="_blank" rel="noreferrer">
-                NC Home Remodeling
-              </a>
-              <a href={site.loanpilotUrl} target="_blank" rel="noreferrer">
-                LoanPilot
-              </a>
-            </div>
-            <div>
-              <p>{t.footer.connect}</p>
-              <a href={site.githubUrl} target="_blank" rel="noreferrer">
-                GitHub
-              </a>
-              <a href={site.linkedinUrl} target="_blank" rel="noreferrer">
-                LinkedIn
-              </a>
-              <a href={mailto}>{site.email}</a>
-              <a href={t.alternatePath}>{lang === "en" ? "Español" : "English"}</a>
-              <a href={privacyPath}>{t.footer.privacy}</a>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <span>© {year}</span>
-            <span>{t.footer.legal}</span>
-            <a href="#content">{t.footer.backToTop} ↑</a>
-          </div>
-        </div>
-      </footer>
-      <ClientEnhancements analyticsId={analyticsId} />
     </>
   );
 }

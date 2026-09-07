@@ -7,7 +7,9 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "preview": "vinext start",
-    "export:hostinger": "node scripts/export-static.mjs"
+    "export:hostinger": "node scripts/export-static.mjs",
+    "check": "tsc --noEmit && node --test tests/structure.test.mjs",
+    "test:export": "node --test tests/export.test.mjs"
   },
   "dependencies": {
     "react": "^19.2.4",

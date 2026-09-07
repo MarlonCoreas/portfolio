@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "vinext/shims/navigation";
 
 type Props = {
   analyticsId?: string;
@@ -14,43 +15,97 @@ declare global {
 }
 
 export default function ClientEnhancements({ analyticsId }: Props) {
+  const pathname = usePathname();
+
   useEffect(() => {
     const header = document.querySelector("[data-header]");
     const updateHeader = () => header?.classList.toggle("is-scrolled", window.scrollY > 18);
     updateHeader();
     window.addEventListener("scroll", updateHeader, { passive: true });
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reducedMotion = motionPreference.matches;
     const revealElements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     let observer: IntersectionObserver | undefined;
 
-    if (reducedMotion) {
-      revealElements.forEach((element) => element.classList.add("is-visible"));
-    } else {
-      observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-visible");
-              observer?.unobserve(entry.target);
-            }
+    const revealAll = () => {
+      observer?.disconnect();
+      revealElements.forEach((element) => {
+        element.classList.remove("reveal-ready");
+        element.classList.add("is-visible");
+      });
+    };
+
+    if (!reducedMotion && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer?.unobserve(entry.target);
           }
-        },
-        { threshold: 0.12 }
-      );
-      revealElements.forEach((element) => observer?.observe(element));
+        }
+      }, { threshold: 0.05, rootMargin: "0px 0px -24px 0px" });
+      revealElements.forEach((element) => {
+        // Keep the initial viewport and restored scroll positions immediately readable.
+        if (element.getBoundingClientRect().top >= window.innerHeight) {
+          element.classList.add("reveal-ready");
+          observer?.observe(element);
+        } else {
+          element.classList.add("is-visible");
+        }
+      });
+    } else {
+      revealAll();
     }
 
     const spotlightElements = Array.from(document.querySelectorAll<HTMLElement>("[data-spotlight]"));
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    let spotlightFrame = 0;
+    let spotlightTarget: HTMLElement | null = null;
+    let spotlightX = 0;
+    let spotlightY = 0;
     const updateSpotlight = (event: PointerEvent) => {
-      const element = event.currentTarget as HTMLElement;
-      const rect = element.getBoundingClientRect();
-      element.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
-      element.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+      if (reducedMotion || !finePointer.matches || event.pointerType === "touch") return;
+      spotlightTarget = event.currentTarget as HTMLElement;
+      const rect = spotlightTarget.getBoundingClientRect();
+      spotlightX = event.clientX - rect.left;
+      spotlightY = event.clientY - rect.top;
+      if (spotlightFrame) return;
+      spotlightFrame = window.requestAnimationFrame(() => {
+        spotlightFrame = 0;
+        if (!spotlightTarget) return;
+        spotlightTarget.style.setProperty("--spot-x", `${spotlightX}px`);
+        spotlightTarget.style.setProperty("--spot-y", `${spotlightY}px`);
+        spotlightTarget.classList.add("is-spotlit");
+      });
     };
-    if (!reducedMotion) {
-      spotlightElements.forEach((element) => element.addEventListener("pointermove", updateSpotlight));
-    }
+    const clearSpotlight = (event: PointerEvent) => {
+      const element = event.currentTarget as HTMLElement;
+      element.classList.remove("is-spotlit");
+      if (spotlightTarget === element) spotlightTarget = null;
+    };
+    const resetSpotlights = () => {
+      window.cancelAnimationFrame(spotlightFrame);
+      spotlightFrame = 0;
+      spotlightTarget = null;
+      spotlightElements.forEach((element) => {
+        element.classList.remove("is-spotlit");
+        element.style.removeProperty("--spot-x");
+        element.style.removeProperty("--spot-y");
+      });
+    };
+    spotlightElements.forEach((element) => {
+      element.addEventListener("pointermove", updateSpotlight, { passive: true });
+      element.addEventListener("pointerleave", clearSpotlight);
+      element.addEventListener("pointercancel", clearSpotlight);
+    });
+    const updateMotionPreference = () => {
+      reducedMotion = motionPreference.matches;
+      if (reducedMotion) revealAll();
+      resetSpotlights();
+    };
+    motionPreference.addEventListener("change", updateMotionPreference);
+    finePointer.addEventListener("change", resetSpotlights);
 
     const status = new URLSearchParams(window.location.search).get("contact");
     const statusElement = document.querySelector<HTMLElement>("[data-contact-status]");
@@ -185,12 +240,20 @@ export default function ClientEnhancements({ analyticsId }: Props) {
     return () => {
       window.removeEventListener("scroll", updateHeader);
       observer?.disconnect();
-      spotlightElements.forEach((element) => element.removeEventListener("pointermove", updateSpotlight));
+      revealAll();
+      resetSpotlights();
+      spotlightElements.forEach((element) => {
+        element.removeEventListener("pointermove", updateSpotlight);
+        element.removeEventListener("pointerleave", clearSpotlight);
+        element.removeEventListener("pointercancel", clearSpotlight);
+      });
+      motionPreference.removeEventListener("change", updateMotionPreference);
+      finePointer.removeEventListener("change", resetSpotlights);
       trackedElements.forEach((element) => element.removeEventListener("click", handleTrackedClick));
       contactForm?.removeEventListener("submit", handleSubmit);
       resetContactButton?.removeEventListener("click", resetContact);
     };
-  }, [analyticsId]);
+  }, [analyticsId, pathname]);
 
   return null;
 }
