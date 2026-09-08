@@ -19,7 +19,7 @@ El movimiento ayuda a presentar el contenido por etapas: animación del producto
 | Acciones | Azul `#0071e3`; enlaces sobre oscuro `#2997ff`, sobre claro `#0066cc`. |
 | Tipografía | Fuente del sistema, con prioridad a la tipografía nativa de Apple; titulares grandes, espaciado compacto y texto secundario legible. |
 | Portada | Titular, entrada breve, dos acciones y las tres pruebas verificables. Sin imagen ni carrusel: los proyectos se muestran una sola vez, en su propia sección. |
-| Proyectos | Imagen panorámica, resumen visible, enlaces públicos y desglose bajo «Detrás del proyecto». |
+| Proyectos | Imagen panorámica, resumen visible, enlaces públicos y desglose bajo «Detrás del proyecto». Cada proyecto tiene su acento: azul, ámbar, menta y violeta. |
 | Servicios | Tarjetas blancas sobre fondo gris, más espacio y menos elementos ornamentales. |
 | Movimiento | Entrada del texto de portada y aparición de secciones de 0,8–0,9 segundos, escalonada 80 ms entre tarjetas hermanas. |
 | Iluminación | Halo que sigue al cursor en proyectos, servicios, testimonios y contacto. Azul sobre grafito y variaciones suaves de azul, índigo y cian sobre blanco. |
@@ -86,3 +86,23 @@ la portada, propiedad por propiedad, a 1440, 820 y 400 píxeles: cero diferencia
 La única excepción es intencionada: el escalonado de 80 y 160 ms entre tarjetas
 existía en el CSS pero la capa `theme` lo anulaba con un `transition` abreviado;
 ahora sí se aplica.
+
+### Un acento por proyecto
+
+`theme-coral`, `theme-teal` y `theme-violet` no pintaban nada: el orden de capas
+hacía que `.project-card` a secas ganara al modificador, y los dos primeros
+tomaban prestados `--color-error` y `--color-success`, que significan un estado,
+no una identidad.
+
+Ahora son `theme-sky`, `theme-amber`, `theme-mint` y `theme-violet`, con cuatro
+tokens propios en `tokens.css`. Se eligieron dentro de una banda estrecha de
+contraste sobre `--color-surface` (6,7:1 a 7,3:1) para que ninguna tarjeta grite
+más que las demás y para que las etiquetas pequeñas de «Detrás del proyecto»
+superen 4,5:1. Los modificadores se declaran como `.project-card.theme-*`, junto
+a la regla que fija el valor por defecto, para que dos clases ganen siempre al
+selector de una sola y el acento no vuelva a depender del orden de importación.
+
+El acento tiñe el borde al pasar el cursor, las etiquetas del desglose, el
+enlace de evidencia y el hover de los enlaces del proyecto.
+
+De la tarjeta «mc.» se quitó la línea sobre correr y hacer trekking.

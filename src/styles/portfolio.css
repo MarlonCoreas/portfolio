@@ -1108,6 +1108,24 @@
     --project-accent: var(--color-accent-mid);
   }
 
+  /* Two classes, so the accent a card asks for cannot be lost to whichever
+     file the plain .project-card rule happens to be imported from. */
+  .project-card.theme-sky {
+    --project-accent: var(--color-project-sky);
+  }
+
+  .project-card.theme-amber {
+    --project-accent: var(--color-project-amber);
+  }
+
+  .project-card.theme-mint {
+    --project-accent: var(--color-project-mint);
+  }
+
+  .project-card.theme-violet {
+    --project-accent: var(--color-project-violet);
+  }
+
   .project-card:hover {
     transform: none;
   }
@@ -1428,15 +1446,6 @@
     color: var(--color-accent-muted);
     font-size: .9375rem;
     line-height: 1.5;
-  }
-
-  .personal-note {
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid color-mix(in srgb, var(--color-white) 10%, transparent);
-    color: var(--color-accent-muted);
-    font-size: .9375rem;
-    line-height: 1.65;
   }
 
   .about-inner {

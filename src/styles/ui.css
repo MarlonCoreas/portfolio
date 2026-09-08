@@ -77,18 +77,6 @@
     color: var(--color-text-secondary);
   }
 
-  .theme-coral {
-    --project-accent: var(--color-error);
-  }
-
-  .theme-teal {
-    --project-accent: var(--color-success);
-  }
-
-  .theme-violet {
-    --project-accent: var(--color-accent-mid);
-  }
-
   .evidence-highlight dd {
     color: var(--color-text);
   }

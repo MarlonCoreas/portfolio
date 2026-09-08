@@ -63,7 +63,7 @@ export const copy = {
           image: "/images/peek-workspace.webp",
           imageHeight: 750,
           alt: "Peek Compress displaying the contents of an archive on macOS",
-          theme: "lime",
+          theme: "sky",
           links: [
             { label: "View live project", href: site.peekUrl },
             { label: "App Store", href: site.peekAppStoreUrl }
@@ -83,7 +83,7 @@ export const copy = {
           image: "/images/nc-remodeling.webp",
           imageHeight: 800,
           alt: "Interior remodeling and custom cabinetry project featured on the NC Home Remodeling website",
-          theme: "coral",
+          theme: "amber",
           links: [{ label: "View live project", href: site.remodelingUrl }]
         },
         {
@@ -110,7 +110,7 @@ export const copy = {
           image: "/images/loanpilot-seven-tools.webp",
           imageHeight: 884,
           alt: "The LoanPilot tool directory showing its seven calculators: loans, credit card, severance, Christmas bonus, overtime, payroll withholdings and annual tax",
-          theme: "teal",
+          theme: "mint",
           links: [{ label: "View live project", href: site.loanpilotUrl }]
         },
         {
@@ -208,7 +208,6 @@ export const copy = {
       text:
         "I'm Marlon, an independent designer and developer based in El Salvador. I work with businesses in the US and Latin America, and build my own products too, including Peek Compress for Mac. We’ll talk directly, review progress together and take your project through to launch.",
       availability: "Working directly with you, in English or Spanish.",
-      personalNote: "Away from the screen, I enjoy running and hiking in the mountains.",
       location: "Based in El Salvador · Working worldwide",
       personalRole: "Independent designer & developer",
       capabilitiesLabel: "Capabilities",
@@ -359,7 +358,7 @@ export const copy = {
           image: "/images/peek-workspace.webp",
           imageHeight: 750,
           alt: "Peek Compress mostrando el contenido de un archivo comprimido en macOS",
-          theme: "lime",
+          theme: "sky",
           links: [
             { label: "Ver proyecto", href: site.peekUrl },
             { label: "App Store", href: site.peekAppStoreUrl }
@@ -379,7 +378,7 @@ export const copy = {
           image: "/images/nc-remodeling.webp",
           imageHeight: 800,
           alt: "Proyecto de remodelación y gabinetes a medida presentado en el sitio de NC Home Remodeling",
-          theme: "coral",
+          theme: "amber",
           links: [{ label: "Ver proyecto", href: site.remodelingUrl }]
         },
         {
@@ -406,7 +405,7 @@ export const copy = {
           image: "/images/loanpilot-seven-tools.webp",
           imageHeight: 884,
           alt: "El directorio de herramientas de LoanPilot mostrando sus siete calculadoras: préstamos, tarjeta de crédito, finiquito, aguinaldo, horas extras, retenciones y renta anual",
-          theme: "teal",
+          theme: "mint",
           links: [{ label: "Ver proyecto", href: site.loanpilotUrl }]
         },
         {
@@ -504,7 +503,6 @@ export const copy = {
       text:
         "Soy Marlon, diseñador y desarrollador independiente en El Salvador. Trabajo con negocios de Estados Unidos y Latinoamérica, y también creo productos propios, como Peek Compress para Mac. Hablaremos directamente, revisaremos los avances juntos y llevaremos tu proyecto hasta el lanzamiento.",
       availability: "Trabajo directo contigo, en español o en inglés.",
-      personalNote: "Fuera de la pantalla, disfruto correr y hacer trekking en la montaña.",
       location: "Desde El Salvador · Para el mundo",
       personalRole: "Diseñador y desarrollador independiente",
       capabilitiesLabel: "Capacidades",

@@ -389,7 +389,6 @@ export default function PortfolioPage({ lang }: Props) {
                 <p>{site.name}</p>
                 <span>{t.about.personalRole}</span>
               </div>
-              <p className="personal-note">{t.about.personalNote}</p>
             </div>
 
             <div className="about-copy" data-reveal>

@@ -43,6 +43,15 @@
   --color-glow-secondary: var(--color-accent-mid);
   --color-glow-tertiary: var(--color-accent-soft);
 
+  /* One accent per project, so each card reads as its own thing. Kept in a
+     narrow luminance band (6.7:1 to 7.3:1 on --color-surface) so no card
+     shouts louder than the rest, and separate from the success and error
+     roles, which mean a state rather than an identity. */
+  --color-project-sky: #4aa8ff;
+  --color-project-amber: #e89b1c;
+  --color-project-mint: #26c08a;
+  --color-project-violet: #a99aff;
+
   /* Shared geometry and typography. */
   --shell: min(1120px, calc(100% - 80px));
   --radius-sm: 16px;
