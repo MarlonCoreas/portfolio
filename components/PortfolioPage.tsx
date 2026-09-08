@@ -5,7 +5,6 @@ import SectionHeading from "./ui/SectionHeading";
 import { routePath } from "../src/config/routes";
 import { site, siteUrl } from "../src/config/site";
 import { copy, type Locale } from "../src/i18n";
-import ProjectCarousel from "./ProjectCarousel";
 
 type Props = {
   lang: Locale;
@@ -123,7 +122,7 @@ export default function PortfolioPage({ lang }: Props) {
                 {t.hero.status}
               </div>
 
-              <p className="eyebrow">{site.name}<span className="hero-role">{t.hero.eyebrow.split(" · ")[1]}</span></p>
+              <p className="eyebrow">{site.name}<span className="hero-role">{t.hero.role}</span></p>
               <h1 id="hero-title">
                 <span>{t.hero.titleStart}</span>
                 <em>{t.hero.titleAccent}</em>
@@ -135,11 +134,6 @@ export default function PortfolioPage({ lang }: Props) {
                 <ActionLink variant="ghost" href="#contact" data-track="hero_contact_click">{t.hero.secondary}</ActionLink>
               </div>
             </div>
-
-            <ProjectCarousel lang={lang} projects={t.work.items.flatMap((project) => project.image ? [{
-              number: project.number, title: project.title, image: project.image,
-              alt: project.alt, height: project.imageHeight ?? 800
-            }] : [])} />
 
             <div className="hero-proof" data-reveal>
               <p>{t.hero.proofLabel}</p>
@@ -188,7 +182,6 @@ export default function PortfolioPage({ lang }: Props) {
                           loading="lazy"
                           decoding="async"
                         />
-                        <span className="project-chip">{project.kind}</span>
                         {index === 0 ? (
                           <img
                             className="project-app-icon"
@@ -218,7 +211,6 @@ export default function PortfolioPage({ lang }: Props) {
                   </div>
 
                   <div className="project-content">
-                    <div className="project-number">{project.number}</div>
                     <div className="project-main">
                       <p className="project-kind">{project.kind}</p>
                       <h3>{project.title}</h3>
@@ -366,6 +358,26 @@ export default function PortfolioPage({ lang }: Props) {
               ))}
             </ol>
           </div>
+
+          {/* The fit lists close the same argument as the steps above: what the
+              engagement looks like, and when it is worth starting at all. */}
+          <div className="shell fit-block">
+            <h3 className="fit-title" id="fit-title">{t.approach.fitTitle}</h3>
+            <div className="fit-grid">
+              <article className="fit-card fit-card-positive" data-reveal>
+                <h4>{t.approach.goodTitle}</h4>
+                <ul>
+                  {t.approach.good.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+              <article className="fit-card" data-reveal>
+                <h4>{t.approach.notTitle}</h4>
+                <ul>
+                  {t.approach.not.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+            </div>
+          </div>
         </section>
 
         <section className="about section-grid" id="about" aria-labelledby="about-title">
@@ -404,26 +416,6 @@ export default function PortfolioPage({ lang }: Props) {
                   </a>
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="fit section-grid" aria-labelledby="fit-title">
-          <div className="shell">
-            <SectionHeading id="fit-title" eyebrow={t.fit.eyebrow} title={t.fit.title} wide />
-            <div className="fit-grid">
-              <article className="fit-card fit-card-positive" data-reveal>
-                <h3>{t.fit.goodTitle}</h3>
-                <ul>
-                  {t.fit.good.map((item) => <li key={item}>{item}</li>)}
-                </ul>
-              </article>
-              <article className="fit-card" data-reveal>
-                <h3>{t.fit.notTitle}</h3>
-                <ul>
-                  {t.fit.not.map((item) => <li key={item}>{item}</li>)}
-                </ul>
-              </article>
             </div>
           </div>
         </section>

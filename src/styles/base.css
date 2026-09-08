@@ -13,6 +13,7 @@
   h1,
   h2,
   h3,
+  h4,
   p,
   ul,
   ol {
@@ -75,7 +76,8 @@
   }
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     font-weight: 720;
     line-height: 0.98;
     letter-spacing: -0.055em;

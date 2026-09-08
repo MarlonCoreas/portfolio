@@ -1,70 +1,63 @@
 @layer components {
   .service-page-hero {
     padding: clamp(150px, 17vw, 230px) 0 clamp(90px, 12vw, 160px);
-    background: radial-gradient(circle at 78% 15%, color-mix(in srgb, var(--color-link) 12%, transparent), transparent 30rem);
-
   }
+
   .service-page-hero h1 {
     max-width: 1050px;
     margin-top: 30px;
-    font-size: clamp(4rem, 9vw, 8.8rem);
-
   }
+
   .service-page-intro {
     max-width: 790px;
     margin-top: 34px;
     color: var(--color-text-secondary);
     font-size: clamp(1.05rem, 1.7vw, 1.35rem);
     line-height: 1.72;
-
   }
+
   .service-page-actions {
     display: flex;
     margin-top: 38px;
     flex-wrap: wrap;
     gap: 12px;
-
   }
+
   .service-page-proof {
     display: grid;
     margin-top: clamp(70px, 9vw, 120px);
     grid-template-columns: repeat(3, 1fr);
     border-top: 1px solid var(--color-border);
-    border-left: 1px solid var(--color-border);
-
   }
+
   .service-page-proof li {
     padding: 24px;
-    border-right: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
     color: var(--color-text-secondary);
     font-family: var(--sans);
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-
   }
+
   .service-page-section {
     padding-block: clamp(90px, 12vw, 160px);
     border-top: 1px solid var(--color-border-soft);
-
   }
+
   .service-page-section h2,
   .service-page-cta h2 {
     max-width: 780px;
     font-size: clamp(2.8rem, 6vw, 6rem);
-
   }
+
   .service-page-two-column {
     display: grid;
     grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
     gap: clamp(50px, 10vw, 150px);
-
   }
+
   .service-page-problems {
     border-top: 1px solid var(--color-border);
-
   }
+
   .service-page-problems li {
     position: relative;
     padding: 24px 0 24px 34px;
@@ -72,8 +65,8 @@
     color: var(--color-text-secondary);
     font-size: 1.05rem;
     line-height: 1.6;
-
   }
+
   .service-page-problems li::before {
     position: absolute;
     top: 32px;
@@ -83,148 +76,138 @@
     content: "";
     border-radius: 50%;
     background: var(--color-link);
-
   }
+
   .service-page-light {
     color: var(--color-background);
     background: var(--color-text);
-
   }
+
   .service-page-light.section-grid::before,
   .service-page-light.section-grid::after {
     background: color-mix(in srgb, var(--color-black) 11%, transparent);
-
   }
+
   .service-page-deliverables {
     display: grid;
     margin-top: clamp(45px, 7vw, 80px);
     grid-template-columns: repeat(2, 1fr);
     border-top: 1px solid color-mix(in srgb, var(--color-black) 15%, transparent);
     border-left: 1px solid color-mix(in srgb, var(--color-black) 15%, transparent);
-
   }
+
   .service-page-deliverables article {
     min-height: 300px;
     padding: clamp(28px, 4vw, 50px);
     border-right: 1px solid color-mix(in srgb, var(--color-black) 15%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--color-black) 15%, transparent);
-
   }
+
   .service-page-deliverables article > span {
     color: var(--color-text-muted-on-light);
     font-family: var(--sans);
     font-size: 0.65rem;
-
   }
+
   .service-page-deliverables h3 {
     max-width: 430px;
     margin-top: 55px;
     font-size: clamp(1.8rem, 3vw, 3rem);
-
   }
+
   .service-page-deliverables p {
     max-width: 520px;
     margin-top: 20px;
     color: var(--color-text-muted-on-light);
     line-height: 1.7;
-
   }
+
   .service-page-honesty > p {
     max-width: 700px;
     color: var(--color-text-secondary);
     font-size: clamp(1.1rem, 2vw, 1.45rem);
     line-height: 1.8;
-
   }
+
   .service-page-cta {
     padding-block: clamp(90px, 12vw, 150px);
     color: var(--color-text);
-    background: linear-gradient(135deg, var(--color-background-soft), var(--color-background-soft) 70%);
-
   }
+
   .service-page-cta h2 {
     margin-top: 24px;
-
   }
+
   .service-page-cta p:not(.eyebrow) {
     max-width: 700px;
     margin-top: 28px;
     color: var(--color-text-secondary);
     font-size: 1.05rem;
     line-height: 1.75;
-
   }
+
   .service-page-cta .button {
     margin-top: 34px;
-
   }
 
-}
-
-@layer responsive {
   @media (max-width: 720px) {
     .service-page-hero h1 {
       font-size: clamp(3.4rem, 15vw, 5.8rem);
-
     }
+
     .service-page-actions {
       flex-direction: column;
-
     }
+
     .service-page-actions .button {
       width: 100%;
-
     }
+
     .service-page-proof,
     .service-page-deliverables {
       grid-template-columns: 1fr;
-
     }
+
     .service-page-two-column {
       grid-template-columns: 1fr;
       gap: 42px;
-
     }
+
     .service-page-deliverables article {
       min-height: auto;
-
     }
 
   }
 
-}
-
-@layer theme {
   .service-page-hero {
     background: var(--color-black);
-
   }
+
   .service-page-hero h1 {
     font-size: clamp(2.75rem, 7vw, 6rem);
-
   }
+
   .service-page-proof {
     border-left: 0;
     gap: 24px;
-
   }
+
   .service-page-proof li {
     border-right: 0;
     padding-inline: 0;
     font-size: .9375rem;
     letter-spacing: 0;
     text-transform: none;
-
   }
+
   .service-page-cta {
     background: var(--color-surface);
-
   }
+
   @media (max-width: 720px) {
     .service-page-proof {
       grid-template-columns: 1fr;
       gap: 0;
-
     }
 
   }

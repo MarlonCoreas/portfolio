@@ -29,7 +29,7 @@ export const copy = {
     },
     hero: {
       status: "Available for new projects",
-      eyebrow: "Marlon Coreas · Independent product designer & developer",
+      role: "Independent designer & developer",
       titleStart: "Your business has a lot to offer.",
       titleAccent: "Let’s make it show.",
       intro:
@@ -41,24 +41,13 @@ export const copy = {
         { value: "03", label: "working products online" },
         { value: "APP STORE", label: "one product published" },
         { value: "EN / ES", label: "delivered bilingually" }
-      ],
-      consoleEyebrow: "How it works",
-      consoleTitle: "From idea to live",
-      consoleLines: [
-        { key: "01 · plan", value: "goals before pixels" },
-        { key: "02 · build", value: "fast, clear, yours" },
-        { key: "03 · launch", value: "live and supported" }
-      ],
-      shipping: "Working principle",
-      shippingValue: "Scope, price and ownership agreed first"
+      ]
     },
     work: {
       eyebrow: "Selected work",
       title: "Proof, not promises.",
       intro:
         "Three public projects you can open and use, plus the one I'm building now. Each finished project shows the problem, the work delivered and the evidence that can be checked today.",
-      viewProject: "View live project",
-      visitAppStore: "App Store",
       items: [
         {
           number: "01",
@@ -195,7 +184,22 @@ export const copy = {
         { title: "Fit before proposal", text: "A short conversation confirms the problem, decision maker, constraints and whether I am the right person to help." },
         { title: "Written scope before work", text: "You receive the deliverables, exclusions, schedule and fixed price or billing model before committing." },
         { title: "Visible progress", text: "You talk directly with me, review working increments and make decisions while changes are still inexpensive." },
-        { title: "Launch with ownership", text: "Access, documentation and next steps are handed over clearly. Support is agreed, never assumed." }
+        { title: "Launch with ownership", text: "Ownership, accounts, licenses and handover are written into the proposal. You receive the agreed access and assets on completion, and support is agreed, never assumed." }
+      ],
+      fitTitle: "A good project fit is clear on both sides.",
+      goodTitle: "Usually a good fit",
+      good: [
+        "There is a real business or user problem to solve",
+        "A decision maker can review progress and answer questions",
+        "Quality and maintainability matter more than the cheapest possible build",
+        "The first release can be focused around an essential outcome"
+      ],
+      notTitle: "Probably not a fit",
+      not: [
+        "Guaranteed rankings, sales or growth without evidence",
+        "Copying another product without understanding the users",
+        "An undefined feature list with a fixed deadline and no discovery",
+        "Speculative work in exchange for future exposure or revenue share"
       ]
     },
     about: {
@@ -221,24 +225,6 @@ export const copy = {
         { label: "LinkedIn", href: site.linkedinUrl }
       ]
     },
-    fit: {
-      eyebrow: "A useful filter",
-      title: "A good project fit is clear on both sides.",
-      goodTitle: "Usually a good fit",
-      good: [
-        "There is a real business or user problem to solve",
-        "A decision maker can review progress and answer questions",
-        "Quality and maintainability matter more than the cheapest possible build",
-        "The first release can be focused around an essential outcome"
-      ],
-      notTitle: "Probably not a fit",
-      not: [
-        "Guaranteed rankings, sales or growth without evidence",
-        "Copying another product without understanding the users",
-        "An undefined feature list with a fixed deadline and no discovery",
-        "Speculative work in exchange for future exposure or revenue share"
-      ]
-    },
     faq: {
       eyebrow: "Before we talk",
       title: "Straight answers to common questions.",
@@ -246,7 +232,6 @@ export const copy = {
         { question: "How much does a project cost?", answer: "It depends on the scope and risk. After an initial conversation, you receive a written proposal with deliverables, exclusions, schedule and price. You can optionally share a budget range to help me recommend a realistic path." },
         { question: "How long will it take?", answer: "A focused business website and a custom platform are different projects. I confirm the schedule only after understanding the content, integrations, feedback process and launch requirements." },
         { question: "Do you guarantee more leads or Google rankings?", answer: "No. I can build the message, user journey, performance and search foundations needed to compete, then measure what happens. No responsible developer can guarantee market behavior or rankings." },
-        { question: "Who owns the finished work?", answer: "Ownership, accounts, licenses and handover are written into the proposal. You receive the agreed access and assets when the project obligations are complete." },
         { question: "What happens after launch?", answer: "Every project includes a defined launch and handover. Ongoing support, maintenance or a next release can be agreed separately when it is useful." }
       ]
     },
@@ -340,7 +325,7 @@ export const copy = {
     },
     hero: {
       status: "Disponible para nuevos proyectos",
-      eyebrow: "Marlon Coreas · Diseñador de producto y desarrollador independiente",
+      role: "Diseñador y desarrollador independiente",
       titleStart: "Tu negocio tiene mucho que ofrecer.",
       titleAccent: "Hagamos que se note.",
       intro:
@@ -352,24 +337,13 @@ export const copy = {
         { value: "03", label: "productos funcionando" },
         { value: "APP STORE", label: "un producto publicado" },
         { value: "EN / ES", label: "entrega bilingüe" }
-      ],
-      consoleEyebrow: "Cómo funciona",
-      consoleTitle: "De la idea a estar en línea",
-      consoleLines: [
-        { key: "01 · plan", value: "objetivos antes que diseño" },
-        { key: "02 · desarrollo", value: "rápido, claro, tuyo" },
-        { key: "03 · lanzamiento", value: "en línea y con soporte" }
-      ],
-      shipping: "Principio de trabajo",
-      shippingValue: "Alcance, precio y propiedad se acuerdan primero"
+      ]
     },
     work: {
       eyebrow: "Proyectos seleccionados",
       title: "Evidencia, no promesas.",
       intro:
         "Tres proyectos públicos que puedes abrir y usar, más el que estoy construyendo ahora. Cada proyecto terminado muestra el problema, el trabajo entregado y la evidencia que se puede comprobar hoy.",
-      viewProject: "Ver proyecto",
-      visitAppStore: "App Store",
       items: [
         {
           number: "01",
@@ -506,7 +480,22 @@ export const copy = {
         { title: "Encaje antes de cotizar", text: "Una conversación breve confirma el problema, quién decide, las restricciones y si soy la persona adecuada para ayudar." },
         { title: "Alcance escrito antes de trabajar", text: "Recibes entregables, exclusiones, calendario y precio fijo o modalidad de cobro antes de comprometerte." },
         { title: "Progreso visible", text: "Hablas directo conmigo, revisas avances funcionando y decides cuando los cambios todavía cuestan poco." },
-        { title: "Lanzamiento con propiedad clara", text: "Accesos, documentación y próximos pasos se entregan con claridad. El soporte se acuerda, nunca se supone." }
+        { title: "Lanzamiento con propiedad clara", text: "La propiedad, las cuentas, licencias y la entrega se detallan en la propuesta. Recibes los accesos y activos acordados al terminar, y el soporte se acuerda, nunca se supone." }
+      ],
+      fitTitle: "Un buen proyecto es claro para ambas partes.",
+      goodTitle: "Normalmente hay buen encaje",
+      good: [
+        "Existe un problema real del negocio o de sus usuarios",
+        "Alguien con poder de decisión puede revisar y responder preguntas",
+        "La calidad y el mantenimiento importan más que conseguir lo más barato",
+        "La primera versión puede enfocarse en un resultado esencial"
+      ],
+      notTitle: "Probablemente no hay encaje",
+      not: [
+        "Garantías de posicionamiento, ventas o crecimiento sin evidencia",
+        "Copiar otro producto sin entender a sus usuarios",
+        "Una lista indefinida de funciones con fecha fija y sin descubrimiento",
+        "Trabajo especulativo a cambio de exposición o ingresos futuros"
       ]
     },
     about: {
@@ -532,24 +521,6 @@ export const copy = {
         { label: "LinkedIn", href: site.linkedinUrl }
       ]
     },
-    fit: {
-      eyebrow: "Un filtro útil",
-      title: "Un buen proyecto es claro para ambas partes.",
-      goodTitle: "Normalmente hay buen encaje",
-      good: [
-        "Existe un problema real del negocio o de sus usuarios",
-        "Alguien con poder de decisión puede revisar y responder preguntas",
-        "La calidad y el mantenimiento importan más que conseguir lo más barato",
-        "La primera versión puede enfocarse en un resultado esencial"
-      ],
-      notTitle: "Probablemente no hay encaje",
-      not: [
-        "Garantías de posicionamiento, ventas o crecimiento sin evidencia",
-        "Copiar otro producto sin entender a sus usuarios",
-        "Una lista indefinida de funciones con fecha fija y sin descubrimiento",
-        "Trabajo especulativo a cambio de exposición o ingresos futuros"
-      ]
-    },
     faq: {
       eyebrow: "Antes de hablar",
       title: "Respuestas directas a preguntas comunes.",
@@ -557,7 +528,6 @@ export const copy = {
         { question: "¿Cuánto cuesta un proyecto?", answer: "Depende del alcance y el riesgo. Después de una conversación inicial recibes una propuesta escrita con entregables, exclusiones, calendario y precio. Puedes compartir un rango de inversión de forma opcional para que te recomiende un camino realista." },
         { question: "¿Cuánto tiempo toma?", answer: "Un sitio enfocado y una plataforma a medida son proyectos diferentes. Confirmo el calendario después de entender el contenido, las integraciones, el proceso de revisión y el lanzamiento." },
         { question: "¿Garantizas más clientes o posiciones en Google?", answer: "No. Puedo construir el mensaje, recorrido, rendimiento y fundamentos de búsqueda necesarios para competir y después medir lo que ocurre. Ningún desarrollador responsable puede garantizar el comportamiento del mercado o de un buscador." },
-        { question: "¿Quién es dueño del trabajo terminado?", answer: "La propiedad, las cuentas, licencias y entrega se detallan en la propuesta. Recibes los accesos y activos acordados cuando se cumplen las obligaciones del proyecto." },
         { question: "¿Qué pasa después del lanzamiento?", answer: "Cada proyecto incluye un lanzamiento y entrega definidos. El soporte, mantenimiento o una siguiente versión se pueden acordar por separado cuando aporten valor." }
       ]
     },

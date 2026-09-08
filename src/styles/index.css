@@ -1,5 +1,5 @@
 /* Cascade order is explicit; page modules cannot override the shared palette. */
-@layer reset, base, components, utilities, responsive, theme;
+@layer reset, base, components, utilities;
 
 @import "./tokens.css";
 @import "./base.css";
@@ -9,5 +9,4 @@
 @import "./services.css";
 @import "./privacy.css";
 @import "./contact.css";
-@import "./carousel.css";
 @import "./motion.css";

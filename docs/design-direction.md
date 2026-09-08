@@ -18,10 +18,10 @@ El movimiento ayuda a presentar el contenido por etapas: animación del producto
 | Texto | Blanco `#f5f5f7`, gris secundario `#b5b5ba`, gris de apoyo `#96969b`. |
 | Acciones | Azul `#0071e3`; enlaces sobre oscuro `#2997ff`, sobre claro `#0066cc`. |
 | Tipografía | Fuente del sistema, con prioridad a la tipografía nativa de Apple; titulares grandes, espaciado compacto y texto secundario legible. |
-| Portada | Carrusel de Peek Compress, NC Home Remodeling y LoanPilot. Proyecto activo centrado, avances laterales, flechas, indicadores, teclado y arrastre horizontal en escritorio y móvil. Cada proyecto enlaza a su ficha. |
+| Portada | Titular, entrada breve, dos acciones y las tres pruebas verificables. Sin imagen ni carrusel: los proyectos se muestran una sola vez, en su propia sección. |
 | Proyectos | Imagen panorámica, resumen visible, enlaces públicos y desglose bajo «Detrás del proyecto». |
 | Servicios | Tarjetas blancas sobre fondo gris, más espacio y menos elementos ornamentales. |
-| Movimiento | Entrada del texto de portada, aparición de secciones de 0,8–0,9 segundos y transiciones del carrusel de 650 ms. El carrusel avanza por interacción del visitante. |
+| Movimiento | Entrada del texto de portada y aparición de secciones de 0,8–0,9 segundos, escalonada 80 ms entre tarjetas hermanas. |
 | Iluminación | Halo que sigue al cursor en proyectos, servicios, testimonios y contacto. Azul sobre grafito y variaciones suaves de azul, índigo y cian sobre blanco. |
 | Navegación | Barra translúcida persistente, contacto azul y navegación de secciones accesible también en móvil. |
 
@@ -41,14 +41,48 @@ También se separaron las capturas de escritorio, se simplificó la portada móv
 
 Se revisó en navegador la portada y los proyectos en escritorio y móvil (320, 390, 782 y 1440 píxeles de ancho), la apertura de detalles y preguntas frecuentes mediante teclado, el foco del formulario y el cambio entre inglés y español. La comprobación del formulario cubre su interfaz y las restricciones de campos vacíos; no se enviaron consultas ni se probó el correo PHP/SMTP desde la vista local.
 
-El carrusel y la iluminación se verificaron después de una carga limpia: avance circular, selección por indicadores, flechas de teclado, arrastre horizontal sin navegación accidental y seguimiento del cursor dentro de las tarjetas. Las imágenes mantienen su proporción y el contenido no genera desbordamiento horizontal en móvil.
+La iluminación se verificó después de una carga limpia: seguimiento del cursor dentro de las tarjetas. Las imágenes mantienen su proporción y el contenido no genera desbordamiento horizontal en móvil.
 
 ## Identidad personal y contacto simplificado
 
 La marca se unificó como «Marlon Coreas.» en portada, pie, servicios y privacidad. El punto azul continúa en la tarjeta tipográfica «mc.», que presenta a Marlon y menciona su afición por correr y hacer trekking. Se deja la fotografía para una elección posterior.
 
-La portada ahora habla del negocio del visitante y explica el trabajo directo con Marlon. Los servicios muestran precios de partida al principio, textos más breves, destinatarios y entregables concretos. Las historias de los proyectos quedan pendientes; su contenido y el carrusel se conservan.
+La portada ahora habla del negocio del visitante y explica el trabajo directo con Marlon. Los servicios muestran precios de partida al principio, textos más breves, destinatarios y entregables concretos. Las historias de los proyectos quedan pendientes; su contenido se conserva.
 
 El formulario empieza con nombre, correo e idea, más el consentimiento. Empresa, tipo de proyecto, plazo y presupuesto están en un desplegable opcional nativo. PHP acepta su omisión y los identifica como «Sin indicar» / «Not specified» en los correos. Se mantienen las validaciones de los campos principales, las listas de valores admitidos y los controles contra spam.
 
 Se verificaron por separado las reglas de validación de PHP con consultas mínimas, completas, valores opcionales vacíos, un presupuesto de la versión anterior y entradas inválidas; no se ejecutó el transporte de correo.
+
+## Depuración posterior
+
+Se retiró lo que no aportaba: el carrusel de portada repetía las mismas tres
+imágenes que la sección de proyectos dos pantallas más abajo; el tipo de
+proyecto se imprimía dos veces por tarjeta (rótulo sobre la imagen y párrafo
+debajo); el número de proyecto estaba en el marcado con `display: none` en todos
+los anchos; y quedaban claves de texto, reglas de CSS y un subrayado verde de una
+paleta anterior que ningún elemento usaba.
+
+«Cómo trabajo» y «Un filtro útil» cerraban el mismo argumento, así que ahora son
+una sola sección: los cuatro pasos y, debajo, las dos listas de encaje sobre la
+misma superficie oscura. La pregunta de propiedad salió de las preguntas
+frecuentes porque el paso «Lanzamiento con propiedad clara» ya la responde; su
+detalle sobre la propuesta se trasladó a ese paso para no perderlo.
+
+### Una sola capa por regla
+
+`components`, `responsive` y `theme` contenían dos diseños superpuestos: 67 de
+los 94 selectores de `theme` reescribían uno de `components`. El orden de capas
+ganaba a la especificidad, así que reglas más específicas quedaban anuladas sin
+aviso y nadie podía saber, leyendo una regla, si se aplicaba.
+
+Se fusionaron en `components` borrando únicamente las declaraciones que una
+regla posterior con el mismo selector y el mismo `@media` siempre anulaba, sin
+reordenar nada. Las tres declaraciones que dependían del orden **entre archivos**
+(el relleno vertical de `.contact`, la altura de línea de `.about-copy > p` y la
+de `.contact-result h3`) se eliminaron porque tampoco se aplicaban nunca.
+
+El resultado se comprobó comparando el estilo calculado de los 482 elementos de
+la portada, propiedad por propiedad, a 1440, 820 y 400 píxeles: cero diferencias.
+La única excepción es intencionada: el escalonado de 80 y 160 ms entre tarjetas
+existía en el CSS pero la capa `theme` lo anulaba con un `transition` abreviado;
+ahora sí se aplica.

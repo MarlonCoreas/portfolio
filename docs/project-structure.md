@@ -16,7 +16,6 @@ La aplicación conserva React, vinext, las rutas actuales y la exportación est�
 | Cabecera, footer, marca y selector de idioma | `components/layout/` |
 | Enlaces con aspecto de botón, flechas y encabezados de sección | `components/ui/` |
 | Formulario y sus estados visibles | `components/portfolio/ContactSection.tsx` |
-| Carrusel | `components/ProjectCarousel.tsx` |
 | Apariciones, iluminación, analítica y envío del formulario | `components/ClientEnhancements.tsx` |
 
 ## Layout compartido
@@ -37,7 +36,7 @@ El menú y el footer reutilizan la misma lista de navegación. Sus enlaces inclu
 
 ## Sistema visual
 
-`src/styles/index.css` es la única entrada de CSS. Importa la paleta y módulos por responsabilidad: base, elementos comunes, layout, portada, servicios, privacidad, contacto, carrusel y movimiento.
+`src/styles/index.css` es la única entrada de CSS. Importa la paleta y módulos por responsabilidad: base, elementos comunes, layout, portada, servicios, privacidad, contacto y movimiento.
 
 Los módulos usan roles de color, nunca valores hexadecimales propios. Por ejemplo:
 
@@ -52,7 +51,7 @@ Los módulos usan roles de color, nunca valores hexadecimales propios. Por ejemp
 
 Para cambiar el acento de todo el sitio, modifica `--color-brand` en `tokens.css`. Los enlaces, botones, tonos claros, fondos con acento y halos derivan de ese valor. Los colores de éxito y error son independientes porque comunican estados. Para un ajuste específico, usa los roles correspondientes: `--color-header`, `--color-text-muted`, `--color-surface-light`, etc.
 
-El orden de capas está declarado en `index.css`: `reset`, `base`, `components`, `utilities`, `responsive`, `theme`. Se conserva el orden de la adaptación visual existente para evitar que reorganizar archivos altere sus prioridades. Los colores y dimensiones compartidas viven fuera de esas capas, en los tokens. Los módulos de movimiento mantienen el soporte de movimiento reducido y las restricciones para pantallas táctiles.
+El orden de capas está declarado en `index.css`: `reset`, `base`, `components`, `utilities`. Cada módulo de página escribe **una sola regla por selector** dentro de `components`; sus ajustes por ancho viven en las `@media` de ese mismo archivo, no en una capa posterior. No añadas una capa nueva para corregir una regla existente: edita la regla. Los colores y dimensiones compartidas viven fuera de esas capas, en los tokens. Los módulos de movimiento mantienen el soporte de movimiento reducido y las restricciones para pantallas táctiles.
 
 Los colores internos de capturas, fotografías, iconos de productos y otras imágenes son parte de esos archivos, no de la paleta de la interfaz.
 
@@ -63,7 +62,7 @@ Los colores internos de capturas, fotografías, iconos de productos y otras imá
 - `ArrowIcon` define la flecha en un único lugar.
 - `BrandName`, `SiteHeader`, `SiteFooter` y `LanguageSwitch` forman el layout común.
 
-Las piezas con comportamiento específico, como el formulario o el carrusel, tienen componentes propios. No se abstraen todos los `div` o párrafos: se comparten los elementos con una responsabilidad repetida y estable.
+Las piezas con comportamiento específico, como el formulario, tienen componentes propios. No se abstraen todos los `div` o párrafos: se comparten los elementos con una responsabilidad repetida y estable.
 
 ## Añadir una página
 
