@@ -1411,18 +1411,26 @@
     overflow: hidden;
     border: 1px solid var(--color-accent-border);
     border-radius: var(--radius-card);
-    background: var(--color-background-soft);
+    /* A halo behind where he stands: the shirt is black, so the silhouette
+       needs a lit surface to read against rather than the flat card. */
+    background:
+      radial-gradient(78% 46% at 50% 64%, color-mix(in srgb, var(--color-brand) 52%, transparent), transparent 72%),
+      linear-gradient(160deg, var(--color-accent-surface), var(--color-accent-surface-deep) 82%);
   }
 
   .personal-photo {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* His face sits a little above the middle of the crop, so the frame holds
-       it whether the card is portrait (desktop) or a wide band (mobile). */
-    object-position: 50% 32%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* Sized by height so he always clears the caption, whatever the card's
+       aspect ratio is at this width. */
+    width: auto;
+    height: 84%;
+    max-width: 92%;
+    margin-inline: auto;
+    object-fit: contain;
+    object-position: bottom;
   }
 
   /* Two stops rather than one: the caption needs a solid footing, the top
@@ -1436,10 +1444,9 @@
     padding: 32px;
     background: linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--color-black) 55%, transparent) 0%,
-      transparent 26%,
-      transparent 46%,
-      color-mix(in srgb, var(--color-black) 82%, transparent) 88%
+      transparent 0%,
+      transparent 52%,
+      color-mix(in srgb, var(--color-black) 72%, transparent) 90%
     );
   }
 

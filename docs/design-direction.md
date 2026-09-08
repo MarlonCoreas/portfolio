@@ -115,14 +115,26 @@ el nombre (cabecera, párrafo y pie) y el cargo (la misma cadena que el eyebrow
 de la portada). Era un marco esperando la fotografía que este documento dejaba
 pendiente.
 
-Ahora la ocupa un retrato de medio cuerpo: `public/images/marlon-portrait.webp`,
-recortado de un original de 3024×4032 a 900×1516 para servir el doble del hueco
-en escritorio (413×695). El monograma desaparece porque la cara hace su trabajo.
-Sobre la foto queda un degradado de dos tramos —fuerte arriba y abajo,
-transparente en el centro— para que la ubicación y el nombre se lean sin tapar
-el rostro.
+Ahora la ocupa un retrato de medio cuerpo recortado sobre fondo transparente:
+`public/images/marlon-cutout.webp`, 900×1700 con alfa. El monograma desaparece
+porque la cara hace su trabajo.
 
-La tarjeta cambia de proporción entre anchos, así que la foto se coloca con
-`object-fit: cover` y `object-position: 50% 32%`, y en móvil la tarjeta fija
-`aspect-ratio: 4 / 5` para que el recorte siga siendo un retrato y no una franja
-del torso. Se comprobó a 1440 y 500 píxeles.
+Se probaron cuatro fotografías antes de esta. Se descartaron una de carrera con
+medalla y dos de montaña: en las tres hay lentes de sol, y sin ojos no hay
+contacto visual, que es lo único que esta tarjeta necesita provocar. En las de
+montaña, además, el sujeto queda tan pequeño que la cara no llega a 30 píxeles.
+
+La versión elegida se usó primero con su fondo original —una vista de la ciudad—
+y funcionaba, pero ese fondo competía por la atención. Recortarlo dejó el
+problema contrario: la camiseta es negra y la tarjeta es oscura, así que la
+silueta se perdía. Se resuelve con un halo radial de azul de marca detrás de
+donde está de pie, sobre el degradado de superficie con acento.
+
+La figura se dimensiona **por altura** (`height: 84%`), no por ancho. Así encaja
+igual en la tarjeta vertical de escritorio y en la de `aspect-ratio: 4 / 5` de
+móvil, sin necesidad de ajustar `object-position` por ancho como exigía la
+versión con fondo. Sobre ella queda un degradado inferior, más suave que antes
+porque ya no hay fondo que atenuar, solo el apoyo del nombre.
+
+El texto alternativo describe lo que se ve —de brazos cruzados, sonriendo— y no
+el lugar, que dejó de estar en la imagen.

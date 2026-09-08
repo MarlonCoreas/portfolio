@@ -385,10 +385,10 @@ export default function PortfolioPage({ lang }: Props) {
             <figure className="personal-card" data-reveal>
               <img
                 className="personal-photo"
-                src="/images/marlon-portrait.webp"
+                src="/images/marlon-cutout.webp"
                 alt={t.about.photoAlt}
                 width="900"
-                height="1516"
+                height="1700"
                 loading="lazy"
                 decoding="async"
               />

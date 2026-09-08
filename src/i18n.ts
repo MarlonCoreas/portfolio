@@ -209,7 +209,7 @@ export const copy = {
         "I'm Marlon, an independent designer and developer based in El Salvador. I work with businesses in the US and Latin America, and build my own products too, including Peek Compress for Mac. We’ll talk directly, review progress together and take your project through to launch.",
       availability: "Working directly with you, in English or Spanish.",
       location: "Based in El Salvador · Working worldwide",
-      photoAlt: "Marlon Coreas standing above his home town in El Salvador",
+      photoAlt: "Marlon Coreas, arms crossed, smiling at the camera",
       personalRole: "Independent designer & developer",
       capabilitiesLabel: "Capabilities",
       capabilities: [
@@ -505,7 +505,7 @@ export const copy = {
         "Soy Marlon, diseñador y desarrollador independiente en El Salvador. Trabajo con negocios de Estados Unidos y Latinoamérica, y también creo productos propios, como Peek Compress para Mac. Hablaremos directamente, revisaremos los avances juntos y llevaremos tu proyecto hasta el lanzamiento.",
       availability: "Trabajo directo contigo, en español o en inglés.",
       location: "Desde El Salvador · Para el mundo",
-      photoAlt: "Marlon Coreas de pie sobre su ciudad en El Salvador",
+      photoAlt: "Marlon Coreas, de brazos cruzados, sonriendo a la cámara",
       personalRole: "Diseñador y desarrollador independiente",
       capabilitiesLabel: "Capacidades",
       capabilities: [
