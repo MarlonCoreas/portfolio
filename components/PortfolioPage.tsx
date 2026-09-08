@@ -382,14 +382,24 @@ export default function PortfolioPage({ lang }: Props) {
 
         <section className="about section-grid" id="about" aria-labelledby="about-title">
           <div className="shell about-inner">
-            <div className="personal-card" data-spotlight data-reveal>
-              <p className="personal-location">{t.about.location}</p>
-              <span className="personal-monogram" aria-hidden="true">mc<span>.</span></span>
-              <div className="personal-identity">
-                <p>{site.name}</p>
-                <span>{t.about.personalRole}</span>
-              </div>
-            </div>
+            <figure className="personal-card" data-reveal>
+              <img
+                className="personal-photo"
+                src="/images/marlon-portrait.webp"
+                alt={t.about.photoAlt}
+                width="900"
+                height="1516"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                <p className="personal-location">{t.about.location}</p>
+                <div className="personal-identity">
+                  <p>{site.name}</p>
+                  <span>{t.about.personalRole}</span>
+                </div>
+              </figcaption>
+            </figure>
 
             <div className="about-copy" data-reveal>
               <p className="eyebrow">{t.about.eyebrow}</p>

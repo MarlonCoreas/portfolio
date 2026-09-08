@@ -106,3 +106,23 @@ El acento tiñe el borde al pasar el cursor, las etiquetas del desglose, el
 enlace de evidencia y el hover de los enlaces del proyecto.
 
 De la tarjeta «mc.» se quitó la línea sobre correr y hacer trekking.
+
+### La tarjeta de identidad, con foto
+
+Sin esa línea la tarjeta repetía cuatro datos que ya estaban a pocos píxeles:
+la ubicación (en el párrafo contiguo), el monograma (la marca de la cabecera),
+el nombre (cabecera, párrafo y pie) y el cargo (la misma cadena que el eyebrow
+de la portada). Era un marco esperando la fotografía que este documento dejaba
+pendiente.
+
+Ahora la ocupa un retrato de medio cuerpo: `public/images/marlon-portrait.webp`,
+recortado de un original de 3024×4032 a 900×1516 para servir el doble del hueco
+en escritorio (413×695). El monograma desaparece porque la cara hace su trabajo.
+Sobre la foto queda un degradado de dos tramos —fuerte arriba y abajo,
+transparente en el centro— para que la ubicación y el nombre se lean sin tapar
+el rostro.
+
+La tarjeta cambia de proporción entre anchos, así que la foto se coloca con
+`object-fit: cover` y `object-position: 50% 32%`, y en móvil la tarjeta fija
+`aspect-ratio: 4 / 5` para que el recorte siga siendo un retrato y no una franja
+del torso. Se comprobó a 1440 y 500 píxeles.

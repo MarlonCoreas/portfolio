@@ -1403,35 +1403,50 @@
   }
 
   .personal-card {
-    display: flex;
-    flex-direction: column;
+    position: relative;
     align-self: stretch;
-    justify-content: space-between;
     min-width: 0;
     min-height: 440px;
-    padding: 36px;
+    margin: 0;
+    overflow: hidden;
     border: 1px solid var(--color-accent-border);
     border-radius: var(--radius-card);
-    background: linear-gradient(145deg, var(--color-accent-surface), var(--color-accent-surface-deep) 75%);
+    background: var(--color-background-soft);
+  }
+
+  .personal-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* His face sits a little above the middle of the crop, so the frame holds
+       it whether the card is portrait (desktop) or a wide band (mobile). */
+    object-position: 50% 32%;
+  }
+
+  /* Two stops rather than one: the caption needs a solid footing, the top
+     label only enough shade to stay legible over the sky. */
+  .personal-card figcaption {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-black) 55%, transparent) 0%,
+      transparent 26%,
+      transparent 46%,
+      color-mix(in srgb, var(--color-black) 82%, transparent) 88%
+    );
   }
 
   .personal-location {
-    color: var(--color-accent-muted);
+    color: var(--color-text);
     font-size: .8125rem;
     line-height: 1.6;
-  }
-
-  .personal-monogram {
-    margin: 32px 0;
-    font-size: clamp(6rem, 12vw, 10rem);
-    font-weight: 650;
-    letter-spacing: -.09em;
-    line-height: 1;
-    color: var(--color-accent-pale);
-  }
-
-  .personal-monogram > span {
-    color: var(--color-accent-mid);
   }
 
   .personal-identity > p {
@@ -1442,8 +1457,8 @@
 
   .personal-identity > span {
     display: block;
-    margin-top: 8px;
-    color: var(--color-accent-muted);
+    margin-top: 6px;
+    color: var(--color-text-secondary);
     font-size: .9375rem;
     line-height: 1.5;
   }
@@ -1629,14 +1644,15 @@
 
     .personal-card {
       width: 100%;
+      /* A portrait band on mobile too, so the crop stays a portrait rather
+         than a letterbox slice of his torso. */
       min-height: 0;
-      padding: 28px;
+      aspect-ratio: 4 / 5;
       border-radius: var(--radius-mobile);
     }
 
-    .personal-monogram {
-      font-size: 6rem;
-      margin-block: 28px;
+    .personal-card figcaption {
+      padding: 24px;
     }
 
   }
