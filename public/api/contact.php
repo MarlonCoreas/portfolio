@@ -266,6 +266,16 @@ function spam_assessment(string $name, string $company, string $goal, array $phr
         $reasons[] = 'delivery-beacon';
     }
 
+    // A seven-figure sum in the message. There is a budget field, with a closed
+    // list, for what someone intends to spend; a number this size in the prose
+    // is the lottery, the inheritance or the investment scheme, and it is the
+    // one thing this kind of pitch cannot drop, because the number IS the bait.
+    // Weighted so a real client mentioning company revenue is still delivered.
+    if (preg_match('~[\$€£]\s?\d{1,3}(?:[.,]\d{3}){2,}~u', $goal)) {
+        $score += 4;
+        $reasons[] = 'jackpot-figure';
+    }
+
     // "MichaelFlind" — two capitalised words fused with no separator is a
     // generated handle far more often than a name someone typed. Deliberately
     // weak: it nudges, and never flags an inquiry by itself.
