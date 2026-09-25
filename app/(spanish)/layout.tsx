@@ -16,10 +16,10 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon-96.png", type: "image/png", sizes: "96x96" }
+      { url: "/favicon-noir.svg", type: "image/svg+xml" },
+      { url: "/favicon-noir-96.png", type: "image/png", sizes: "96x96" }
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }]
+    apple: [{ url: "/apple-touch-icon-noir.png", sizes: "180x180" }]
   },
   openGraph: {
     type: "website",
@@ -29,13 +29,13 @@ export const metadata = {
     url: "/es",
     locale: t.locale,
     alternateLocale: ["en_US"],
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Consultas más útiles. Menos trabajo manual. — Marlon Coreas" }]
+    images: [{ url: "/og-noir-es.jpg", type: "image/jpeg", width: 1200, height: 630, alt: "Consultas más útiles. Menos trabajo manual. — Marlon Coreas" }]
   },
   twitter: {
     card: "summary_large_image",
     title: t.seo.title,
     description: t.seo.description,
-    images: ["/og.png"]
+    images: ["/og-noir-es.jpg"]
   }
 };
 

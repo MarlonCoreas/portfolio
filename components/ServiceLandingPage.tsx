@@ -140,9 +140,8 @@ export default function ServiceLandingPage({ lang, service }: Props) {
     <>
       <header className="service-page-header">
         <div className="shell service-page-nav">
-          <a className="brand" href={locale.home} aria-label={locale.homeLabel}>
-            <span className="brand-glyph" aria-hidden="true"><i /><i /><i /></span>
-            <span className="brand-label">MARLON<span>/</span>COREAS</span>
+          <a className="wordmark" href={locale.home} aria-label={locale.homeLabel}>
+            Marlon Coreas
           </a>
           <div>
             <a className="language-switch" href={t.alternatePath}>{locale.alternateLabel}</a>

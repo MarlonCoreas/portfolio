@@ -77,4 +77,8 @@ When the custom domain is ready:
 - Responsive WebP project imagery
 - Reduced-motion support and accessible landmarks
 
-Latest local Lighthouse production audit: 90 Performance, 100 Accessibility, 100 Best Practices, and 100 SEO.
+Latest local Lighthouse production audit (home page): 100 Performance on desktop and 84 on simulated mobile, with 100 Accessibility, 100 Best Practices, 100 SEO and zero layout shift. The mobile gap is the self-hosted display serif, which Lighthouse counts on the critical path; body text deliberately uses the system face so it never waits for a font.
+
+## Social cards
+
+`docs/social-card.html` is the source for the Open Graph images. Render it at 1200×630 (append `#es` for Spanish) and save the result as `public/og-noir-<lang>.jpg`. When a card changes, give it a new filename and update both layouts: Hostinger and the social networks cache these images by URL.

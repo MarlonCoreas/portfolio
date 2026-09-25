@@ -21,6 +21,9 @@ export default function ClientEnhancements({ analyticsId }: Props) {
     window.addEventListener("scroll", updateHeader, { passive: true });
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Headings only hide their words once this script is running, so the page
+    // stays fully readable when JavaScript never arrives.
+    document.documentElement.classList.add("js-ready");
     const revealElements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     let observer: IntersectionObserver | undefined;
 
@@ -51,6 +54,59 @@ export default function ClientEnhancements({ analyticsId }: Props) {
     if (!reducedMotion) {
       spotlightElements.forEach((element) => element.addEventListener("pointermove", updateSpotlight));
     }
+
+    // The hero sculpture's highlight follows the pointer across the whole hero,
+    // as if the visitor were carrying the light.
+    const lightElement = document.querySelector<HTMLElement>("[data-light]");
+    const lightArea = lightElement?.closest<HTMLElement>("section");
+    let lightFrame = 0;
+    const updateLight = (event: PointerEvent) => {
+      if (!lightElement) return;
+      cancelAnimationFrame(lightFrame);
+      lightFrame = requestAnimationFrame(() => {
+        const rect = lightElement.getBoundingClientRect();
+        const x = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+        const y = Math.min(Math.max((event.clientY - rect.top) / rect.height, 0), 1);
+        lightElement.style.setProperty("--lx", `${18 + x * 40}%`);
+        lightElement.style.setProperty("--ly", `${14 + y * 36}%`);
+        lightElement.style.setProperty("--tilt-x", `${(x - 0.5) * 10}deg`);
+        lightElement.style.setProperty("--tilt-y", `${(0.5 - y) * 8}deg`);
+      });
+    };
+    if (!reducedMotion) lightArea?.addEventListener("pointermove", updateLight);
+
+    // Marks the section in view on the rail and in the header navigation.
+    const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-section-link]"));
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const id = entry.target.id;
+          sectionLinks.forEach((link) => {
+            if (link.dataset.sectionLink === id) link.setAttribute("aria-current", "true");
+            else link.removeAttribute("aria-current");
+          });
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    document.querySelectorAll<HTMLElement>("[data-section]").forEach((section) => sectionObserver.observe(section));
+
+    const menu = document.querySelector<HTMLDetailsElement>("[data-menu]");
+    const closeMenu = () => {
+      if (menu) menu.open = false;
+    };
+    const handleMenuKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && menu?.open) {
+        closeMenu();
+        menu.querySelector("summary")?.focus();
+      }
+    };
+    const handleMenuToggle = () => document.documentElement.classList.toggle("menu-open", Boolean(menu?.open));
+    const menuLinks = Array.from(menu?.querySelectorAll<HTMLAnchorElement>(".menu-panel a") ?? []);
+    menuLinks.forEach((link) => link.addEventListener("click", closeMenu));
+    menu?.addEventListener("toggle", handleMenuToggle);
+    document.addEventListener("keydown", handleMenuKey);
 
     const status = new URLSearchParams(window.location.search).get("contact");
     const statusElement = document.querySelector<HTMLElement>("[data-contact-status]");
@@ -186,6 +242,12 @@ export default function ClientEnhancements({ analyticsId }: Props) {
       window.removeEventListener("scroll", updateHeader);
       observer?.disconnect();
       spotlightElements.forEach((element) => element.removeEventListener("pointermove", updateSpotlight));
+      lightArea?.removeEventListener("pointermove", updateLight);
+      cancelAnimationFrame(lightFrame);
+      sectionObserver.disconnect();
+      menuLinks.forEach((link) => link.removeEventListener("click", closeMenu));
+      menu?.removeEventListener("toggle", handleMenuToggle);
+      document.removeEventListener("keydown", handleMenuKey);
       trackedElements.forEach((element) => element.removeEventListener("click", handleTrackedClick));
       contactForm?.removeEventListener("submit", handleSubmit);
       resetContactButton?.removeEventListener("click", resetContact);

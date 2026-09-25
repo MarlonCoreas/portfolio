@@ -43,9 +43,8 @@ export default function PrivacyPage({ lang }: { lang: Locale }) {
     <main className="legal-page section-grid">
       <div className="shell legal-page-inner">
         <nav className="legal-nav" aria-label={lang === "en" ? "Privacy navigation" : "Navegación de privacidad"}>
-          <a className="brand" href={t.home}>
-            <span className="brand-glyph" aria-hidden="true"><i /><i /><i /></span>
-            <span className="brand-label">MARLON<span>/</span>COREAS</span>
+          <a className="wordmark" href={t.home}>
+            Marlon Coreas
           </a>
           <a className="language-switch" href={t.alternate}>{t.alternateLabel}</a>
         </nav>

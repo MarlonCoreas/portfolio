@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { copy, site, siteUrl, type Locale } from "../src/i18n";
 import ClientEnhancements from "./ClientEnhancements";
 
@@ -9,16 +10,56 @@ function Arrow() {
   return (
     <svg viewBox="0 0 20 20" aria-hidden="true">
       <path
-        d="M4.5 15.5 15 5m0 0H7m8 0v8"
+        d="M3.5 10h13m0 0-5-5m5 5-5 5"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.7"
+        strokeWidth="1.4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
   );
 }
+
+// Splits a heading into words so each one can rise out of its own mask. The
+// spaces stay real text nodes, so assistive tech reads the sentence unchanged.
+function SplitWords({ text }: { text: string }) {
+  return (
+    <span className="split">
+      {text.split(" ").map((word, index) => (
+        <span key={`${word}-${index}`}>
+          {index > 0 ? " " : null}
+          <span className="split-word" style={{ "--i": index } as CSSProperties}>
+            <span>{word}</span>
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+const serviceIcons = [
+  // A page with a clear call to action.
+  <svg viewBox="0 0 32 32" aria-hidden="true" key="site">
+    <rect x="4.5" y="6.5" width="23" height="19" rx="1" />
+    <path d="M4.5 11.5h23M9 16.5h9M9 20.5h5" />
+    <circle cx="8" cy="9" r=".6" />
+  </svg>,
+  // Connected tools, one workflow.
+  <svg viewBox="0 0 32 32" aria-hidden="true" key="software">
+    <circle cx="8" cy="8" r="3.5" />
+    <circle cx="24" cy="8" r="3.5" />
+    <circle cx="16" cy="24" r="3.5" />
+    <path d="M11 9.5 14 21M21 9.5 18 21M11.5 8h9" />
+  </svg>,
+  // Something new, from nothing.
+  <svg viewBox="0 0 32 32" aria-hidden="true" key="product">
+    <path d="M16 3.5v7M16 21.5v7M3.5 16h7M21.5 16h7" />
+    <path d="m16 11 1.6 3.4L21 16l-3.4 1.6L16 21l-1.6-3.4L11 16l3.4-1.6Z" />
+  </svg>
+];
+
+const numerals = ["I", "II", "III", "IV", "V", "VI"];
 
 export default function PortfolioPage({ lang }: Props) {
   const t = copy[lang];
@@ -27,6 +68,15 @@ export default function PortfolioPage({ lang }: Props) {
   const canonical = lang === "en" ? `${siteUrl}/` : `${siteUrl}/es`;
   const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const privacyPath = lang === "en" ? "/privacy" : "/es/privacidad";
+  const homePath = lang === "en" ? "/" : "/es";
+
+  const sections = [
+    { id: "top", label: lang === "en" ? "Intro" : "Inicio" },
+    { id: "work", label: t.nav.work },
+    { id: "services", label: t.nav.services },
+    { id: "about", label: t.nav.about },
+    { id: "contact", label: t.nav.contact }
+  ];
 
   // One person across both languages, so the node carries a language-neutral
   // @id and every other node points at it instead of repeating the object.
@@ -86,7 +136,7 @@ export default function PortfolioPage({ lang }: Props) {
         url: canonical,
         description: t.seo.description,
         email: site.email,
-        image: `${siteUrl}/og.png`,
+        image: `${siteUrl}/og-noir-${lang}.jpg`,
         inLanguage: lang,
         provider: { "@id": personId },
         founder: { "@id": personId },
@@ -131,58 +181,87 @@ export default function PortfolioPage({ lang }: Props) {
       </a>
 
       <header className="site-header" data-header>
-        <div className="shell header-inner">
-          <a className="brand" href={lang === "en" ? "/" : "/es"} aria-label="Portfolio home">
-            <span className="brand-glyph" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-            <span className="brand-label">
-              BUILD<span>/</span>SHIP
-            </span>
+        <div className="header-inner">
+          <a className="wordmark" href={homePath} aria-label="Portfolio home">
+            Marlon Coreas
           </a>
 
           <nav className="desktop-nav" aria-label={lang === "en" ? "Primary navigation" : "Navegación principal"}>
-            <a href="#work">{t.nav.work}</a>
-            <a href="#services">{t.nav.services}</a>
-            <a href="#about">{t.nav.about}</a>
+            {sections.slice(1, 4).map((section) => (
+              <a href={`#${section.id}`} data-section-link={section.id} key={section.id}>
+                {section.label}
+              </a>
+            ))}
           </nav>
 
           <div className="header-actions">
-            <a
-              className="language-switch"
-              href={t.alternatePath}
-              hrefLang={lang === "en" ? "es" : "en"}
-              lang={lang === "en" ? "es" : "en"}
-              aria-label={lang === "en" ? "Ver en español" : "View in English"}
-            >
-              {t.alternateLabel}
-            </a>
+            <p className="language-pair">
+              <span aria-current="true">{lang.toUpperCase()}</span>
+              <a
+                href={t.alternatePath}
+                hrefLang={lang === "en" ? "es" : "en"}
+                lang={lang === "en" ? "es" : "en"}
+                aria-label={lang === "en" ? "Ver en español" : "View in English"}
+              >
+                {t.alternateLabel}
+              </a>
+            </p>
             <a className="header-cta" href="#contact" data-track="header_contact_click">
-              <span>{t.nav.contact}</span>
-              <span className="icon">
-                <Arrow />
-              </span>
+              {t.nav.contact}
             </a>
+            <details className="menu" data-menu>
+              <summary aria-label={lang === "en" ? "Menu" : "Menú"}>
+                <span className="menu-dots" aria-hidden="true">
+                  {Array.from({ length: 9 }, (_, index) => <i key={index} />)}
+                </span>
+              </summary>
+              <div className="menu-panel">
+                <nav aria-label={lang === "en" ? "Menu" : "Menú"}>
+                  {sections.map((section, index) => (
+                    <a href={`#${section.id}`} key={section.id}>
+                      <span>0{index + 1}</span>
+                      {section.label}
+                    </a>
+                  ))}
+                </nav>
+                <div className="menu-meta">
+                  <a href={mailto}>{site.email}</a>
+                  <a href={site.githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+                  <a href={site.linkedinUrl} target="_blank" rel="noreferrer">LinkedIn</a>
+                  <a href={t.alternatePath}>{lang === "en" ? "Español" : "English"}</a>
+                </div>
+              </div>
+            </details>
           </div>
         </div>
       </header>
 
+      <nav className="section-rail" aria-label={lang === "en" ? "Page sections" : "Secciones de la página"}>
+        {sections.map((section) => (
+          <a href={`#${section.id}`} data-section-link={section.id} key={section.id}>
+            <span>{section.label}</span>
+          </a>
+        ))}
+      </nav>
+
+      <div className="social-rail">
+        <a href={site.githubUrl} target="_blank" rel="noreferrer" aria-label="GitHub">Gh</a>
+        <a href={site.linkedinUrl} target="_blank" rel="noreferrer" aria-label="LinkedIn">In</a>
+      </div>
+
       <main id="content">
-        <section className="hero section-grid" aria-labelledby="hero-title">
-          <div className="hero-glow" aria-hidden="true" />
+        <section className="hero" id="top" data-section aria-labelledby="hero-title">
+          <div className="hero-light" aria-hidden="true" />
           <div className="shell hero-inner">
-            <div className="hero-copy" data-reveal>
-              <div className="availability">
+            <div className="hero-copy">
+              <p className="availability">
                 <span className="availability-pulse" aria-hidden="true" />
                 {t.hero.status}
-              </div>
-
-              <p className="eyebrow">{t.hero.eyebrow}</p>
+              </p>
+              <p className="hero-eyebrow">{t.hero.eyebrow}</p>
               <h1 id="hero-title">
-                <span>{t.hero.titleStart}</span>
-                <em>{t.hero.titleAccent}</em>
+                <span className="hero-line">{t.hero.titleStart}</span>
+                <em className="hero-line">{t.hero.titleAccent}</em>
               </h1>
               <p className="hero-intro">{t.hero.intro}</p>
 
@@ -199,129 +278,111 @@ export default function PortfolioPage({ lang }: Props) {
               </div>
             </div>
 
-            <div className="hero-system" data-reveal data-spotlight>
-              <div className="system-orbit orbit-one" aria-hidden="true" />
-              <div className="system-orbit orbit-two" aria-hidden="true" />
-              <div className="system-card">
-                <div className="system-topline">
-                  <span>{t.hero.consoleEyebrow}</span>
-                  <span className="system-status">
-                    <i /> online
-                  </span>
-                </div>
+            <div className="hero-stage" data-light>
+              <div className="halo" aria-hidden="true" />
+              <div className="orb" aria-hidden="true" />
+              <div className="orb-floor" aria-hidden="true" />
+              <div className="stage-caption">
+                <p>{t.hero.consoleEyebrow}</p>
                 <h2>{t.hero.consoleTitle}</h2>
-                <div className="system-code" aria-label={t.hero.consoleTitle}>
-                  {t.hero.consoleLines.map((line) => (
-                    <div key={line.key}>
-                      <span>{line.key}</span>
-                      <strong>{line.value}</strong>
-                    </div>
-                  ))}
-                </div>
-                <div className="shipping-card">
-                  <div className="shipping-icon" aria-hidden="true">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <div>
-                    <small>{t.hero.shipping}</small>
-                    <p>{t.hero.shippingValue}</p>
-                  </div>
-                </div>
               </div>
-              <span className="system-coordinate coordinate-one">13.69°N</span>
-              <span className="system-coordinate coordinate-two">DEV/26</span>
+              <ol className="stage-notes">
+                {t.hero.consoleLines.map((line) => (
+                  <li key={line.key}>
+                    <span>{line.key}</span>
+                    <strong>{line.value}</strong>
+                  </li>
+                ))}
+              </ol>
+              <span className="stage-coordinate coordinate-one" aria-hidden="true">13.69°N 89.19°W</span>
+              <span className="stage-coordinate coordinate-two" aria-hidden="true">DEV / 26</span>
             </div>
+          </div>
 
-            <div className="hero-proof" data-reveal>
-              <p>{t.hero.proofLabel}</p>
-              <div className="proof-list">
+          <div className="shell">
+            <div className="hero-proof">
+              <p className="hero-proof-label">{t.hero.proofLabel}</p>
+              <dl>
                 {t.hero.proof.map((item) => (
                   <div key={item.label}>
-                    <strong>{item.value}</strong>
-                    <span>{item.label}</span>
+                    <dt>{item.label}</dt>
+                    <dd>{item.value}</dd>
                   </div>
                 ))}
-              </div>
+                <div className="hero-principle">
+                  <dt>{t.hero.shipping}</dt>
+                  <dd>{t.hero.shippingValue}</dd>
+                </div>
+              </dl>
             </div>
           </div>
         </section>
 
-        <section className="work section-grid" id="work" aria-labelledby="work-title">
+        <section className="work" id="work" data-section aria-labelledby="work-title">
           <div className="shell">
             <div className="section-heading" data-reveal>
               <p className="eyebrow">{t.work.eyebrow}</p>
-              <div>
-                <h2 id="work-title">{t.work.title}</h2>
-                <p>{t.work.intro}</p>
-              </div>
+              <h2 id="work-title">
+                <SplitWords text={t.work.title} />
+              </h2>
+              <p className="section-intro">{t.work.intro}</p>
             </div>
 
-            <div className="project-list">
+            <div className="exhibit-list">
               {t.work.items.map((project, index) => {
                 // Every current project ships an image, so TypeScript narrows the
-                // fallback branch to never. Widening here keeps the stealth visual
+                // fallback branch to never. Widening here keeps the veiled visual
                 // available for confidential work without an image to show.
                 const projectImage: string | undefined = project.image;
                 // Only LoanPilot publishes the reading it applies where the law
                 // admits more than one, so the fourth evidence row is optional.
                 const highlight = "highlight" in project ? project.highlight : undefined;
                 return (
-                <article
-                  className={`project-card theme-${project.theme}`}
-                  data-reveal
-                  data-spotlight
-                  key={project.number}
-                >
-                  <div className="project-visual">
-                    {projectImage ? (
-                      <>
-                        <img
-                          src={projectImage}
-                          alt={project.alt}
-                          width="1200"
-                          height={project.imageHeight ?? 800}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <span className="project-chip">{project.kind}</span>
-                        {index === 0 ? (
+                  <article className={`exhibit theme-${project.theme}`} key={project.number}>
+                    <div className="exhibit-visual" data-reveal data-spotlight>
+                      <span className="exhibit-index" aria-hidden="true">{project.number}</span>
+                      {projectImage ? (
+                        <figure className="exhibit-frame">
                           <img
-                            className="project-app-icon"
-                            src="/images/peek-icon.webp"
-                            alt=""
-                            width="82"
-                            height="82"
+                            src={projectImage}
+                            alt={project.alt}
+                            width="1200"
+                            height={project.imageHeight ?? 800}
                             loading="lazy"
+                            decoding="async"
                           />
-                        ) : null}
-                      </>
-                    ) : (
-                      <div className="stealth-visual" aria-hidden="true">
-                        <div className="stealth-ring ring-a" />
-                        <div className="stealth-ring ring-b" />
-                        <div className="stealth-ring ring-c" />
-                        <div className="stealth-center">
-                          <span>{lang === "en" ? "BUILD" : "CREAR"}</span>
-                          <strong>{project.number}</strong>
-                          <span>{lang === "en" ? "TEST" : "PROBAR"}</span>
+                          {index === 0 ? (
+                            <img
+                              className="exhibit-app-icon"
+                              src="/images/peek-icon.webp"
+                              alt=""
+                              width="82"
+                              height="82"
+                              loading="lazy"
+                            />
+                          ) : null}
+                        </figure>
+                      ) : (
+                        <div className="exhibit-frame veiled" aria-hidden="true">
+                          <div className="veiled-halo" />
+                          <div className="veiled-orb" />
+                          <span className="veiled-label">
+                            {lang === "en" ? "In the studio" : "En el taller"}
+                          </span>
                         </div>
-                        <span className="stealth-note note-a">{lang === "en" ? "research" : "estudio"}</span>
-                        <span className="stealth-note note-b">{lang === "en" ? "prototype" : "prototipo"}</span>
-                        <span className="stealth-note note-c">{lang === "en" ? "iterate" : "iterar"}</span>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                      <p className="exhibit-plate">
+                        <span>N° {project.number}</span>
+                        <span>{project.kind}</span>
+                      </p>
+                    </div>
 
-                  <div className="project-content">
-                    <div className="project-number">{project.number}</div>
-                    <div className="project-main">
-                      <p className="project-kind">{project.kind}</p>
+                    <div className="exhibit-content" data-reveal>
+                      <p className="exhibit-kind">{project.kind}</p>
                       <h3>{project.title}</h3>
-                      <p className="project-description">{project.description}</p>
-                      <p className="project-role">{project.role}</p>
-                      <dl className="project-evidence">
+                      <p className="exhibit-description">{project.description}</p>
+                      <p className="exhibit-role">{project.role}</p>
+                      <dl className="exhibit-evidence">
                         <div>
                           <dt>{lang === "en" ? "Challenge" : "Problema"}</dt>
                           <dd>{project.challenge}</dd>
@@ -361,28 +422,27 @@ export default function PortfolioPage({ lang }: Props) {
                           <li key={tag}>{tag}</li>
                         ))}
                       </ul>
+                      {project.links.length > 0 ? (
+                        <div className="exhibit-links">
+                          {project.links.map((link) => (
+                            <a
+                              href={link.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              key={link.href}
+                              data-track="case_study_open"
+                              data-track-label={project.title}
+                            >
+                              <span>{link.label}</span>
+                              <span className="icon">
+                                <Arrow />
+                              </span>
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
-                    {project.links.length > 0 ? (
-                      <div className="project-links">
-                        {project.links.map((link) => (
-                          <a
-                            href={link.href}
-                            target="_blank"
-                            rel="noreferrer"
-                            key={link.href}
-                            data-track="case_study_open"
-                            data-track-label={project.title}
-                          >
-                            <span>{link.label}</span>
-                            <span className="icon">
-                              <Arrow />
-                            </span>
-                          </a>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                </article>
+                  </article>
                 );
               })}
             </div>
@@ -390,27 +450,26 @@ export default function PortfolioPage({ lang }: Props) {
         </section>
 
         {t.testimonials.items.length > 0 ? (
-          <section className="testimonials section-grid" aria-labelledby="testimonials-title">
+          <section className="testimonials" aria-labelledby="testimonials-title">
             <div className="shell">
               <div className="section-heading" data-reveal>
                 <p className="eyebrow">{t.testimonials.eyebrow}</p>
-                <div>
-                  <h2 id="testimonials-title">{t.testimonials.title}</h2>
-                </div>
+                <h2 id="testimonials-title">
+                  <SplitWords text={t.testimonials.title} />
+                </h2>
               </div>
               <div className="testimonial-list">
                 {t.testimonials.items.map((item) => (
-                  <figure className="testimonial-card" data-reveal data-spotlight key={item.name}>
-                    <span className="testimonial-mark" aria-hidden="true">&ldquo;</span>
+                  <figure className="testimonial" data-reveal key={item.name}>
                     <blockquote>
-                      <p>{item.quote}</p>
+                      <p>&ldquo;{item.quote}&rdquo;</p>
                     </blockquote>
                     <figcaption>
                       <strong>{item.name}</strong>
                       <span>
                         {item.role} · {item.company}
                       </span>
-                      {item.project ? <span className="testimonial-project">{item.project}</span> : null}
+                      {item.project ? <span>{item.project}</span> : null}
                     </figcaption>
                   </figure>
                 ))}
@@ -419,29 +478,32 @@ export default function PortfolioPage({ lang }: Props) {
           </section>
         ) : null}
 
-        <section className="services section-grid" id="services" aria-labelledby="services-title">
+        <section className="services" id="services" data-section aria-labelledby="services-title">
           <div className="shell">
-            <div className="section-heading section-heading-wide" data-reveal>
+            <div className="section-heading" data-reveal>
               <p className="eyebrow">{t.services.eyebrow}</p>
-              <div>
-                <h2 id="services-title">{t.services.title}</h2>
-                <p>{t.services.intro}</p>
-              </div>
+              <h2 id="services-title">
+                <SplitWords text={t.services.title} />
+              </h2>
+              <p className="section-intro">{t.services.intro}</p>
             </div>
 
             <div className="service-grid">
-              {t.services.items.map((service) => (
-                <article className="service-card" data-reveal data-spotlight key={service.number}>
-                  <div className="service-number">{service.number}</div>
+              {t.services.items.map((service, index) => (
+                <article className="service" data-reveal data-spotlight key={service.number}>
+                  <div className="service-top">
+                    <span className="service-icon">{serviceIcons[index]}</span>
+                    <span className="service-number">{service.number}</span>
+                  </div>
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
                   <p className="service-fit">{service.fit}</p>
-                  <p className="service-price">{service.priceFrom}</p>
                   <ul>
                     {service.skills.map((skill) => (
                       <li key={skill}>{skill}</li>
                     ))}
                   </ul>
+                  <p className="service-price">{service.priceFrom}</p>
                   <a className="service-link" href={service.path} data-track="service_detail_open" data-track-label={service.title}>
                     <span>{service.linkLabel}</span>
                     <span className="icon"><Arrow /></span>
@@ -452,18 +514,21 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </section>
 
-        <section className="approach section-grid" aria-labelledby="approach-title">
+        <section className="approach" aria-labelledby="approach-title">
+          <div className="approach-halo" aria-hidden="true" />
           <div className="shell approach-inner">
             <div className="approach-copy" data-reveal>
               <p className="eyebrow">{t.approach.eyebrow}</p>
-              <h2 id="approach-title">{t.approach.title}</h2>
+              <h2 id="approach-title">
+                <SplitWords text={t.approach.title} />
+              </h2>
               <p>{t.approach.intro}</p>
             </div>
 
             <ol className="approach-list">
               {t.approach.points.map((point, index) => (
                 <li data-reveal key={point.title}>
-                  <span>0{index + 1}</span>
+                  <span className="approach-numeral" aria-hidden="true">{numerals[index]}</span>
                   <div>
                     <h3>{point.title}</h3>
                     <p>{point.text}</p>
@@ -474,26 +539,31 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </section>
 
-        <section className="about section-grid" id="about" aria-labelledby="about-title">
+        <section className="about" id="about" data-section aria-labelledby="about-title">
           <div className="shell about-inner">
-            <div className="about-mark" aria-hidden="true" data-reveal>
-              <span className="about-bracket">[</span>
-              <div className="about-core">
-                <span>think</span>
-                <strong>+</strong>
-                <span>make</span>
+            <div className="about-plinth" aria-hidden="true" data-reveal>
+              <div className="plinth-frame">
+                <span className="plinth-monogram">
+                  M<em>c</em>
+                </span>
+                <div className="plinth-ring" />
               </div>
-              <span className="about-bracket">]</span>
+              <p className="plinth-caption">
+                <span>San Salvador</span>
+                <span>13.69°N · 89.19°W</span>
+              </p>
             </div>
 
             <div className="about-copy" data-reveal>
               <p className="eyebrow">{t.about.eyebrow}</p>
-              <h2 id="about-title">{t.about.title}</h2>
-              <p>{t.about.text}</p>
-              <div className="about-availability">
+              <h2 id="about-title">
+                <SplitWords text={t.about.title} />
+              </h2>
+              <p className="about-text">{t.about.text}</p>
+              <p className="about-availability">
                 <span aria-hidden="true" />
                 {t.about.availability}
-              </div>
+              </p>
               <div className="toolkit">
                 <p>{t.about.capabilitiesLabel}</p>
                 <ul>
@@ -514,22 +584,22 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </section>
 
-        <section className="fit section-grid" aria-labelledby="fit-title">
+        <section className="fit" aria-labelledby="fit-title">
           <div className="shell">
-            <div className="section-heading section-heading-wide" data-reveal>
+            <div className="section-heading" data-reveal>
               <p className="eyebrow">{t.fit.eyebrow}</p>
-              <div>
-                <h2 id="fit-title">{t.fit.title}</h2>
-              </div>
+              <h2 id="fit-title">
+                <SplitWords text={t.fit.title} />
+              </h2>
             </div>
             <div className="fit-grid">
-              <article className="fit-card fit-card-positive" data-reveal>
+              <article className="fit-column fit-positive" data-reveal>
                 <h3>{t.fit.goodTitle}</h3>
                 <ul>
                   {t.fit.good.map((item) => <li key={item}>{item}</li>)}
                 </ul>
               </article>
-              <article className="fit-card" data-reveal>
+              <article className="fit-column" data-reveal>
                 <h3>{t.fit.notTitle}</h3>
                 <ul>
                   {t.fit.not.map((item) => <li key={item}>{item}</li>)}
@@ -539,16 +609,18 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </section>
 
-        <section className="faq section-grid" aria-labelledby="faq-title">
+        <section className="faq" aria-labelledby="faq-title">
           <div className="shell faq-inner">
             <div className="faq-heading" data-reveal>
               <p className="eyebrow">{t.faq.eyebrow}</p>
-              <h2 id="faq-title">{t.faq.title}</h2>
+              <h2 id="faq-title">
+                <SplitWords text={t.faq.title} />
+              </h2>
             </div>
             <div className="faq-list">
               {t.faq.items.map((item) => (
                 <details key={item.question} data-reveal>
-                  <summary>{item.question}<span aria-hidden="true">+</span></summary>
+                  <summary>{item.question}<span aria-hidden="true" /></summary>
                   <p>{item.answer}</p>
                 </details>
               ))}
@@ -556,13 +628,22 @@ export default function PortfolioPage({ lang }: Props) {
           </div>
         </section>
 
-        <section className="contact section-grid" id="contact" aria-labelledby="contact-title">
-          <div className="shell">
-            <div className="contact-panel" data-reveal data-spotlight>
-              <div className="contact-grid" aria-hidden="true" />
+        <section className="contact" id="contact" data-section aria-labelledby="contact-title">
+          <div className="contact-halo" aria-hidden="true" />
+          <div className="shell contact-inner">
+            <div className="contact-copy" data-reveal>
               <p className="eyebrow">{t.contact.eyebrow}</p>
-              <h2 id="contact-title">{t.contact.title}</h2>
+              <h2 id="contact-title">
+                <SplitWords text={t.contact.title} />
+              </h2>
               <p className="contact-intro">{t.contact.text}</p>
+              <div className="contact-direct">
+                <span>{t.contact.responseTime}</span>
+                <p>{t.contact.emailLabel} <a href={mailto} data-track="email_click">{site.email}</a></p>
+              </div>
+            </div>
+
+            <div className="contact-panel" data-reveal>
               <section
                 className="contact-result"
                 data-contact-status
@@ -586,7 +667,7 @@ export default function PortfolioPage({ lang }: Props) {
                   <div className="contact-result-actions contact-result-success-actions">
                     {site.bookingUrl ? (
                       <a
-                        className="button button-light"
+                        className="button button-primary"
                         href={site.bookingUrl}
                         target="_blank"
                         rel="noreferrer"
@@ -597,7 +678,7 @@ export default function PortfolioPage({ lang }: Props) {
                         <span className="icon"><Arrow /></span>
                       </a>
                     ) : (
-                      <a className="button button-light" href="#work" data-track="contact_success_work">
+                      <a className="button button-primary" href="#work" data-track="contact_success_work">
                         <span>{t.contact.fields.successAction}</span>
                         <span className="icon"><Arrow /></span>
                       </a>
@@ -607,7 +688,7 @@ export default function PortfolioPage({ lang }: Props) {
                     </button>
                   </div>
                   <div className="contact-result-actions contact-result-error-actions">
-                    <a className="button button-light" href={mailto} data-track="contact_error_email">
+                    <a className="button button-primary" href={mailto} data-track="contact_error_email">
                       <span>{t.contact.fields.emailAction}</span>
                       <span className="icon"><Arrow /></span>
                     </a>
@@ -616,7 +697,7 @@ export default function PortfolioPage({ lang }: Props) {
               </section>
               <form className="contact-form" action="/api/contact.php" method="post" data-contact-form>
                 <input type="hidden" name="language" value={lang} />
-                <input type="hidden" name="redirect" value={lang === "en" ? "/" : "/es"} />
+                <input type="hidden" name="redirect" value={homePath} />
                 {/* Filled in at submit time with how long the form was open. A
                     bot posting straight at the endpoint leaves it empty, which
                     the server scores rather than rejects. */}
@@ -670,7 +751,7 @@ export default function PortfolioPage({ lang }: Props) {
                     id={`goal-${lang}`}
                     name="goal"
                     placeholder={t.contact.fields.goalPlaceholder}
-                    rows={6}
+                    rows={5}
                     maxLength={2500}
                     required
                   />
@@ -680,14 +761,10 @@ export default function PortfolioPage({ lang }: Props) {
                   <span>{t.contact.fields.consent} <a href={privacyPath}>{t.contact.fields.privacy}</a>.</span>
                 </label>
                 <div className="contact-submit form-field-wide">
-                  <button className="button button-light" type="submit" data-contact-submit data-sending={t.contact.fields.sending}>
+                  <button className="button button-primary" type="submit" data-contact-submit data-sending={t.contact.fields.sending}>
                     <span data-contact-submit-label>{t.contact.button}</span>
                     <span className="icon"><Arrow /></span>
                   </button>
-                  <div>
-                    <span>{t.contact.responseTime}</span>
-                    <p>{t.contact.emailLabel} <a href={mailto} data-track="email_click">{site.email}</a></p>
-                  </div>
                 </div>
               </form>
             </div>
@@ -695,53 +772,51 @@ export default function PortfolioPage({ lang }: Props) {
         </section>
       </main>
 
-      <footer className="site-footer section-grid">
+      <footer className="site-footer">
         <div className="shell">
           <div className="footer-top">
-            <a className="brand" href={lang === "en" ? "/" : "/es"} aria-label="Portfolio home">
-              <span className="brand-glyph" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-              <span className="brand-label">
-                BUILD<span>/</span>SHIP
-              </span>
-            </a>
-            <p>{t.footer.tagline}</p>
-          </div>
-          <div className="footer-links">
-            <div>
-              <p>{t.footer.navigation}</p>
-              <a href="#work">{t.nav.work}</a>
-              <a href="#services">{t.nav.services}</a>
-              <a href="#about">{t.nav.about}</a>
+            <div className="footer-intro">
+              <a className="wordmark" href={homePath} aria-label="Portfolio home">
+                Marlon Coreas
+              </a>
+              <p>{t.footer.tagline}</p>
             </div>
-            <div>
-              <p>{t.footer.projects}</p>
-              <a href={site.peekUrl} target="_blank" rel="noreferrer">
-                Peek Compress
-              </a>
-              <a href={site.remodelingUrl} target="_blank" rel="noreferrer">
-                NC Home Remodeling
-              </a>
-              <a href={site.loanpilotUrl} target="_blank" rel="noreferrer">
-                LoanPilot
-              </a>
-            </div>
-            <div>
-              <p>{t.footer.connect}</p>
-              <a href={site.githubUrl} target="_blank" rel="noreferrer">
-                GitHub
-              </a>
-              <a href={site.linkedinUrl} target="_blank" rel="noreferrer">
-                LinkedIn
-              </a>
-              <a href={mailto}>{site.email}</a>
-              <a href={t.alternatePath}>{lang === "en" ? "Español" : "English"}</a>
-              <a href={privacyPath}>{t.footer.privacy}</a>
+            <div className="footer-links">
+              <div>
+                <p>{t.footer.navigation}</p>
+                <a href="#work">{t.nav.work}</a>
+                <a href="#services">{t.nav.services}</a>
+                <a href="#about">{t.nav.about}</a>
+              </div>
+              <div>
+                <p>{t.footer.projects}</p>
+                <a href={site.peekUrl} target="_blank" rel="noreferrer">
+                  Peek Compress
+                </a>
+                <a href={site.remodelingUrl} target="_blank" rel="noreferrer">
+                  NC Home Remodeling
+                </a>
+                <a href={site.loanpilotUrl} target="_blank" rel="noreferrer">
+                  LoanPilot
+                </a>
+              </div>
+              <div>
+                <p>{t.footer.connect}</p>
+                <a href={site.githubUrl} target="_blank" rel="noreferrer">
+                  GitHub
+                </a>
+                <a href={site.linkedinUrl} target="_blank" rel="noreferrer">
+                  LinkedIn
+                </a>
+                <a href={mailto}>{site.email}</a>
+                <a href={t.alternatePath}>{lang === "en" ? "Español" : "English"}</a>
+                <a href={privacyPath}>{t.footer.privacy}</a>
+              </div>
             </div>
           </div>
+          <p className="footer-signature" aria-hidden="true">
+            Marlon <em>Coreas</em>
+          </p>
           <div className="footer-bottom">
             <span>© {year}</span>
             <span>{t.footer.legal}</span>
