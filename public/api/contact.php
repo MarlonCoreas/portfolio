@@ -216,7 +216,10 @@ function spam_assessment(string $name, string $company, string $goal, array $phr
     // Safe to keep public — the sender needs the link for the pitch to work.
     $suspectHosts = array_merge([
         'mega.nz', 'mega.io', 'mega.co.nz', 'bit.ly', 'tinyurl', 'cutt.ly', 'rebrand.ly',
-        't.me', 'wetransfer', 'dropbox.com', 'drive.google.com', 'shorturl', 'is.gd',
+        't.me', 'wetransfer', 'dropbox.com', 'drive.google.com', 'shorturl', 'shorto.link', 'is.gd',
+        // Telegram's anonymous publishing pages: the sweepstakes campaign's
+        // landing page, and no account is needed to put one up.
+        'telegra.ph', 'graph.org',
     ], $phrases['hosts']);
     foreach ($suspectHosts as $host) {
         if (str_contains($haystack, $host)) {
@@ -276,10 +279,11 @@ function spam_assessment(string $name, string $company, string $goal, array $phr
         $reasons[] = 'jackpot-figure';
     }
 
-    // "MichaelFlind" — two capitalised words fused with no separator is a
-    // generated handle far more often than a name someone typed. Deliberately
-    // weak: it nudges, and never flags an inquiry by itself.
-    if (preg_match('~^[A-Z][a-z]+[A-Z][a-z]+$~', $name)) {
+    // "MichaelFlind" or "Marywar4474" — two capitalised words fused with no
+    // separator, or a handle with a run of digits appended, is a generated
+    // name far more often than one someone typed. Deliberately weak: it
+    // nudges, and never flags an inquiry by itself.
+    if (preg_match('~^(?:[A-Z][a-z]+[A-Z][a-z]+|[A-Za-z]+\d{3,})$~', $name)) {
         $score += 2;
         $reasons[] = 'generated-name';
     }
