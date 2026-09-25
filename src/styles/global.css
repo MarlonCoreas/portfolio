@@ -264,8 +264,9 @@
   html.menu-open .site-header {
     border-color: transparent;
     background: transparent;
+    /* Only the standard property: the minifier derives the -webkit- one, and
+       writing both made it keep just the prefixed copy, which Chrome ignores. */
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     transition: none;
   }
 
