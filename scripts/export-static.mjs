@@ -93,6 +93,13 @@ RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ ${SITE_URL}%{REQUEST_URI} [R=301,L]
 
+# Subdomain folders live inside this document root, which makes each of them
+# reachable a second time as a path on this host. Send that copy to the
+# subdomain it belongs to. The host condition keeps the rule from ever firing
+# on the subdomain itself.
+RewriteCond %{HTTP_HOST} ^${host.replaceAll(".", "\\.")}$ [NC]
+RewriteRule ^(loanpilot)(?:/(.*))?$ https://$1.${host}/$2 [R=301,L]
+
 RewriteRule ^es/?$ es/index.html [L]
 RewriteRule ^services/websites/?$ services/websites/index.html [L]
 RewriteRule ^services/custom-software/?$ services/custom-software/index.html [L]
