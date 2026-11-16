@@ -29,6 +29,19 @@ return [
     // Send the visitor a confirmation email. Set to false to disable.
     'send_confirmation' => true,
 
+    // Ceilings on the confirmation email. It goes to an address nobody has
+    // verified, so bots submit the form with a stranger's address to make this
+    // mailbox write to them. The mail carries nothing the sender typed, which
+    // leaves only volume to abuse, and these bound it:
+    //   - at most this many confirmations in any rolling 24 hours, in total;
+    //   - at most one per recipient address in this many days.
+    // Above either, the inquiry is still delivered and logged; only the
+    // automatic reply is skipped (`confirmation=skipped:...` in the lead log).
+    // If the abuse continues anyway, set `send_confirmation` to false: the
+    // success page already tells a real visitor the inquiry arrived.
+    'confirmation_daily_cap' => 20,
+    'confirmation_recipient_days' => 7,
+
     // Booking link included in the confirmation email. Keep it in sync with
     // `site.bookingUrl` in src/i18n.ts, which controls the button on the page.
     // Leave empty to omit that paragraph entirely.

@@ -45,9 +45,12 @@ try {
   if (!ready) throw new Error(`Production server did not start on port ${PORT}`);
 
   await rm(OUT, { recursive: true, force: true });
+  // Left out of the upload: build metadata the browser never requests, and the
+  // config template, which belongs in the repository and not on the server.
+  const notDeployed = ["vinext-client-entry-manifest.json", "config.example.php"];
   await cp("dist/client", OUT, {
     recursive: true,
-    filter: (source) => !source.includes(`${path.sep}.vite`)
+    filter: (source) => !source.includes(`${path.sep}.vite`) && !notDeployed.includes(path.basename(source))
   });
 
   for (const { route, file } of routes) {
@@ -62,6 +65,23 @@ try {
   // Serve /es without a trailing-slash redirect so the canonical URL matches,
   // and collapse www/http variants onto the canonical origin.
   const host = new URL(SITE_URL).host;
+
+  // Google's hosts are only allowed when analytics is actually configured, so
+  // the policy never trusts a third party the pages do not load.
+  const analytics = Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID);
+  const csp = [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${analytics ? " https://www.googletagmanager.com" : ""}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data:${analytics ? " https://www.google-analytics.com" : ""}`,
+    "font-src 'self'",
+    `connect-src 'self'${analytics ? " https://www.google-analytics.com https://www.googletagmanager.com" : ""}`,
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests"
+  ].join("; ");
   await writeFile(
     path.join(OUT, ".htaccess"),
     `Options -MultiViews -Indexes
@@ -108,7 +128,8 @@ ErrorDocument 404 /404.html
   Header always set Cross-Origin-Opener-Policy "same-origin"
   # The framework emits per-build inline bootstrap scripts, so script hashes are
   # not stable; 'unsafe-inline' stays, but every other directive is locked down.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+  Header always set Content-Security-Policy "${csp}"
+  Header always unset X-Powered-By
 </IfModule>
 
 <IfModule mod_expires.c>

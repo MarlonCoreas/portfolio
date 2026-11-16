@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use PHPMailer\PHPMailer\PHPMailer;
 
+header_remove('X-Powered-By');
 header('X-Robots-Tag: noindex, nofollow');
 header('Cache-Control: no-store');
 
@@ -114,6 +115,95 @@ function send_via_smtp(
     } catch (\Throwable $exception) {
         $error = $exception->getMessage();
         return false;
+    }
+}
+
+/**
+ * The directory above the document root, where the config and the lead log
+ * live. Empty when it cannot be written, so callers fall back elsewhere.
+ */
+function private_dir(): string {
+    $docRoot = (string)($_SERVER['DOCUMENT_ROOT'] ?? '');
+    $dir = $docRoot !== '' ? dirname($docRoot) : '';
+    return ($dir !== '' && is_dir($dir) && is_writable($dir)) ? $dir : '';
+}
+
+/**
+ * The name used to greet the visitor in the confirmation email, or '' when the
+ * field does not look like a plain first name.
+ *
+ * The confirmation goes to an address nobody has verified, so every character
+ * of it that the sender controls is a way to deliver their text to a stranger
+ * from this domain's signed mailbox. The name field was the last such channel:
+ * "J. Claim your prize at example.com/x" used to be greeted in full. Now only a
+ * single word of letters gets through, and anything else is greeted generically.
+ */
+function greeting_name(string $name): string {
+    $parts = preg_split('~\s+~u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $first = (string)($parts[0] ?? '');
+    return preg_match('~^\p{L}[\p{L}\'’\-]{1,24}$~u', $first) === 1 ? $first : '';
+}
+
+/**
+ * Decides whether one more confirmation email may leave the server, and
+ * reserves the slot when it may. Returns 'ok' or the reason it may not.
+ *
+ * Two ceilings, both independent of the sender's IP, which a bot rotates:
+ *   - one confirmation per recipient address per `confirmation_recipient_days`,
+ *     so the form cannot be used to mail the same inbox over and over;
+ *   - `confirmation_daily_cap` confirmations in total per rolling 24 hours, a
+ *     circuit breaker that bounds what a campaign can spend of the domain's
+ *     sending reputation. Real inquiries above the cap still reach the inbox
+ *     and the visitor still sees the success page; only the automatic reply
+ *     is skipped.
+ */
+function confirmation_gate(string $email, array $config): string {
+    $dailyCap = (int)($config['confirmation_daily_cap'] ?? 20);
+    $recipientWindow = (int)($config['confirmation_recipient_days'] ?? 7) * 86_400;
+
+    $dir = private_dir();
+    if ($dir === '') {
+        $dir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+    }
+    $handle = @fopen($dir . DIRECTORY_SEPARATOR . 'contact-confirmations.json', 'c+');
+    if ($handle === false || !flock($handle, LOCK_EX)) {
+        // Without the counter there is no ceiling, so nothing is sent.
+        return 'no-state';
+    }
+
+    try {
+        $state = json_decode((string)stream_get_contents($handle), true);
+        $now = time();
+        $sentAt = array_values(array_filter(
+            is_array($state['sent'] ?? null) ? $state['sent'] : [],
+            static fn (mixed $at): bool => is_int($at) && $now - $at < 86_400
+        ));
+        $recipients = array_filter(
+            is_array($state['recipients'] ?? null) ? $state['recipients'] : [],
+            static fn (mixed $at): bool => is_int($at) && $now - $at < $recipientWindow
+        );
+
+        // Plus-tags and case do not make a different inbox.
+        [$local, $domain] = array_pad(explode('@', mb_strtolower($email, 'UTF-8'), 2), 2, '');
+        $key = substr(hash('sha256', explode('+', $local)[0] . '@' . $domain), 0, 20);
+
+        if (isset($recipients[$key])) {
+            $verdict = 'recipient-repeat';
+        } elseif (count($sentAt) >= $dailyCap) {
+            $verdict = 'daily-cap';
+        } else {
+            $verdict = 'ok';
+            $sentAt[] = $now;
+            $recipients[$key] = $now;
+        }
+
+        rewind($handle);
+        ftruncate($handle, 0);
+        fwrite($handle, (string)json_encode(['sent' => $sentAt, 'recipients' => $recipients]));
+        return $verdict;
+    } finally {
+        flock($handle, LOCK_UN);
+        fclose($handle);
     }
 }
 
@@ -356,14 +446,17 @@ if ($lastAttempt > 0 && time() - $lastAttempt < 60) {
 // inquiries; a bot working through a target list sends dozens. Beyond the cap
 // the answer is the ordinary success page, so a script gets no signal that it
 // has been cut off and simply keeps talking to a wall.
+//
+// A capped submission is not mailed, but it IS written to the lead log, marked
+// CAPPED. If the address the server sees ever turns out to be shared — a proxy
+// in front of the site, an office behind one connection — the inquiry of a
+// real visitor caught by somebody else's count is still there to be read.
 if (time() - $dayStart >= 86_400) {
     $dayStart = time();
     $dayCount = 0;
 }
 $dailyCap = (int)($config['daily_cap_per_ip'] ?? 5);
-if ($dayCount >= $dailyCap) {
-    respond_to($redirect, 'sent');
-}
+$isCapped = $dayCount >= $dailyCap;
 
 $name = trim((string)($_POST['name'] ?? ''));
 $email = trim((string)($_POST['email'] ?? ''));
@@ -514,7 +607,11 @@ $spamHeaders = $isSuspected
 $transport = 'smtp';
 $transportError = null;
 
-if ($isDiscarded) {
+if ($isCapped) {
+    // Over the per-address daily ceiling: recorded, not mailed.
+    $transport = 'capped';
+    $sent = true;
+} elseif ($isDiscarded) {
     // Nothing leaves the server. The log below is the only record, which is
     // where to look if a real inquiry ever lands here.
     $transport = 'discarded';
@@ -562,28 +659,42 @@ if ($isDiscarded) {
 // text to any inbox over this domain's authenticated, DKIM-signed mailbox — a
 // relay, paid for with the domain's sending reputation. The full message is in
 // the notification and the log, where it is only ever read by its owner.
+//
+// That includes the name: it is reduced to a single plain word for the greeting
+// and never placed in the To header. And because the mail carries no payload,
+// all that is left to abuse is its volume, which the gate below bounds.
 
 $confirmationSent = false;
+$confirmationNote = 'no';
 
-if (!$isDiscarded && $sent && !$isSuspected && ($config['send_confirmation'] ?? true) && ($config['smtp_host'] ?? '') !== '') {
+$confirmationWanted = !$isCapped && !$isDiscarded && $sent && !$isSuspected
+    && ($config['send_confirmation'] ?? true) && ($config['smtp_host'] ?? '') !== '';
+
+if ($confirmationWanted && !$browserProof) {
+    // A POST that never ran the page is not a visitor waiting for a reply.
+    $confirmationNote = 'skipped:no-browser-proof';
+    $confirmationWanted = false;
+}
+
+if ($confirmationWanted) {
+    $gate = confirmation_gate($safeEmail, $config);
+    if ($gate !== 'ok') {
+        $confirmationNote = 'skipped:' . $gate;
+        $confirmationWanted = false;
+    }
+}
+
+if ($confirmationWanted) {
     $labels = $optionLabels[$language];
     $bookingUrl = trim((string)($config['booking_url'] ?? ''));
-
-    // Greet by first name — "Hi Marlon Salomon Coreas Villanueva," reads like a
-    // form letter. Fall back to the full name for initials or a title, where
-    // the first token ("J.", "Sr.") is not a name at all.
-    $nameParts = preg_split('~\s+~', $safeName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-    $firstName = $nameParts[0] ?? $safeName;
-    if (mb_strlen($firstName, 'UTF-8') <= 2 || str_ends_with($firstName, '.')) {
-        $firstName = $safeName;
-    }
+    $firstName = greeting_name($safeName);
 
     if ($language === 'es') {
         $confirmSubject = 'Recibí los detalles de tu proyecto — Marlon Coreas';
         $bookingBlock = $bookingUrl !== ''
             ? "Si prefieres avanzar más rápido, puedes reservar una llamada de 15 minutos aquí:\n" . $bookingUrl . "\n\n"
             : '';
-        $confirmBody = "Hola " . $firstName . ",\n\n"
+        $confirmBody = "Hola" . ($firstName !== '' ? ' ' . $firstName : '') . ",\n\n"
             . "Gracias por escribir. Esta es la confirmación de que tu consulta llegó: la leo yo personalmente, no un equipo de ventas.\n\n"
             . "Qué sigue: voy a revisar el contexto que describiste y te responderé en un máximo de dos días hábiles, con una lectura honesta de si soy la persona indicada para ayudarte y cuál sería un primer paso sensato.\n\n"
             . $bookingBlock
@@ -600,7 +711,7 @@ if (!$isDiscarded && $sent && !$isSuspected && ($config['send_confirmation'] ?? 
         $bookingBlock = $bookingUrl !== ''
             ? "If you would rather move faster, you can book a 15-minute call here:\n" . $bookingUrl . "\n\n"
             : '';
-        $confirmBody = "Hi " . $firstName . ",\n\n"
+        $confirmBody = "Hi" . ($firstName !== '' ? ' ' . $firstName : '') . ",\n\n"
             . "Thanks for writing. This confirms your inquiry arrived — I read these myself, not a sales team.\n\n"
             . "What happens next: I will review the context you described and reply within two business days, with an honest read on whether I am the right person to help and what a sensible first step would be.\n\n"
             . $bookingBlock
@@ -617,12 +728,13 @@ if (!$isDiscarded && $sent && !$isSuspected && ($config['send_confirmation'] ?? 
     $confirmationSent = send_via_smtp(
         $config,
         $safeEmail,
-        $safeName,
+        '',
         $confirmSubject,
         $confirmBody,
         (string)($config['from_email'] ?? 'hello@marloncoreas.com'),
         'Marlon Coreas'
     );
+    $confirmationNote = $confirmationSent ? 'ok' : 'failed';
 }
 
 // --- Local copy -------------------------------------------------------------
@@ -630,11 +742,22 @@ if (!$isDiscarded && $sent && !$isSuspected && ($config['send_confirmation'] ?? 
 // than a duplicated one. The log holds personal data, so it is written above the
 // document root when possible; inside the webroot the .htaccess rules block it.
 
+// Short hashes of the address the server sees and of the first forwarded hop.
+// Not enough to identify anyone, enough to answer one question: if `ip` is the
+// same on inquiries from unrelated people while `fwd` changes, the server is
+// seeing a proxy instead of the visitor, and the per-address limits above are
+// being shared by everyone behind it.
+$forwarded = trim(explode(',', (string)($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))[0]);
+$clientTrace = ' · ip=' . substr(hash('sha256', $ip), 0, 8)
+    . ' · fwd=' . ($forwarded !== '' ? substr(hash('sha256', $forwarded), 0, 8) : 'none');
+
 $logEntry = implode("\n", [
     '--- ' . gmdate('c')
         . ' · via=' . $transport
+        . ($isCapped ? ' (CAPPED: over ' . $dailyCap . '/day for this address)' : '')
         . ' · delivery=' . ($sent ? 'ok' : 'failed')
-        . ' · confirmation=' . ($confirmationSent ? 'ok' : 'no')
+        . ' · confirmation=' . $confirmationNote
+        . $clientTrace
         . ' · spam=' . $spamScore . '/' . $spamThreshold . '/' . $hardThreshold . ' · phrases=' . $phraseCount
         . ($isDiscarded ? ' (DISCARDED: ' : ($isSuspected ? ' (FLAGGED: ' : ''))
         . ($isSuspected ? implode(', ', $spamReasons) . ')' : '')
@@ -643,9 +766,8 @@ $logEntry = implode("\n", [
     ''
 ]) . "\n";
 
-$docRoot = (string)($_SERVER['DOCUMENT_ROOT'] ?? '');
-$privateDir = $docRoot !== '' ? dirname($docRoot) : '';
-$logFile = ($privateDir !== '' && is_dir($privateDir) && is_writable($privateDir))
+$privateDir = private_dir();
+$logFile = $privateDir !== ''
     ? $privateDir . DIRECTORY_SEPARATOR . 'contact-leads.log'
     : __DIR__ . DIRECTORY_SEPARATOR . 'leads.log';
 

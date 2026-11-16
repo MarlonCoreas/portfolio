@@ -48,6 +48,10 @@ Until that file exists the form still works — it falls back to PHP `mail()` fo
 
 Any transactional email provider that offers SMTP credentials (Brevo, Resend, MailerSend, Amazon SES) can be used instead by changing only `contact-config.php` — no code change required.
 
+### Confirmation email abuse
+
+The confirmation goes to whatever address was typed into the form, so bots submit it with a stranger's address to make the domain mailbox write to them. Three things keep that worthless: the mail contains nothing the sender typed (the name is reduced to a single plain word, or dropped), it is only sent when the page's own timer ran, and it is capped — `confirmation_daily_cap` in total per 24 hours and one per recipient per `confirmation_recipient_days`. Skipped confirmations show up in `contact-leads.log` as `confirmation=skipped:<reason>`; the inquiry itself is always delivered. Submissions over the per-address daily cap are logged as `CAPPED` rather than dropped. Each log line also carries `ip=` and `fwd=` short hashes: the same `ip` on unrelated inquiries with a changing `fwd` means the server is seeing a proxy instead of the visitor.
+
 ### Spam scoring
 
 Inquiries are scored for cold-outreach pitches. Flagged mail still arrives, tagged `[SPAM?]` with an `X-Spam-Flag` header, but the sender receives no confirmation email and no booking link — a false positive costs the automatic reply, never the lead.
